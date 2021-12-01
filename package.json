@@ -1,5 +1,5 @@
 {
-  "name": "typescript-boilerplate-2021",
+  "name": "@textile/js-tableland",
   "version": "0.4.2",
   "description": "Boilerplate for TypeScript projects (Node.js and browser modules)",
   "author": "Chris Hager <chris@linuxuser.at>",
@@ -10,6 +10,7 @@
     "boilerplate",
     "esbuild"
   ],
+  "type": "module",
   "main": "./dist/tsc/main.js",
   "types": "./dist/tsc/main.d.ts",
   "browser": "./dist/esbuild/browser.js",
