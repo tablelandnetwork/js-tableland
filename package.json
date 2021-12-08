@@ -24,14 +24,10 @@
     "clean": "rm -rf dist build package",
     "ts-node": "ts-node",
     "docs": "typedoc --entryPoints src/main.ts",
-    "build": "tsc -p tsconfig.json",
-    "build-all": "yarn clean && yarn build && yarn esbuild-node && yarn esbuild-browser",
-    "esbuild-browser": "esbuild src/browser.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/browser.js",
-    "esbuild-browser:dev": "esbuild src/browser.ts --bundle --outfile=dist/esbuild/browser.js",
-    "esbuild-browser:watch": "esbuild src/browser.ts --bundle --watch --outfile=dist/esbuild/browser.js",
-    "esbuild-node": "esbuild src/cli.ts --bundle --platform=node --minify --sourcemap=external --outfile=dist/esbuild/cli.js",
-    "esbuild-node:dev": "esbuild src/cli.ts --bundle --platform=node --sourcemap=external --outfile=dist/esbuild/cli.js",
-    "esbuild-node:watch": "esbuild src/cli.ts --bundle --platform=node --watch --sourcemap=external --outfile=dist/esbuild/cli.js"
+    "tsbuild": "tsc -p tsconfig.json",
+    "build": "esbuild src/browser.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/browser.js --format=esm",
+    "build:dev": "esbuild src/browser.ts --bundle --outfile=dist/esbuild/browser.js --format=esm",
+    "build:watch": "esbuild src/browser.ts --bundle --watch --outfile=dist/esbuild/browser.js --format=esm"
   },
   "devDependencies": {
     "@types/jest": "^26.0.21",
@@ -45,5 +41,10 @@
     "ts-node": "^9.1.1",
     "typedoc": "^0.20.35",
     "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "@textile/core-storage": "^1.0.0",
+    "ethers": "^5.5.2",
+    "graphql-tag": "^2.12.6"
   }
 }

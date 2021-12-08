@@ -1,10 +1,24 @@
-export const delayMillis = (delayMs: number): Promise<void> => new Promise(resolve => setTimeout(resolve, delayMs));
+import { registerTable } from "./lib/eth-calls";
+import * as tablelandCalls from "./lib/tableland-calls";
+import connect from './lib/single';
 
-export const greet = (name: string): string => `Hello ${name}`
 
-export const foo = async (): Promise<boolean> => {
-  console.log(greet('World'))
-  await delayMillis(1000)
-  console.log('done')
-  return true
+async function createTable(query: string) {
+  // Validation
+  // Check table name from query
+  let registryTxn = await registerTable();
+  tablelandCalls.createTable(query, registryTxn);
+}
+
+async function runQuery(query: string) : Promise<string> {
+
+
+  return await tablelandCalls.runQuery(query);
+}
+
+
+export {
+  createTable,
+  runQuery,
+  connect
 }
