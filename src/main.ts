@@ -16,7 +16,6 @@ async function runQuery(query: string) : Promise<string> {
   return await tablelandCalls.runQuery(query);
 }
 
-
 export {
   createTable,
   runQuery,

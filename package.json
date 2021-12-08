@@ -2,32 +2,28 @@
   "name": "@textile/js-tableland",
   "version": "0.4.2",
   "description": "Boilerplate for TypeScript projects (Node.js and browser modules)",
-  "author": "Chris Hager <chris@linuxuser.at>",
-  "repository": "https://github.com/metachris/typescript-boilerplate",
+  "author": "Allen Muncy <allen@textile.io>",
+  "repository": "https://github.com/textileio/js-tableland",
   "license": "MIT",
   "keywords": [
     "typescript",
-    "boilerplate",
     "esbuild"
   ],
   "type": "module",
   "main": "./dist/tsc/main.js",
   "types": "./dist/tsc/main.d.ts",
-  "browser": "./dist/esbuild/browser.js",
-  "bin": {
-    "my-cli-tool": "./dist/esbuild/cli.js"
-  },
+  "moduleTypes": {"jest.config.js": "cjs"},
   "scripts": {
-    "cli": "ts-node src/cli.ts",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "test": "jest",
     "clean": "rm -rf dist build package",
     "ts-node": "ts-node",
     "docs": "typedoc --entryPoints src/main.ts",
     "tsbuild": "tsc -p tsconfig.json",
-    "build": "esbuild src/browser.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/browser.js --format=esm",
-    "build:dev": "esbuild src/browser.ts --bundle --outfile=dist/esbuild/browser.js --format=esm",
-    "build:watch": "esbuild src/browser.ts --bundle --watch --outfile=dist/esbuild/browser.js --format=esm"
+    "build": "esbuild src/main.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/main.js --format=esm",
+    "build:dev": "esbuild src/main.ts --bundle --outfile=dist/esbuild/main.js --format=esm",
+    "build:watch": "esbuild src/main.ts --bundle --watch --outfile=dist/esbuild/main.js --format=esm",
+    "build-all": "npm run tsbuild && build"
   },
   "devDependencies": {
     "@types/jest": "^26.0.21",
