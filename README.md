@@ -1,6 +1,7 @@
 # @textile/js-storage
 
-[![Build and test status](https://github.com/textileio/js-tableland/workflows/Lint%20and%20test/badge.svg)](https://github.com/textileio/js-tableland/actions?query=workflow%3A%22Build+and+test%22)
+
+[![Lint and test](https://github.com/textileio/js-tableland/actions/workflows/lint-and-test.yml/badge.svg)](https://github.com/textileio/js-tableland/actions/workflows/lint-and-test.yml)
 
 
 
@@ -50,7 +51,7 @@ npm test
 
 
 
-You can generate a full clean build with `yarn build-all` (which uses both `tsc` and `esbuild`).
+You can generate a full clean build with `npm build-all` (which uses both `tsc` and `esbuild`).
 
 * `package.json` includes `scripts` for various esbuild commands: [see here](https://github.com/metachris/typescript-boilerplate/blob/master/package.json#L23)
 * `esbuild` has a `--global-name=xyz` flag, to store the exports from the entry point in a global variable. See also the [esbuild "Global name" docs](https://esbuild.github.io/api/#global-name).
