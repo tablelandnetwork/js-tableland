@@ -1,4 +1,4 @@
-import { getSigner, getHost } from "./single";
+import { getSigner, getHost, getToken } from "./single";
 import { ContractReceipt } from "@ethersproject/contracts";
 
 enum Method {
@@ -12,8 +12,6 @@ async function getNonce() {
 
 async function signTransaction(message:Object|String, gas:Number=1000) {
 
-    // Ignoreing because 
-    // @ts-ignore
 
     let signer = await getSigner();
     let messageWithMeta = {
@@ -34,10 +32,12 @@ async function signTransaction(message:Object|String, gas:Number=1000) {
 }
 
 async function SendCall(rpcBody: Object) {
+
     return await fetch(`${getHost()}/rpc`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${await getToken()}`
         },
         body: JSON.stringify(rpcBody)
     }).then(r=>r.json());
@@ -48,15 +48,12 @@ async function SendCall(rpcBody: Object) {
 async function GeneralizedRPC(method: Method, statement: string) {
 
 
-    let transaction = await signTransaction(statement);
-
     return {
         "jsonrpc": "2.0", 
         "method": `tableland_${method}`, 
         "id" : 1,
         "params": [{
-            "statement": statement,
-            "transaction": transaction
+            "statement": statement
         }]
     };
 }

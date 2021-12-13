@@ -1,9 +1,10 @@
 import { registerTable } from "./lib/eth-calls";
 import * as tablelandCalls from "./lib/tableland-calls";
-import connect from './lib/single';
+import connect, { connectionCheck } from './lib/single';
 
 
 async function createTable(query: string) {
+  connectionCheck();
   // Validation
   // Check table name from query
   let registryTxn = await registerTable();
@@ -11,7 +12,7 @@ async function createTable(query: string) {
 }
 
 async function runQuery(query: string) : Promise<string> {
-
+  connectionCheck();
 
   return await tablelandCalls.runQuery(query);
 }

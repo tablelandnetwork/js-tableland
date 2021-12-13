@@ -1,8 +1,38 @@
 import { ethers } from "ethers";
-import { createToken } from '@textile/core-storage';
+import { createToken, Signer } from '@textile/core-storage';
+
+
 
 let signer: ethers.Signer;
 let host: string;
+let token : Object;
+let connected: boolean;
+
+function isConnected() {
+    return connected;
+}
+
+function connectionCheck() {
+    if(!isConnected()) {
+        throw("Please connect your account before trying anything.")
+    }
+}
+
+async function setToken(token_to_be?: string) {
+    // @ts-ignore
+    let ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
+
+    // @ts-ignore
+    token = token_to_be || await createToken(await getSigner(), {}, {iss: ethAccounts[0] });
+
+}
+
+async function getToken(): Promise<Object> {
+    if(!token) {
+        await setToken();
+    }
+    return token;
+}
 
 async function setSigner(newSigner: ethers.Signer) {
     signer = newSigner;
@@ -45,8 +75,9 @@ async function connect(validatorHost: string, options?: Object|undefined) {
     // @ts-ignore
     let ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
     let tablelandAddress = {};
-    const jws_token = await createToken(await getSigner(), {}, {iss: ethAccounts[0] });
-
+    // @ts-ignore
+    const jws_token = options?.token || await getToken();
+    connected = true;
     return {
         jws_token,
         ethAccounts,
@@ -60,5 +91,9 @@ export {
     getSigner,
     setSigner,
     getHost,
-    setHost   
+    setHost,
+    setToken,
+    getToken,
+    isConnected,
+    connectionCheck
 };
