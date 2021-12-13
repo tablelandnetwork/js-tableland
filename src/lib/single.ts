@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { createToken } from '@textile/core-storage';
 
 let signer: ethers.Signer;
 let host: string;
@@ -44,10 +45,12 @@ async function connect(validatorHost: string, options?: Object|undefined) {
     // @ts-ignore
     let ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
     let tablelandAddress = {};
+    const jws_token = await createToken(await getSigner(), {}, {iss: ethAccounts[0] });
 
     return {
+        jws_token,
         ethAccounts,
-        tablelandAddress
+        tablelandAddress,
     }
 }
 
