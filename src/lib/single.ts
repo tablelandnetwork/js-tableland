@@ -64,7 +64,7 @@ async function setHost(newHost: string) {
     host = newHost;
 }
 
-async function connect(validatorHost: string, options?: Object|undefined) {
+async function connect(validatorHost: string, options: Object={}) {
     
     if(!validatorHost) {
         throw (`You haven't specified a tableland validator. If you don't have your own, try gateway.tableland.com.`);
@@ -75,8 +75,12 @@ async function connect(validatorHost: string, options?: Object|undefined) {
     // @ts-ignore
     let ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
     let tablelandAddress = {};
+    
+    if(options.jws_token) {
+        await setToken(options.jws_token);
+    }
     // @ts-ignore
-    const jws_token = options?.token || await getToken();
+    const jws_token = await getToken();
     connected = true;
     return {
         jws_token,

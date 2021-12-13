@@ -37,7 +37,7 @@ async function SendCall(rpcBody: Object) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${await getToken()}`
+            "Authorization": `Bearer ${(await getToken()).token}`
         },
         body: JSON.stringify(rpcBody)
     }).then(r=>r.json());
