@@ -56,19 +56,21 @@ async function getSigner(): Promise<Signer> {
         return signer;
     }
     return signer;
+  }
+  return signer;
 }
 
 function getHost(): string {
-    if(!host) {
-        throw ("No host set");
-    }
+  if (!host) {
+    throw "No host set";
+  }
 
-    return host;
+  return host;
 }
 
 async function setHost(newHost: string) {
-    // Should probably validate newHost is a valid host.
-    host = newHost;
+  // Should probably validate newHost is a valid host.
+  host = newHost;
 }
 
 async function connect(validatorHost: string, options: Object={}) {
