@@ -1,11 +1,11 @@
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 import { createToken, Signer } from '@textile/core-storage';
 
 
 
-let signer: ethers.Signer;
+let signer: Signer;
 let host: string;
-let token : Object;
+let token : any;
 let connected: boolean;
 
 function isConnected() {
@@ -19,11 +19,18 @@ function connectionCheck() {
 }
 
 async function setToken(token_to_be?: string) {
-    // @ts-ignore
-    let ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
 
-    // @ts-ignore
-    token = token_to_be || await createToken(await getSigner(), {}, {iss: ethAccounts[0] });
+    const ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
+
+    const signer = await getSigner();
+
+    const sign = {
+        signMessage: async (message: Uint8Array): Promise<Uint8Array> => {
+          const sig = await signer.signMessage(message);
+          return utils.arrayify(sig);
+        },
+      };
+    token = token_to_be || await createToken(sign, {}, {iss: ethAccounts[0] });
 
 }
 
@@ -34,15 +41,15 @@ async function getToken(): Promise<Object> {
     return token;
 }
 
-async function setSigner(newSigner: ethers.Signer) {
+async function setSigner(newSigner: Signer) {
     signer = newSigner;
     return true; 
 }
 
-async function getSigner(): Promise<ethers.Signer> {
+async function getSigner(): Promise<Signer> {
     if(!signer) {
         
-        // @ts-ignore
+
         const provider = new ethers.providers.Web3Provider(globalThis.ethereum);
         signer = provider.getSigner();
 
@@ -73,8 +80,8 @@ async function connect(validatorHost: string, options: Object={}) {
     setHost(validatorHost);
 
     // @ts-ignore
-    let ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
-    let tablelandAddress = {};
+    const ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
+    const tablelandAddress = {};
     
     if(options.jws_token) {
         await setToken(options.jws_token);
