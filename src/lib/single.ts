@@ -29,7 +29,12 @@ async function setToken(tokenToBe?: string) {
       return utils.arrayify(sig);
     },
   };
-  token = tokenToBe || (await createToken(sign, {}, { iss: ethAccounts[0] }));
+  const iat = ~~(Date.now() / 1000);
+  const exp = iat + 60 * 60 * 10; // Default to ~10 hours
+
+  token =
+    tokenToBe ||
+    (await createToken(sign, {}, { iss: ethAccounts[0], exp: exp }));
 }
 
 async function getToken(): Promise<Object> {
