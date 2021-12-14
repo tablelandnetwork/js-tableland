@@ -20,7 +20,8 @@ function connectionCheck() {
 
 async function setToken(token_to_be?: string) {
 
-    const ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
+         const ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});  
+
 
     const signer = await getSigner();
 
@@ -30,7 +31,7 @@ async function setToken(token_to_be?: string) {
           return utils.arrayify(sig);
         },
       };
-    token = token_to_be || await createToken(sign, {}, {iss: ethAccounts[0] });
+    token = token_to_be || await createToken(sign, {}, {iss: ethAccounts[0],  });
 
 }
 
