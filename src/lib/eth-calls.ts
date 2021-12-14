@@ -1,6 +1,5 @@
-import { ContractReceipt } from "@ethersproject/contracts";
-import { Registry, Registry__factory } from "@textile/eth-tableland";
-import { ethers } from "@textile/eth-tableland/node_modules/ethers/lib";
+import { Registry__factory } from "@textile/eth-tableland";
+import ethers, { ContractReceipt } from "ethers";
 
 import { getSigner } from "./single";
 

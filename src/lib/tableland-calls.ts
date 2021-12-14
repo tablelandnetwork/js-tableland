@@ -1,10 +1,6 @@
 import { getSigner, getHost, getToken } from "./single";
 import { ContractReceipt } from "@ethersproject/contracts";
-
-enum Method {
-  CREATE_TABLE = "createTable",
-  RUN_SQL = "runSQL",
-}
+import { Method } from "./Method";
 
 async function getNonce() {
   return await 0;
@@ -52,7 +48,7 @@ async function GeneralizedRPC(method: Method, statement: string) {
   };
 }
 
-async function createTable(query: string, registryTxn: ContractReceipt) {
+async function createTable(query: string /*, registryTxn: ContractReceipt */) {
   return await SendCall(await GeneralizedRPC(Method.CREATE_TABLE, query));
 }
 
@@ -61,4 +57,4 @@ async function runQuery(query: string): Promise<string> {
   return await SendCall(await GeneralizedRPC(Method.RUN_SQL, query));
 }
 
-export { createTable, runQuery };
+export { createTable, runQuery, signTransaction };

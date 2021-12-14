@@ -11,8 +11,8 @@ async function createTable(query: string): Promise<any> {
   connectionCheck();
   // Validation
   // Check table name from query
-  const registryTxn = await registerTable();
-  tablelandCalls.createTable(query, registryTxn);
+  /* const registryTxn = */ await registerTable();
+  tablelandCalls.createTable(query /*, registryTxn */);
 }
 
 async function runQuery(query: string): Promise<string> {

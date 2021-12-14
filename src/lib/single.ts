@@ -1,61 +1,54 @@
 import { ethers, utils } from "ethers";
-import { createToken, Signer } from '@textile/core-storage';
-
-
+import { createToken, Signer } from "@textile/core-storage";
 
 let signer: Signer;
 let host: string;
-let token : any;
+let token: any;
 let connected: boolean;
 
 function isConnected() {
-    return connected;
+  return connected;
 }
 
 function connectionCheck() {
-    if(!isConnected()) {
-        throw("Please connect your account before trying anything.")
-    }
+  if (!isConnected()) {
+    throw Error("Please connect your account before trying anything.");
+  }
 }
 
-async function setToken(token_to_be?: string) {
+async function setToken(tokenToBe?: string) {
+  const ethAccounts = await globalThis.ethereum.request({
+    method: "eth_requestAccounts",
+  });
 
-         const ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});  
+  const signer = await getSigner();
 
-
-    const signer = await getSigner();
-
-    const sign = {
-        signMessage: async (message: Uint8Array): Promise<Uint8Array> => {
-          const sig = await signer.signMessage(message);
-          return utils.arrayify(sig);
-        },
-      };
-    token = token_to_be || await createToken(sign, {}, {iss: ethAccounts[0],  });
-
+  const sign = {
+    signMessage: async (message: Uint8Array): Promise<Uint8Array> => {
+      const sig = await signer.signMessage(message);
+      return utils.arrayify(sig);
+    },
+  };
+  token = tokenToBe || (await createToken(sign, {}, { iss: ethAccounts[0] }));
 }
 
 async function getToken(): Promise<Object> {
-    if(!token) {
-        await setToken();
-    }
-    return token;
+  if (!token) {
+    await setToken();
+  }
+  return token;
 }
 
 async function setSigner(newSigner: Signer) {
-    signer = newSigner;
-    return true; 
+  signer = newSigner;
+  return true;
 }
 
 async function getSigner(): Promise<Signer> {
-    if(!signer) {
-        
+  if (!signer) {
+    const provider = new ethers.providers.Web3Provider(globalThis.ethereum);
+    signer = provider.getSigner();
 
-        const provider = new ethers.providers.Web3Provider(globalThis.ethereum);
-        signer = provider.getSigner();
-
-        return signer;
-    }
     return signer;
   }
   return signer;
@@ -63,7 +56,7 @@ async function getSigner(): Promise<Signer> {
 
 function getHost(): string {
   if (!host) {
-    throw "No host set";
+    throw Error("No host set");
   }
 
   return host;
@@ -74,40 +67,43 @@ async function setHost(newHost: string) {
   host = newHost;
 }
 
-async function connect(validatorHost: string, options: Object={}) {
-    
-    if(!validatorHost) {
-        throw (`You haven't specified a tableland validator. If you don't have your own, try gateway.tableland.com.`);
-    }
+async function connect(validatorHost: string, options: Object = {}) {
+  if (!validatorHost) {
+    throw Error(
+      `You haven't specified a tableland validator. If you don't have your own, try gateway.tableland.com.`
+    );
+  }
 
-    setHost(validatorHost);
+  setHost(validatorHost);
 
-    // @ts-ignore
-    const ethAccounts = await globalThis.ethereum.request({method:'eth_requestAccounts'});
-    const tablelandAddress = {};
-    
-    if(options.jws_token) {
-        await setToken(options.jws_token);
-    }
-    // @ts-ignore
-    const jws_token = await getToken();
-    connected = true;
-    return {
-        jws_token,
-        ethAccounts,
-        tablelandAddress,
-    }
+  // @ts-ignore
+  const ethAccounts = await globalThis.ethereum.request({
+    method: "eth_requestAccounts",
+  });
+  const tablelandAddress = {};
+
+  if (options.jwsToken) {
+    await setToken(options.jwsToken);
+  }
+  // @ts-ignore
+  const jwsToken = await getToken();
+  connected = true;
+  return {
+    jwsToken,
+    ethAccounts,
+    tablelandAddress,
+  };
 }
 
 export default connect;
 
 export {
-    getSigner,
-    setSigner,
-    getHost,
-    setHost,
-    setToken,
-    getToken,
-    isConnected,
-    connectionCheck
+  getSigner,
+  setSigner,
+  getHost,
+  setHost,
+  setToken,
+  getToken,
+  isConnected,
+  connectionCheck,
 };

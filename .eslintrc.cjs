@@ -1,9 +1,17 @@
 module.exports = {
   env: {
-    browser: false,
+    browser: true,
     es2021: true,
     mocha: true,
-    node: true,
+  },
+  settings: {
+    node: {
+      tryExtensions: [".js", ".json", ".node", ".ts", ".d.ts"],
+    },
+  },
+  globals: {
+    fetch: false,
+    ethereum: false,
   },
   plugins: ["@typescript-eslint"],
   extends: [
@@ -20,5 +28,7 @@ module.exports = {
       "error",
       { ignores: ["modules"] },
     ],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error",
   },
 };
