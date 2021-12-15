@@ -19,7 +19,7 @@ jobs:
         node-version: ${{ matrix.nodejs }}
 
     - run: npm install
-    - run: npm run esbuild
+    - run: npm run tsbuild
     - run: npm test
     - run: npm run lint
     - run: npm run build-all
