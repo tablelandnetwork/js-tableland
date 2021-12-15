@@ -1,23 +1,24 @@
 import { registerTable } from "./lib/eth-calls";
 import * as tablelandCalls from "./lib/tableland-calls";
-import connect from './lib/single';
+import connect, { connectionCheck } from "./lib/single";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line no-unused-expressions
+(globalThis as any).ethereum;
 
-async function createTable(query: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function createTable(query: string): Promise<any> {
+  connectionCheck();
   // Validation
   // Check table name from query
-  let registryTxn = await registerTable();
-  tablelandCalls.createTable(query, registryTxn);
+  /* const registryTxn = */ await registerTable();
+  tablelandCalls.createTable(query /*, registryTxn */);
 }
 
-async function runQuery(query: string) : Promise<string> {
-
+async function runQuery(query: string): Promise<string> {
+  connectionCheck();
 
   return await tablelandCalls.runQuery(query);
 }
 
-export {
-  createTable,
-  runQuery,
-  connect
-}
+export { createTable, runQuery, connect };
