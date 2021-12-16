@@ -1,5 +1,4 @@
 import { getSigner, getHost, getToken } from "./single";
-import { ContractReceipt } from "@ethersproject/contracts";
 import { Method } from "./Method";
 
 async function getNonce() {
@@ -35,7 +34,13 @@ async function SendCall(rpcBody: Object) {
   }).then((r) => r.json());
 }
 
-async function GeneralizedRPC(method: Method, statement: string) {
+async function GeneralizedRPC(
+  method: Method,
+  statement: string,
+  tableId: string
+) {
+  const signer = await getSigner();
+  const address = await signer.getAddress();
   return {
     jsonrpc: "2.0",
     method: `tableland_${method}`,
@@ -43,18 +48,26 @@ async function GeneralizedRPC(method: Method, statement: string) {
     params: [
       {
         statement: statement,
+        tableId: tableId,
+        controller: address,
       },
     ],
   };
 }
 
-async function createTable(query: string /*, registryTxn: ContractReceipt */) {
-  return await SendCall(await GeneralizedRPC(Method.CREATE_TABLE, query));
+async function createTable(query: string, tableId: string) {
+  return await SendCall(
+    await GeneralizedRPC(Method.CREATE_TABLE, query, tableId)
+  );
 }
 
-async function runQuery(query: string): Promise<string> {
+async function runQuery(query: string, tableId: string): Promise<string> {
   // Validation here?
-  return await SendCall(await GeneralizedRPC(Method.RUN_SQL, query));
+  return await SendCall(await GeneralizedRPC(Method.RUN_SQL, query, tableId));
 }
 
-export { createTable, runQuery, signTransaction };
+async function findMyTables() {
+  return [];
+}
+
+export { createTable, runQuery, signTransaction, findMyTables };

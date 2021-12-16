@@ -9,16 +9,20 @@ import connect, { connectionCheck } from "./lib/single";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createTable(query: string): Promise<any> {
   connectionCheck();
+
   // Validation
-  // Check table name from query
-  /* const registryTxn = */ await registerTable();
-  tablelandCalls.createTable(query /*, registryTxn */);
+  const { tableId } = await registerTable();
+  tablelandCalls.createTable(query, tableId);
 }
 
-async function runQuery(query: string): Promise<string> {
+async function runQuery(query: string, tableId: string): Promise<string> {
   connectionCheck();
-
-  return await tablelandCalls.runQuery(query);
+  console.log(`Running query "${query}" against token ${tableId}`);
+  return await tablelandCalls.runQuery(query, tableId);
 }
 
-export { createTable, runQuery, connect };
+async function myTables() {
+  //
+  return [];
+}
+export { createTable, runQuery, connect, myTables };
