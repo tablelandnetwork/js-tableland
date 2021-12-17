@@ -48,7 +48,7 @@ async function GeneralizedRPC(
     params: [
       {
         statement: statement,
-        tableId: tableId,
+        tableId: tableId.slice(2),
         controller: address,
       },
     ],

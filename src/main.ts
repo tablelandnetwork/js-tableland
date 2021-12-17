@@ -1,6 +1,6 @@
 import { registerTable } from "./lib/eth-calls";
 import * as tablelandCalls from "./lib/tableland-calls";
-import connect, { connectionCheck } from "./lib/single";
+import connect, { connectionCheck, getSigner } from "./lib/single";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // eslint-disable-next-line no-unused-expressions
@@ -13,6 +13,7 @@ async function createTable(query: string): Promise<any> {
   // Validation
   const { tableId } = await registerTable();
   tablelandCalls.createTable(query, tableId);
+  return tableId;
 }
 
 async function runQuery(query: string, tableId: string): Promise<string> {
@@ -22,7 +23,13 @@ async function runQuery(query: string, tableId: string): Promise<string> {
 }
 
 async function myTables() {
-  //
-  return [];
+  const signer = await getSigner();
+  const address = await signer.getAddress();
+
+  const resp = await runQuery(
+    `SELECT * FROM system_tables WHERE controller='${address}'`,
+    "0x932848feae2d4bfe912fb1e5c949f3fe"
+  );
+  return resp;
 }
 export { createTable, runQuery, connect, myTables };
