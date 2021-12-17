@@ -33,7 +33,9 @@ async function GeneralizedRPC(
 }
 
 async function createTable(query: string, tableId: string) {
-  return await SendCall(await GeneralizedRPC("createTable", query, tableId));
+  return await SendCall(
+    await GeneralizedRPC("createTable", query, tableId.slice(2))
+  );
 }
 
 async function runQuery(query: string, tableId: string): Promise<string> {
