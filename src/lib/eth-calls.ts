@@ -1,11 +1,17 @@
+// eslint-disable-next-line camelcase
 import { Registry__factory } from "@textile/eth-tableland";
-import ethers, { ContractReceipt } from "ethers";
+import { ContractReceipt } from "ethers";
 import { v4 } from "uuid";
 
 import { getSigner } from "./single";
 
-async function registerTable(): Promise<Object> {
-  const signer = await (<ethers.Signer>getSigner());
+interface TableRegistration {
+  receipt: ContractReceipt;
+  tableId: string;
+}
+
+async function registerTable(): Promise<TableRegistration> {
+  const signer = await getSigner();
   const address = await signer.getAddress();
   const contract = Registry__factory.connect(
     "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
@@ -30,7 +36,7 @@ async function registerTable(): Promise<Object> {
 }
 
 async function doIOwn(tableId: string): Promise<boolean> {
-  const signer = await (<ethers.Signer>getSigner());
+  const signer = await getSigner();
   const address = await signer.getAddress();
   const contract = Registry__factory.connect(
     "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
