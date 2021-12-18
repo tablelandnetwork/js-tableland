@@ -14,6 +14,7 @@ async function registerTable(): Promise<TableRegistration> {
   const signer = await getSigner();
   const address = await signer.getAddress();
   const contract = Registry__factory.connect(
+    // TODO: Extra to abstraction
     "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
     signer
   );
@@ -39,6 +40,7 @@ async function doIOwn(tableId: string): Promise<boolean> {
   const signer = await getSigner();
   const address = await signer.getAddress();
   const contract = Registry__factory.connect(
+    // TODO: Extra to abstraction
     "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
     signer
   );

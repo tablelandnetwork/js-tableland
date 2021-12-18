@@ -43,8 +43,14 @@ async function runQuery(query: string, tableId: string): Promise<string> {
   return await SendCall(await GeneralizedRPC("runSQL", query, tableId));
 }
 
-async function findMyTables() {
-  return [];
+async function myTables() {
+  const signer = await getSigner();
+  const address = await signer.getAddress();
+  const host = await getHost();
+  const resp = await fetch(`${host}/tables/controller/${address}`).then((r) =>
+    r.json()
+  );
+  return resp;
 }
 
-export { createTable, runQuery, findMyTables };
+export { createTable, runQuery, myTables };
