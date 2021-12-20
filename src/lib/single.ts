@@ -95,7 +95,6 @@ async function connect(
   validatorHost: string,
   options: Authenticator = { jwsToken: "" }
 ) {
-  console.log(options);
   if (!validatorHost) {
     throw Error(
       `You haven't specified a tableland validator. If you don't have your own, try gateway.tableland.com.`
