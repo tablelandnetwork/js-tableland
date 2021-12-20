@@ -37,7 +37,17 @@ async function setToken(tokenToBe?: string) {
   const iat = ~~(Date.now() / 1000);
   const exp = iat + 60 * 60 * 10; // Default to ~10 hours
 
-  token = tokenToBe ? {token: tokenToBe} : (await createToken(sign, {}, { iss: ethAccounts[0], exp: exp }));
+  // WARN: This is a non-standard JWT
+  // Borrows ideas from: https://github.com/ethereum/EIPs/issues/1341
+  const iss = await signer.getAddress();
+  const network = await signer.provider?.getNetwork();
+  const chain = network?.chainId ?? "unknown";
+  let net = network?.name;
+  if (net?.startsWith("matic")) net = "poly";
+  else net = "eth";
+  const kid = `${net}:${chain}:${iss}`;
+
+  token = tokenToBe ? {token: tokenToBe} : (await createToken(sign, {kid: kid, alg: 'ETH'}, { iss: ethAccounts[0], exp: exp }));
 }
 
 interface Token {
