@@ -37,9 +37,7 @@ async function setToken(tokenToBe?: string) {
   const iat = ~~(Date.now() / 1000);
   const exp = iat + 60 * 60 * 10; // Default to ~10 hours
 
-  token =
-    tokenToBe ||
-    (await createToken(sign, {}, { iss: ethAccounts[0], exp: exp }));
+  token = tokenToBe ? {token: tokenToBe} : (await createToken(sign, {}, { iss: ethAccounts[0], exp: exp }));
 }
 
 interface Token {
@@ -87,6 +85,7 @@ async function connect(
   validatorHost: string,
   options: Authenticator = { jwsToken: "" }
 ) {
+  console.log(options);
   if (!validatorHost) {
     throw Error(
       `You haven't specified a tableland validator. If you don't have your own, try gateway.tableland.com.`
