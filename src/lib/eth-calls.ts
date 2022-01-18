@@ -3,7 +3,7 @@ import { Registry__factory } from "@textile/eth-tableland";
 import { ContractReceipt } from "ethers";
 import { v4 } from "uuid";
 
-import { getSigner } from "./single";
+import { getSigner } from "./single.js";
 
 interface TableRegistration {
   receipt: ContractReceipt;

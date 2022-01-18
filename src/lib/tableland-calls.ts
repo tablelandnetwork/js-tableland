@@ -1,4 +1,4 @@
-import { getSigner, getHost, getToken } from "./single";
+import { getSigner, getHost, getToken } from "./single.js";
 
 async function SendCall(rpcBody: Object) {
   return await fetch(`${getHost()}/rpc`, {
@@ -38,7 +38,7 @@ async function createTable(query: string, tableId: string) {
   );
 }
 
-async function runQuery(query: string, tableId: string): Promise<string> {
+async function runQuery(query: string, tableId: string): Promise<object> {
   // Validation here?
   return await SendCall(await GeneralizedRPC("runSQL", query, tableId));
 }

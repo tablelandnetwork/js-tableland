@@ -13,7 +13,7 @@
     "node": ">=12.0.0"
   },
   "type": "module",
-  "main": "./dist/tsc/main.js",
+  "main": "./dist/tsc/main",
   "types": "./dist/tsc/main.d.ts",
   "moduleTypes": {
     "jest.config.js": "cjs"
