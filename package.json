@@ -1,5 +1,5 @@
 {
-  "name": "@textile/js-tableland",
+  "name": "@textile/tableland",
   "version": "0.4.2",
   "description": "Boilerplate for TypeScript projects (Node.js and browser modules)",
   "author": "Allen Muncy <allen@textile.io>",
