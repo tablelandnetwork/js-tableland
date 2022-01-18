@@ -1,10 +1,15 @@
-import { ethers, utils } from "ethers";
-import { createToken, Signer } from "@textile/core-storage";
+import { ethers, utils, Signer } from "ethers";
+import { createToken } from "@textile/core-storage";
 
 let signer: Signer;
 let host: string;
 let token: any;
 let connected: boolean;
+
+declare global {
+  // eslint-disable-next-line no-var
+  var ethereum: any;
+}
 
 function isConnected() {
   return connected;
@@ -32,12 +37,24 @@ async function setToken(tokenToBe?: string) {
   const iat = ~~(Date.now() / 1000);
   const exp = iat + 60 * 60 * 10; // Default to ~10 hours
 
-  token =
-    tokenToBe ||
-    (await createToken(sign, {}, { iss: ethAccounts[0], exp: exp }));
+  // WARN: This is a non-standard JWT
+  // Borrows ideas from: https://github.com/ethereum/EIPs/issues/1341
+  const iss = await signer.getAddress();
+  const network = await signer.provider?.getNetwork();
+  const chain = network?.chainId ?? "unknown";
+  let net = network?.name;
+  if (net?.startsWith("matic")) net = "poly";
+  else net = "eth";
+  const kid = `${net}:${chain}:${iss}`;
+
+  token = tokenToBe ? {token: tokenToBe} : (await createToken(sign, {kid: kid, alg: 'ETH'}, { iss: ethAccounts[0], exp: exp }));
 }
 
-async function getToken(): Promise<Object> {
+interface Token {
+  token: string;
+}
+
+async function getToken(): Promise<Token> {
   if (!token) {
     await setToken();
   }
@@ -53,8 +70,6 @@ async function getSigner(): Promise<Signer> {
   if (!signer) {
     const provider = new ethers.providers.Web3Provider(globalThis.ethereum);
     signer = provider.getSigner();
-
-    return signer;
   }
   return signer;
 }
@@ -72,7 +87,14 @@ async function setHost(newHost: string) {
   host = newHost;
 }
 
-async function connect(validatorHost: string, options: Object = {}) {
+interface Authenticator {
+  jwsToken: string;
+}
+
+async function connect(
+  validatorHost: string,
+  options: Authenticator = { jwsToken: "" }
+) {
   if (!validatorHost) {
     throw Error(
       `You haven't specified a tableland validator. If you don't have your own, try gateway.tableland.com.`

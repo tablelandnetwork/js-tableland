@@ -13,9 +13,11 @@
     "node": ">=12.0.0"
   },
   "type": "module",
-  "main": "./dist/tsc/main.js",
+  "main": "./dist/tsc/main",
   "types": "./dist/tsc/main.d.ts",
-  "moduleTypes": {"jest.config.js": "cjs"},
+  "moduleTypes": {
+    "jest.config.js": "cjs"
+  },
   "scripts": {
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "test": "jest",
@@ -29,13 +31,14 @@
     "build-all": "npm run tsbuild && build"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.22",
     "@types/jest": "^26.0.21",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.10",
+    "@types/uuid": "^8.3.3",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
     "esbuild": "^0.11.11",
-    "jest": "^26.6.3",
-    "ts-jest": "^26.5.4",
-    "ts-node": "^9.1.1",
-    "typedoc": "^0.20.35",
-    "typescript": "^4.2.3",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",
@@ -43,16 +46,17 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-promise": "^5.1.1",
-    "@types/chai": "^4.2.22",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^16.11.10",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
-    "prettier": "^2.5.0"
+    "jest": "^26.6.3",
+    "prettier": "^2.5.0",
+    "ts-jest": "^26.5.4",
+    "ts-node": "^9.1.1",
+    "typedoc": "^0.20.35",
+    "typescript": "^4.2.3"
   },
   "dependencies": {
     "@textile/core-storage": "^1.0.0",
     "ethers": "^5.5.2",
-    "graphql-tag": "^2.12.6"
+    "graphql-tag": "^2.12.6",
+    "uuid": "^8.3.2"
   }
 }

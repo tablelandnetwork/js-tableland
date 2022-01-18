@@ -21,7 +21,7 @@ async function useTableland() {
 
   let table = createTable("CREATE ..."); // You can optionally pass in a UUID
   
-  runQuery("INSERT (firstname) VALUES ('Murray' INTO MyTable", table.token_id);  
+  runQuery("INSERT (firstname) VALUES ('Murray' INTO MyTable)", table.token_id);  
 }
 
 ```

@@ -1,28 +1,4 @@
-import { getSigner, getHost, getToken } from "./single";
-import { ContractReceipt } from "@ethersproject/contracts";
-import { Method } from "./Method";
-
-async function getNonce() {
-  return await 0;
-}
-
-async function signTransaction(message: Object | String, gas: Number = 1000) {
-  const signer = await getSigner();
-  const messageWithMeta = {
-    nonce: await getNonce(),
-    gas: gas,
-    message,
-  };
-
-  const stringToSign = JSON.stringify(messageWithMeta);
-
-  const signedTransaction = await signer.signMessage(stringToSign);
-
-  return {
-    message: stringToSign,
-    signature: signedTransaction,
-  };
-}
+import { getSigner, getHost, getToken } from "./single.js";
 
 async function SendCall(rpcBody: Object) {
   return await fetch(`${getHost()}/rpc`, {
@@ -35,7 +11,13 @@ async function SendCall(rpcBody: Object) {
   }).then((r) => r.json());
 }
 
-async function GeneralizedRPC(method: Method, statement: string) {
+async function GeneralizedRPC(
+  method: string,
+  statement: string,
+  tableId: string
+) {
+  const signer = await getSigner();
+  const address = await signer.getAddress();
   return {
     jsonrpc: "2.0",
     method: `tableland_${method}`,
@@ -43,18 +25,32 @@ async function GeneralizedRPC(method: Method, statement: string) {
     params: [
       {
         statement: statement,
+        tableId: tableId,
+        controller: address,
       },
     ],
   };
 }
 
-async function createTable(query: string /*, registryTxn: ContractReceipt */) {
-  return await SendCall(await GeneralizedRPC(Method.CREATE_TABLE, query));
+async function createTable(query: string, tableId: string) {
+  return await SendCall(
+    await GeneralizedRPC("createTable", query, tableId.slice(2))
+  );
 }
 
-async function runQuery(query: string): Promise<string> {
+async function runQuery(query: string, tableId: string): Promise<object> {
   // Validation here?
-  return await SendCall(await GeneralizedRPC(Method.RUN_SQL, query));
+  return await SendCall(await GeneralizedRPC("runSQL", query, tableId));
 }
 
-export { createTable, runQuery, signTransaction };
+async function myTables() {
+  const signer = await getSigner();
+  const address = await signer.getAddress();
+  const host = await getHost();
+  const resp = await fetch(`${host}/tables/controller/${address}`).then((r) =>
+    r.json()
+  );
+  return resp;
+}
+
+export { createTable, runQuery, myTables };

@@ -1,6 +1,6 @@
-import { registerTable } from "./lib/eth-calls";
-import * as tablelandCalls from "./lib/tableland-calls";
-import connect, { connectionCheck } from "./lib/single";
+import { registerTable } from "./lib/eth-calls.js";
+import * as tablelandCalls from "./lib/tableland-calls.js";
+import connect, { connectionCheck } from "./lib/single.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // eslint-disable-next-line no-unused-expressions
@@ -9,16 +9,18 @@ import connect, { connectionCheck } from "./lib/single";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createTable(query: string): Promise<any> {
   connectionCheck();
+
   // Validation
-  // Check table name from query
-  /* const registryTxn = */ await registerTable();
-  tablelandCalls.createTable(query /*, registryTxn */);
+  const { tableId } = await registerTable();
+  tablelandCalls.createTable(query, tableId);
+  return tableId;
 }
 
-async function runQuery(query: string): Promise<string> {
+async function runQuery(query: string, tableId: string): Promise<object> {
   connectionCheck();
-
-  return await tablelandCalls.runQuery(query);
+  console.log(`Running query "${query}" against token ${tableId}`);
+  return await tablelandCalls.runQuery(query, tableId);
 }
 
 export { createTable, runQuery, connect };
+export { myTables } from "./lib/tableland-calls.js";
