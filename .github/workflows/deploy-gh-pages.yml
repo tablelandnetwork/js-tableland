@@ -1,34 +1,43 @@
-#
-# Builds the docs and deploys to GitHub pages
-#
-# https://github.com/actions/setup-node
-# Using https://github.com/marketplace/actions/deploy-to-github-pages
-name: Deploy to Github pages
-
+name: Docs
 on:
   push:
-    #tags:
-    #  - v*
     branches:
-      - master
-
+      - main
 jobs:
-  deploy_pages:
+  docs:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '12'
-        cache: 'yarn'
-    - run: yarn install
-    - run: yarn docs
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+        with:
+          persist-credentials: false
 
-    - run: touch docs/.nojekyll
-    - name: Deploy docs 🚀
-      uses: JamesIves/github-pages-deploy-action@releases/v3
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: docs # The folder the action should deploy.
+      - name: Cache 📦
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Setup Node Environment ⬢
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - name: Install and Build 🔧
+        run: |
+          npm install
+          npm build
+          npm run docs -- --plugin none
+          echo "eth.storage" > docs/CNAME
+          touch docs/.nojekyll
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: docs
