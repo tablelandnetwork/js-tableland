@@ -24,3 +24,5 @@ async function runQuery(query: string, tableId: string): Promise<object> {
 
 export { createTable, runQuery, connect };
 export { myTables } from "./lib/tableland-calls.js";
+export { Authenticator, ConnectionDetails, Token } from "./lib/single.js";
+export { Column, ColumnDescriptor, Row, Table } from "./lib/tableland-calls.js";

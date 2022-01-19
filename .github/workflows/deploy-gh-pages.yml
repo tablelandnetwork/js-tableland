@@ -32,7 +32,6 @@ jobs:
           npm install
           npm build
           npm run docs -- --plugin none
-          echo "eth.storage" > docs/CNAME
           touch docs/.nojekyll
 
       - name: Deploy 🚀

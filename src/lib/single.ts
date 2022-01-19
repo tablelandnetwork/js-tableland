@@ -6,10 +6,7 @@ let host: string;
 let token: any;
 let connected: boolean;
 
-declare global {
-  // eslint-disable-next-line no-var
-  var ethereum: any;
-}
+declare let globalThis: any;
 
 function isConnected() {
   return connected;
@@ -47,10 +44,16 @@ async function setToken(tokenToBe?: string) {
   else net = "eth";
   const kid = `${net}:${chain}:${iss}`;
 
-  token = tokenToBe ? {token: tokenToBe} : (await createToken(sign, {kid: kid, alg: 'ETH'}, { iss: ethAccounts[0], exp: exp }));
+  token = tokenToBe
+    ? { token: tokenToBe }
+    : await createToken(
+        sign,
+        { kid: kid, alg: "ETH" },
+        { iss: ethAccounts[0], exp: exp }
+      );
 }
 
-interface Token {
+export interface Token {
   token: string;
 }
 
@@ -87,14 +90,36 @@ async function setHost(newHost: string) {
   host = newHost;
 }
 
-interface Authenticator {
+export interface Authenticator {
   jwsToken: string;
 }
 
+export interface ConnectionDetails {
+  jwsToken: Token;
+  ethAccounts: Array<string>;
+}
+
+/**
+ * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Threads server.
+ * This client library can be used to interact with a local or remote Textile gRPC-service
+ * It is a wrapper around Textile Thread's 'DB' API, which is defined here:
+ * https://github.com/textileio/go-threads/blob/master/api/pb/threads.proto.
+ *
+ * @example
+ * ```typescript
+ * import connect, { createTable } from '@textile/tableland'
+ *
+ *
+ * async function setupDB() {
+ *    const connectionDetails = await connect("https://tableland.com");
+ *    createTable("CREATE TABLE table_name (Foo varchar(255), Bar int)", UUID())
+ * }
+ * ```
+ */
 async function connect(
   validatorHost: string,
   options: Authenticator = { jwsToken: "" }
-) {
+): Promise<ConnectionDetails> {
   if (!validatorHost) {
     throw Error(
       `You haven't specified a tableland validator. If you don't have your own, try gateway.tableland.com.`
@@ -103,22 +128,19 @@ async function connect(
 
   setHost(validatorHost);
 
-  // @ts-ignore
   const ethAccounts = await globalThis.ethereum.request({
     method: "eth_requestAccounts",
   });
-  const tablelandAddress = {};
 
   if (options.jwsToken) {
     await setToken(options.jwsToken);
   }
-  // @ts-ignore
+
   const jwsToken = await getToken();
   connected = true;
   return {
     jwsToken,
     ethAccounts,
-    tablelandAddress,
   };
 }
 

@@ -1,5 +1,25 @@
 import { getSigner, getHost, getToken } from "./single.js";
 
+/**
+ * ColumnDescriptor gives metadata about a colum (name, type)
+ */
+export interface ColumnDescriptor {
+  name: string;
+}
+
+export interface Column {
+  [index: number]: ColumnDescriptor;
+}
+
+export interface Row {
+  [index: number]: string | number;
+}
+
+export interface Table {
+  columns: Array<Column>;
+  rows: Array<Row>;
+}
+
 async function SendCall(rpcBody: Object) {
   return await fetch(`${getHost()}/rpc`, {
     method: "POST",
@@ -43,13 +63,14 @@ async function runQuery(query: string, tableId: string): Promise<object> {
   return await SendCall(await GeneralizedRPC("runSQL", query, tableId));
 }
 
-async function myTables() {
+async function myTables(): Promise<Table> {
   const signer = await getSigner();
   const address = await signer.getAddress();
   const host = await getHost();
-  const resp = await fetch(`${host}/tables/controller/${address}`).then((r) =>
-    r.json()
-  );
+  const resp: Table = await fetch(`${host}/tables/controller/${address}`)
+    .then((r) => r.json())
+    .then((r) => r.result.data);
+
   return resp;
 }
 
