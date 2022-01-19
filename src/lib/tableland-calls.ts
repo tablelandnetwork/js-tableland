@@ -15,7 +15,7 @@ export interface Row {
   [index: number]: string | number;
 }
 
-export interface Table {
+export interface ReadQueryResult {
   columns: Array<Column>;
   rows: Array<Row>;
 }
@@ -58,16 +58,26 @@ async function createTable(query: string, tableId: string) {
   );
 }
 
-async function runQuery(query: string, tableId: string): Promise<object> {
+async function runQuery(
+  query: string,
+  tableId: string
+): Promise<ReadQueryResult> {
   // Validation here?
   return await SendCall(await GeneralizedRPC("runSQL", query, tableId));
 }
 
-async function myTables(): Promise<Table> {
+export interface TableMetadata {
+  id: string;
+  type: string;
+}
+
+async function myTables(): Promise<TableMetadata[]> {
   const signer = await getSigner();
   const address = await signer.getAddress();
   const host = await getHost();
-  const resp: Table = await fetch(`${host}/tables/controller/${address}`)
+  const resp: ReadQueryResult[] = await fetch(
+    `${host}/tables/controller/${address}`
+  )
     .then((r) => r.json())
     .then((r) => r.result.data);
 

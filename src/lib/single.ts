@@ -1,9 +1,13 @@
 import { ethers, utils, Signer } from "ethers";
 import { createToken } from "@textile/core-storage";
 
+export interface Token {
+  token: string;
+}
+
 let signer: Signer;
 let host: string;
-let token: any;
+let token: Token;
 let connected: boolean;
 
 declare let globalThis: any;
@@ -53,10 +57,6 @@ async function setToken(tokenToBe?: string) {
       );
 }
 
-export interface Token {
-  token: string;
-}
-
 async function getToken(): Promise<Token> {
   if (!token) {
     await setToken();
@@ -100,10 +100,9 @@ export interface ConnectionDetails {
 }
 
 /**
- * Client is a web-gRPC wrapper client for communicating with a webgRPC-enabled Threads server.
- * This client library can be used to interact with a local or remote Textile gRPC-service
- * It is a wrapper around Textile Thread's 'DB' API, which is defined here:
- * https://github.com/textileio/go-threads/blob/master/api/pb/threads.proto.
+ * `connect` is a wrapper for using an ethereum signature to communicate with a Tableland server.
+ * This client library can be used to interact with a local or remote Tableland gRPC-service
+ * It is a wrapper around Textile Tableland DB API
  *
  * @example
  * ```typescript
