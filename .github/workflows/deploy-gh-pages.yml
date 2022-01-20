@@ -30,6 +30,10 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm install
+          cd ./node_modules/@textile/eth-tableland
+          npm install
+          npx hardhat compile
+          cd ../../../
           npm build
           npm run docs -- --plugin none
           touch docs/.nojekyll
