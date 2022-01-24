@@ -30,7 +30,7 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm install
-          npm build
+          npm run build
           npm run docs:gh-pages
           touch docs/.nojekyll
 
