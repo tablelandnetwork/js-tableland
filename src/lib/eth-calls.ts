@@ -1,5 +1,5 @@
 // eslint-disable-next-line camelcase
-import { Registry__factory } from "@textile/eth-tableland";
+import { Registry__factory } from "@awmuncy/cheese";
 import { ContractReceipt } from "ethers";
 import { v4 } from "uuid";
 
