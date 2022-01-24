@@ -31,7 +31,7 @@ jobs:
         run: |
           npm install
           npm run build
-          npm run docs:gh-pages
+          npm run docs:html
           touch docs/.nojekyll
 
       - name: Deploy 🚀
