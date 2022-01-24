@@ -30,12 +30,8 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm install
-          cd ./node_modules/@textile/eth-tableland
-          npm install
-          npx hardhat compile
-          cd ../../../
           npm build
-          npm run docs -- --plugin none
+          npm run docs:gh-pages
           touch docs/.nojekyll
 
       - name: Deploy 🚀

@@ -24,6 +24,7 @@
     "clean": "rm -rf dist build package",
     "ts-node": "ts-node",
     "docs": "typedoc --entryPoints src/main.ts",
+    "docs:gh-pages": "typedoc --entryPoints src/main.ts --plugin none",
     "tsbuild": "tsc -p tsconfig.json",
     "build": "esbuild src/main.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/main.js --format=esm",
     "build:dev": "esbuild src/main.ts --bundle --outfile=dist/esbuild/main.js --format=esm",
