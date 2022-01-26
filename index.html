@@ -3,9 +3,10 @@
   <h1>@textile/tableland</h1>
 </a>
 <p><a href="https://github.com/textileio/js-tableland/actions/workflows/lint-and-test.yml"><img src="https://github.com/textileio/js-tableland/actions/workflows/lint-and-test.yml/badge.svg" alt="Lint and test"></a>
-<a href="./package.json"><img src="https://img.shields.io/github/package-json/v/textileio/storage-js.svg" alt="GitHub package.json version"></a>
-<a href="https://github.com/textileio/storage-js/releases/latest"><img src="https://img.shields.io/github/release/textileio/storage-js.svg" alt="Release"></a>
+<a href="./package.json"><img src="https://img.shields.io/github/package-json/v/textileio/js-tableland.svg" alt="GitHub package.json version"></a>
+<a href="https://github.com/textileio/js-tableland/releases/latest"><img src="https://img.shields.io/github/release/textileio/js-tableland.svg" alt="Release"></a>
 <a href="https://github.com/RichardLitt/standard-readme"><img src="https://img.shields.io/badge/standard--readme-OK-green.svg" alt="standard-readme compliant"></a></p>
+<p>A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.</p>
 
 <a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
   <h1>Table of Contents</h1>
@@ -14,17 +15,12 @@
 <li><a href="#textiletableland">@textile/tableland</a></li>
 <li><a href="#table-of-contents">Table of Contents</a></li>
 <li><a href="#background">Background</a></li>
-<li><a href="#install">Install</a><ul>
+<li><a href="#install">Install</a></li>
 <li><a href="#usage">Usage</a></li>
-<li><a href="#contributing">Contributing</a></li>
-<li><a href="#tests-with-jest">Tests with Jest</a></li>
-<li><a href="#documentation-published-with-ci">Documentation, published with CI</a></li>
 <li><a href="#feedback">Feedback</a></li>
 <li><a href="#examples">Examples</a></li>
-</ul>
-</li>
 <li><a href="#maintainers">Maintainers</a></li>
-<li><a href="#contributing-1">Contributing</a></li>
+<li><a href="#contributing">Contributing</a></li>
 <li><a href="#license">License</a></li>
 </ul>
 
@@ -41,55 +37,14 @@
 </code></pre>
 
 <a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
-  <h2>Usage</h2>
+  <h1>Usage</h1>
 </a>
 <pre><code class="language-typescript"><span class="hl-0">import</span><span class="hl-1"> { </span><span class="hl-2">connect</span><span class="hl-1">, </span><span class="hl-2">createTable</span><span class="hl-1">, </span><span class="hl-2">runQuery</span><span class="hl-1"> } </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&#39;@textile/tableland&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-0">await</span><span class="hl-1"> </span><span class="hl-5">connect</span><span class="hl-1">(</span><span class="hl-3">&#39;http://tableland.com&#39;</span><span class="hl-1">); </span><br/><br/><span class="hl-4">let</span><span class="hl-1"> </span><span class="hl-2">tableTokenId</span><span class="hl-1"> = </span><span class="hl-5">createTable</span><span class="hl-1">(</span><span class="hl-3">&quot;CREATE ...&quot;</span><span class="hl-1">); </span><br/><span class="hl-1">  </span><br/><span class="hl-1">  </span><span class="hl-5">runQuery</span><span class="hl-1">(</span><span class="hl-3">&quot;INSERT (firstname) VALUES (&#39;Murray&#39; INTO MyTable)&quot;</span><span class="hl-1">, </span><span class="hl-2">table</span><span class="hl-1">.</span><span class="hl-2">token_id</span><span class="hl-1">);  </span><br/><span class="hl-1">}</span><br/>
 </code></pre>
-
-<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
-  <h2>Contributing</h2>
-</a>
-<pre><code class="language-bash"><span class="hl-1">git clone https://github.com/textileio/js-tableland.git</span><br/><br/><span class="hl-5">cd</span><span class="hl-1"> js-tableland</span><br/><br/><span class="hl-7"># Install dependencies</span><br/><span class="hl-1">npm install</span><br/><br/><span class="hl-7"># Now you can run various commands:</span><br/><span class="hl-1">npm run build</span><br/><span class="hl-1">npm run tsbuild</span><br/><span class="hl-1">npm run build:dev</span><br/><span class="hl-1">npm run build:watch</span><br/><span class="hl-1">npm lint</span><br/><span class="hl-1">npm </span><span class="hl-5">test</span>
-</code></pre>
-<ul>
-<li>Take a look at all the scripts in <a href="https://github.com/metachris/typescript-boilerplate/blob/master/package.json"><code>package.json</code></a></li>
-<li>For publishing to npm, use <code>npm publish</code></li>
-</ul>
 <p>You can generate a full clean build with <code>npm build-all</code> (which uses both <code>tsc</code> and <code>esbuild</code>).</p>
-<ul>
-<li><code>package.json</code> includes <code>scripts</code> for various esbuild commands: <a href="https://github.com/metachris/typescript-boilerplate/blob/master/package.json#L23">see here</a></li>
-<li><code>esbuild</code> has a <code>--global-name=xyz</code> flag, to store the exports from the entry point in a global variable. See also the <a href="https://esbuild.github.io/api/#global-name">esbuild &quot;Global name&quot; docs</a>.</li>
-<li>Read more about the esbuild setup <a href="https://www.metachris.com/2021/04/starting-a-typescript-project-in-2021/#esbuild">here</a>.</li>
-<li>esbuild for the browser uses the IIFE (immediately-invoked function expression) format, which executes the bundled code on load (see also <a href="https://github.com/evanw/esbuild/issues/29">https://github.com/evanw/esbuild/issues/29</a>)</li>
-</ul>
-
-<a href="#tests-with-jest" id="tests-with-jest" style="color: inherit; text-decoration: none;">
-  <h2>Tests with Jest</h2>
-</a>
-<p>You can write <a href="https://jestjs.io/docs/getting-started">Jest tests</a> <a href="https://github.com/metachris/typescript-boilerplate/blob/master/src/main.test.ts">like this</a>:</p>
-<pre><code class="language-typescript"><span class="hl-0">import</span><span class="hl-1"> { </span><span class="hl-2">greet</span><span class="hl-1"> } </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&#39;./main&#39;</span><br/><br/><span class="hl-5">test</span><span class="hl-1">(</span><span class="hl-3">&#39;the data is peanut butter&#39;</span><span class="hl-1">, () </span><span class="hl-4">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">expect</span><span class="hl-1">(</span><span class="hl-8">1</span><span class="hl-1">).</span><span class="hl-5">toBe</span><span class="hl-1">(</span><span class="hl-8">1</span><span class="hl-1">)</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-5">test</span><span class="hl-1">(</span><span class="hl-3">&#39;greeting&#39;</span><span class="hl-1">, () </span><span class="hl-4">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">expect</span><span class="hl-1">(</span><span class="hl-5">greet</span><span class="hl-1">(</span><span class="hl-3">&#39;Foo&#39;</span><span class="hl-1">)).</span><span class="hl-5">toBe</span><span class="hl-1">(</span><span class="hl-3">&#39;Hello Foo&#39;</span><span class="hl-1">)</span><br/><span class="hl-1">});</span>
-</code></pre>
-<p>Run the tests with <code>npm test</code>, no separate compile step is necessary.</p>
-<ul>
-<li>See also the <a href="https://jestjs.io/docs/getting-started">Jest documentation</a>.</li>
-<li>The tests can be automatically run in CI (GitHub Actions, GitLab CI): <a href="https://github.com/textileio/js-tableland/blob/master/.github/workflows/lint-and-test.yml"><code>.github/workflows/lint-and-test.yml</code></a>, <a href="https://github.com/textileio/js-tableland/blob/master/.gitlab-ci.yml"><code>.gitlab-ci.yml</code></a></li>
-</ul>
-
-<a href="#documentation-published-with-ci" id="documentation-published-with-ci" style="color: inherit; text-decoration: none;">
-  <h2>Documentation, published with CI</h2>
-</a>
-<p>You can auto-generate API documentation from the TyoeScript source files using <a href="https://typedoc.org/guides/doccomments/">TypeDoc</a>. The generated documentation can be published to GitHub / GitLab pages through the CI.</p>
-<p>Generate the documentation, using <code>src/main.ts</code> as entrypoint (configured in package.json):</p>
-<pre><code class="language-bash"><span class="hl-1">npm docs</span>
-</code></pre>
-<p>The resulting HTML is saved in <code>docs/</code>.</p>
-<p>You can publish the documentation through CI:</p>
-<ul>
-<li><a href="https://pages.github.com/">GitHub pages</a>: See <a href="https://github.com/metachris/typescript-boilerplate/blob/master/.github/workflows/deploy-gh-pages.yml"><code>.github/workflows/deploy-gh-pages.yml</code></a></li>
-</ul>
 
 <a href="#feedback" id="feedback" style="color: inherit; text-decoration: none;">
-  <h2>Feedback</h2>
+  <h1>Feedback</h1>
 </a>
 <p>Reach out with feedback and ideas:</p>
 <ul>
@@ -98,7 +53,7 @@
 </ul>
 
 <a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
-  <h2>Examples</h2>
+  <h1>Examples</h1>
 </a>
 <ul>
 <li><a href="https://github.com/textileio/tableland-example-apps/">To-do App</a> (<a href="https://github.com/textileio/tableland-example-apps/tree/loot-extension/tableland-todo">source</a></li>
@@ -111,7 +66,7 @@
 </a>
 <p><a href="https://github.com/awmuncy">@awmuncy</a></p>
 
-<a href="#contributing-1" id="contributing-1" style="color: inherit; text-decoration: none;">
+<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
   <h1>Contributing</h1>
 </a>
 <p>PRs accepted.</p>
