@@ -22,11 +22,11 @@ A TypeScript/JavaScript library for creating and querying Tables on the Tablelan
 
 # Background
 
-The Tableland project provides a zero-config Typescript/Javascript SDK that make it easy to interact with the Tableland network from Ethereum-based applications. This SDK (@textile/tableland) should feel comfortable to developers already familiar with the ethersjs Javascript library. The Tableland SDK provides a small but powerful API surface that integrates nicely with existing ETH development best practices.
+The Tableland project provides a zero-config Typescript/Javascript SDK that make it easy to interact with the Tableland network from Ethereum-based applications. The [`@textile/tableland`](https://github.com/textileio/js-tableland) SDK should feel comfortable to developers already familiar with the [`ethersjs` Javascript library](https://docs.ethers.io/). The Tableland SDK provides a small but powerful API surface that integrates nicely with existing ETH development best practices.
 
 Simply import the library, connect to the Tableland network, and you are ready to start creating and updating tables.
 
-Interested in supporting additional chains and ecosystems? Create an Issue and let us know!
+> Note: Interested in supporting additional chains and ecosystems? Create an Issue and let us know!
 
 # Install
 
@@ -77,7 +77,7 @@ Like most relational database systems, Tableland requires the user to create tab
 - `bool`, `float4`, `float8`, `numeric`
 - `uuid`, `json`
 
-> Warning: The above list is tentative and incomplete; the accepted types are still not well defined at the spec level.
+> Note: The above list is tentative and incomplete; the accepted types are still not well defined at the spec level.
 
 ```typescript
 import { createTable } from "@textile/tableland";
@@ -92,7 +92,7 @@ Creating a table also generates at unique table identifier (uuid). The table id 
 
 Currently, tables created by a given Ethereum address are owned by that address. For the time being, this means that the user must be signed in with the address used to create the table in order to _mutate_ the table. However, any address can _read_ the table at any time.
 
-> Warning: It is not advised to store sensitive or private information on the Tableland network at this time.
+> Warn: It is not advised to store sensitive or private information on the Tableland network at this time.
 
 ## Listing Tables
 
@@ -134,13 +134,13 @@ const two = await runQuery(
 
 This inserted row can then be removed from the table state like this:
 
-> Warning: While rows can be deleted from the table state, row information will remain in the table's history for obvious reasons.
+> Warn: While rows can be deleted from the table state, row information will remain in the table's history for obvious reasons.
 
 ```typescript
 const remove = await runQuery(`DELETE FROM ${tableId} WHERE id = 0;`);
 ```
 
-> Warning: As mentioned previously, table mutations are currently restricted to the table creator address.
+> Note: As mentioned previously, table mutations are currently restricted to the table creator address.
 
 ## Querying Tables
 
@@ -150,13 +150,14 @@ Finally, the moment we've all been waiting for -- we are ready to query our tabl
 const { rows, columns } = await runQuery(`SELECT * FROM ${tableId};`);
 ```
 
-The response from a read query contains a [`ReadQueryResult`](https://textileio.github.io/js-tableland/interfaces/ReadQueryResult.html) object, with properties for `columns` and `rows`. The `columns` property contains an enumerated array of column ids and their corresponding [`ColumnDescriptor`](https://textileio.github.io/js-tableland/interfaces/ColumnDescriptor.html) information. The `rows` property is an array of objects mapping column id to table data. The rows can be iterated over and used to populate UIs etc.
+The response from a read query contains a [`ReadQueryResult`](https://textileio.github.io/js-tableland/interfaces/ReadQueryResult.html) object, with properties for `columns` and `rows`. The `columns` property contains an enumerated array of column ids and their corresponding [`ColumnDescriptor`](https://textileio.github.io/js-tableland/interfaces/ColumnDescriptor.html) information. The `rows` property is an array of row-wise table data. The rows can be iterated over and used to populate UIs etc.
 
 ```typescript
-for (const [id, row] of Object.entries(rows)) {
-  console.log(`row: ${id}`);
-  for (const col of Object.entries(row)) {
-    console.log(`col: ${col}`);
+for (const [rowId, row] of Object.entries(rows)) {
+  console.log(`row: ${rowId}`);
+  for (const [colId, data] of Object.entries(row)) {
+    const { name } = columns[colId];
+    console.log(`  ${name}: ${data}`);
   }
 }
 ```
