@@ -30,11 +30,17 @@ Simply import the library, connect to the Tableland network, and you are ready t
 
 # Install
 
+Installation is easy using npm or yarn. An ES bundle is also available for those operating purely in a browser environnement.
+
 ```bash
 npm i @textile/tableland
 ```
 
+> Note: Not seeing the build type you need for your project or idea? Let us know, we're happy to work with you to improve the SDK usability!
+
 # Usage
+
+Most common Tableland usage patterns will follow something like the following. In general, you'll need to connect, create, mutate, and query your tables. In that order :)
 
 ```typescript
 import { connect, createTable, runQuery, myTables } from "@textile/tableland";
@@ -50,7 +56,7 @@ res = await runQuery(`SELECT * FROM ${id}`);
 
 # API
 
-[Full library documentation available on GitHub Pages](https://textileio.github.io/js-tableland/)!
+[Full library documentation available on GitHub](https://textileio.github.io/js-tableland/)!
 
 ## Connecting to Tableland
 
