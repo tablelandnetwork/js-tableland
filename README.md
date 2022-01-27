@@ -22,9 +22,10 @@ A TypeScript/JavaScript library for creating and querying Tables on the Tablelan
 
 # Background
 
-Textile's `@textile/tableland` provides zero-config Typescript/JavaScript SDKs that make it easy to user the Tableland network from any Blockchain-based dApp. `@textile/tableland` should feel comfortable to developers already familiar with the [Ethers](https://docs.ethers.io/) Javascript library.
+The Tableland project provides a zero-config Typescript/Javascript SDK that make it easy to interact with the Tableland network from Ethereum-based applications. This SDK (@textile/tableland) should feel comfortable to developers already familiar with the ethersjs Javascript library. The Tableland SDK provides a small but powerful API surface that integrates nicely with existing ETH development best practices.
 
-Simply import the library, connect your wallet, and you are ready to start making queries to Tables on the Tableland network, and minting your own Tables.
+Simply import the library, connect to the Tableland network, and you are ready to start creating and updating tables.
+
 Interested in supporting additional chains and ecosystems? Create an Issue and let us know!
 
 # Install
