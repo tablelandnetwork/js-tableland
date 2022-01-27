@@ -54,7 +54,7 @@ res = await runQuery(`SELECT * FROM ${id}`);
 
 ## Connecting to Tableland
 
-The @textile/tableland library includes functions for connecting to remote clients, creating and mutating tables, querying existing tables, and listing all user tables. These top level exports are available as individual function.
+The `@textile/tableland` library includes functions for connecting to remote clients, creating and mutating tables, querying existing tables, and listing all user tables. These top level exports are available as individual function.
 
 The [`connect`](https://textileio.github.io/js-tableland/modules.html#connect) function can be used to connect to a remote Tableland host, which is required to interact with the Tableland network. If information about a known Tableland validator is available, this can be specified as the host parameter in the `options` argument to the connect function.
 
@@ -132,19 +132,19 @@ const two = await runQuery(
 );
 ```
 
-This inserted row can then be removed from the table state like this:
+> Note: As mentioned previously, table mutations are currently restricted to the table creator address.
 
-> Warn: While rows can be deleted from the table state, row information will remain in the table's history for obvious reasons.
+This inserted row can then be removed from the table state like this:
 
 ```typescript
 const remove = await runQuery(`DELETE FROM ${tableId} WHERE id = 0;`);
 ```
 
-> Note: As mentioned previously, table mutations are currently restricted to the table creator address.
+> Warn: While rows can be deleted from the table state, row information will remain in the table's history for obvious reasons.
 
 ## Querying Tables
 
-Finally, the moment we've all been waiting for -- we are ready to query our table state! You already have all the tools required to get this done. Simply use the `runQuery` function imported previously to query the latest table state. Currently, queries are extremely flexible in Tableland. You have most SQL query features available to craft your query, though the most common will likely be the classic `SELECT * FROM` pattern shown here:
+Finally, the moment we've all been waiting for; we are ready to query our table state! You already have all the tools required to get this done. Simply use the `runQuery` function imported previously to query the latest table state. Currently, queries are extremely flexible in Tableland. You have most SQL query features available to craft your query, though the most common will likely be the classic `SELECT * FROM` pattern shown here:
 
 ```typescript
 const { rows, columns } = await runQuery(`SELECT * FROM ${tableId};`);
