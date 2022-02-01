@@ -1,6 +1,7 @@
 import { registerTable } from "./lib/eth-calls.js";
 import * as tablelandCalls from "./lib/tableland-calls.js";
 import connect, { connectionCheck } from "./lib/single.js";
+// import { v4 } from "uuid";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // eslint-disable-next-line no-unused-expressions
@@ -12,12 +13,12 @@ import connect, { connectionCheck } from "./lib/single.js";
  * @param query An SQL create statement
  * @returns {string} The token ID of the table created
  */
-async function createTable(query: string): Promise<string> {
+async function createTable(query: string, options: any): Promise<string> {
   connectionCheck();
 
   // Validation
   const { tableId } = await registerTable();
-  tablelandCalls.createTable(query, tableId);
+  tablelandCalls.createTable(query, tableId, options);
   return tableId;
 }
 

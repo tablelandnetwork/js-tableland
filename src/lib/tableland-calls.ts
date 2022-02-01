@@ -7,11 +7,11 @@ export interface ColumnDescriptor {
   name: string;
 }
 
-export interface Column {
+export interface Column extends Array<any> {
   [index: number]: ColumnDescriptor;
 }
 
-export interface Row {
+export interface Row extends Array<any> {
   [index: number]: string | number;
 }
 
@@ -34,27 +34,41 @@ async function SendCall(rpcBody: Object) {
 async function GeneralizedRPC(
   method: string,
   statement: string,
-  tableId: string
+  tableId: string,
+  options?: any
 ) {
   const signer = await getSigner();
   const address = await signer.getAddress();
+
+  const params = [
+    {
+      statement: statement,
+      tableId: tableId,
+      controller: address,
+      type: options?.type,
+    },
+  ];
+
   return {
     jsonrpc: "2.0",
     method: `tableland_${method}`,
     id: 1,
-    params: [
-      {
-        statement: statement,
-        tableId: tableId,
-        controller: address,
-      },
-    ],
+    params,
   };
 }
 
-async function createTable(query: string, tableId: string) {
+async function checkAuthorizedList(): Promise<boolean> {
+  const authorized: boolean = await SendCall(
+    await GeneralizedRPC("authorize", "", "")
+  ).then((r) => {
+    return r.status === 200;
+  });
+  return authorized;
+}
+
+async function createTable(query: string, tableId: string, options: any) {
   return await SendCall(
-    await GeneralizedRPC("createTable", query, tableId.slice(2))
+    await GeneralizedRPC("createTable", query, tableId.slice(2), options)
   );
 }
 
@@ -77,11 +91,9 @@ async function myTables(): Promise<TableMetadata[]> {
   const host = await getHost();
   const resp: TableMetadata[] = await fetch(
     `${host}/tables/controller/${address}`
-  )
-    .then((r) => r.json())
-    .then((r) => r.result.data);
+  ).then((r) => r.json());
 
   return resp;
 }
 
-export { createTable, runQuery, myTables };
+export { createTable, runQuery, myTables, checkAuthorizedList };
