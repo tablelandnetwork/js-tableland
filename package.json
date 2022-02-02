@@ -32,7 +32,7 @@
     "build-all": "npm run tsbuild && build"
   },
   "devDependencies": {
-    "@awmuncy/cheese": "*",
+    "@textile/eth-tableland": "0.0.1",
     "@types/chai": "^4.2.22",
     "@types/jest": "^26.0.21",
     "@types/mocha": "^9.0.0",

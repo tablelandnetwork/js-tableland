@@ -1,3 +1,4 @@
+/* eslint-disable node/no-missing-import */
 import { getSigner, getHost, getToken } from "./single.js";
 
 /**
