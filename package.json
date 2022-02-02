@@ -1,6 +1,6 @@
 {
   "name": "@textile/tableland",
-  "version": "0.4.2",
+  "version": "0.0.1",
   "description": "Boilerplate for TypeScript projects (Node.js and browser modules)",
   "author": "Allen Muncy <allen@textile.io>",
   "repository": "https://github.com/textileio/js-tableland",
@@ -59,7 +59,6 @@
   "dependencies": {
     "@textile/core-storage": "^1.0.0",
     "ethers": "^5.5.2",
-    "graphql-tag": "^2.12.6",
-    "uuid": "^8.3.2"
+    "graphql-tag": "^2.12.6"
   }
 }
