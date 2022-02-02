@@ -29,7 +29,7 @@
     "build": "esbuild src/main.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/main.js --format=esm",
     "build:dev": "esbuild src/main.ts --bundle --outfile=dist/esbuild/main.js --format=esm",
     "build:watch": "esbuild src/main.ts --bundle --watch --outfile=dist/esbuild/main.js --format=esm",
-    "build-all": "npm run tsbuild && build"
+    "build-all": "npm run tsbuild && npm run build"
   },
   "devDependencies": {
     "@textile/eth-tableland": "0.0.1",
