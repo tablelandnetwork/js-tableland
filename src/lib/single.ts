@@ -1,5 +1,5 @@
 import { ethers, utils, Signer } from "ethers";
-import { createToken } from "@textile/core-storage";
+import { createToken } from "./token";
 
 export interface Token {
   token: string;
