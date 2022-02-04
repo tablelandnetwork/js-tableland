@@ -2,7 +2,7 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
-    mocha: true,
+    jest: true,
   },
   settings: {
     node: {
@@ -12,8 +12,18 @@ module.exports = {
   globals: {
     fetch: false,
     ethereum: false,
+    jest: true,
   },
-  plugins: ["@typescript-eslint"],
+  overrides: [
+    {
+      files: ["*.spec.js"],
+
+      rules: {
+        "jest/valid-expect": 0,
+      },
+    },
+  ],
+  plugins: ["@typescript-eslint", "jest"],
   extends: [
     "standard",
     "plugin:prettier/recommended",
