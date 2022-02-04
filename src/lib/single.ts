@@ -22,7 +22,7 @@ function connectionCheck() {
   }
 }
 
-async function setToken(tokenToBe?: string) {
+async function setToken(tokenToBe?: Token) {
   const signer = await getSigner();
 
   const sign = {
@@ -44,9 +44,9 @@ async function setToken(tokenToBe?: string) {
   else net = "eth";
   const kid = `${net}:${chain}:${iss}`;
 
-  token = tokenToBe
-    ? { token: tokenToBe }
-    : await createToken(sign, { kid: kid, alg: "ETH" }, { iss: iss, exp: exp });
+  token =
+    tokenToBe ||
+    (await createToken(sign, { kid: kid, alg: "ETH" }, { iss: iss, exp: exp }));
 }
 
 async function getToken(): Promise<Token> {
@@ -83,7 +83,8 @@ async function setHost(newHost: string) {
 }
 
 export interface Authenticator {
-  jwsToken: string;
+  jwsToken: Token;
+  validatorHost: string;
 }
 
 export interface ConnectionDetails {
@@ -92,28 +93,35 @@ export interface ConnectionDetails {
 }
 
 /**
+ *
  * `connect` is a wrapper for using an ethereum signature to communicate with a Tableland server.
  * This client library can be used to interact with a local or remote Tableland gRPC-service
  * It is a wrapper around Textile Tableland DB API
  *
+ * @param {Authenticator} Object Host to connect to, and previous jwsToken if needed.
+ * @returns {ConnectionDetails} Object containing JWS token, and a list of ETH accounts
+ *
  * @example
  * ```typescript
- * import connect, { createTable } from '@textile/tableland'
+ * import { connect, createTable } from '@textile/tableland'
  *
  *
  * async function setupDB() {
- *    const connectionDetails = await connect("https://tableland.com");
- *    createTable("CREATE TABLE table_name (Foo varchar(255), Bar int)", UUID())
+ *    const connectionDetails = await connect("https://testnet.tableland.network");
+ *    createTable("CREATE TABLE table_name (Foo varchar(255), Bar int)");
  * }
  * ```
  */
 async function connect(
-  validatorHost: string,
-  options: Authenticator = { jwsToken: "" }
+  options: Authenticator = {
+    validatorHost: "https://testnet.tableland.network",
+    jwsToken: { token: "" },
+  }
 ): Promise<ConnectionDetails> {
+  let { validatorHost, jwsToken } = options;
   if (!validatorHost) {
     throw Error(
-      `You haven't specified a tableland validator. If you don't have your own, try gateway.tableland.com.`
+      `You haven't specified a tableland validator. If you don't have your own, try https://testnet.tableland.network.`
     );
   }
 
@@ -127,7 +135,7 @@ async function connect(
     await setToken(options.jwsToken);
   }
 
-  const jwsToken = await getToken();
+  jwsToken = await getToken();
   connected = true;
   return {
     jwsToken,
@@ -135,9 +143,8 @@ async function connect(
   };
 }
 
-export default connect;
-
 export {
+  connect,
   getSigner,
   setSigner,
   getHost,

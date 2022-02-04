@@ -29,7 +29,7 @@ async function SendCall(rpcBody: Object) {
       Authorization: `Bearer ${(await getToken()).token}`,
     },
     body: JSON.stringify(rpcBody),
-  }).then((r) => r.json());
+  });
 }
 
 async function GeneralizedRPC(
@@ -67,18 +67,34 @@ async function checkAuthorizedList(): Promise<boolean> {
   return authorized;
 }
 
-async function createTable(query: string, tableId: string, options: any) {
+export interface CreateTableOptions {
+  /** A human readable description of the nature and purpoe of the table */
+  description?: string;
+}
+
+export interface CreateTableReceipt {
+  name: string;
+  id: number;
+  description: string;
+}
+
+async function createTable(
+  query: string,
+  tableId: string,
+  options: CreateTableOptions
+): Promise<CreateTableReceipt> {
   return await SendCall(
     await GeneralizedRPC("createTable", query, tableId.slice(2), options)
-  );
+  ).then((r) => r.json());
 }
 
 async function runQuery(
   query: string,
   tableId: string
 ): Promise<ReadQueryResult> {
-  // Validation here?
-  return await SendCall(await GeneralizedRPC("runSQL", query, tableId));
+  return await SendCall(await GeneralizedRPC("runSQL", query, tableId)).then(
+    (r) => r.json()
+  );
 }
 
 export interface TableMetadata {
