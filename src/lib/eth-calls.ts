@@ -4,17 +4,19 @@ import { TablelandTables__factory } from "@textile/eth-tableland";
 import { ContractReceipt } from "ethers";
 import { getSigner } from "./single.js";
 
-interface TableRegistration {
+
+const rinkbyContract = "0x30867AD98A520287CCc28Cde70fCF63E3Cdb9c3C"
+
+interface TableRegistrationReceipt {
   receipt: ContractReceipt;
   tableId: string;
 }
 
-async function registerTable(): Promise<TableRegistration> {
+async function registerTable(): Promise<TableRegistrationReceipt> {
   const signer = await getSigner();
   const address = await signer.getAddress();
   const contract = TablelandTables__factory.connect(
-    // TODO: Extra to abstraction
-    "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+  rinkbyContract,
     signer
   );
 

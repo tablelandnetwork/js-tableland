@@ -73,7 +73,7 @@ async function runQuery(
 
 export { createTable, runQuery, connect };
 export { myTables } from "./lib/tableland-calls.js";
-export { Authenticator, ConnectionDetails, Token } from "./lib/single.js";
+export { ConnectionReceipt, ConnectionOptions, Token } from "./lib/single.js";
 export {
   Column,
   ColumnDescriptor,

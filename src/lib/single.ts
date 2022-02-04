@@ -1,5 +1,5 @@
 import { ethers, utils, Signer } from "ethers";
-import { createToken } from "./token";
+import { createToken } from "./token.js";
 
 export interface Token {
   token: string;
@@ -82,12 +82,13 @@ async function setHost(newHost: string) {
   host = newHost;
 }
 
-export interface Authenticator {
+export interface ConnectionOptions {
   jwsToken: Token;
   validatorHost: string;
+  network: string;
 }
 
-export interface ConnectionDetails {
+export interface ConnectionReceipt {
   jwsToken: Token;
   ethAccounts: Array<string>;
 }
@@ -98,8 +99,8 @@ export interface ConnectionDetails {
  * This client library can be used to interact with a local or remote Tableland gRPC-service
  * It is a wrapper around Textile Tableland DB API
  *
- * @param {Authenticator} Object Host to connect to, and previous jwsToken if needed.
- * @returns {ConnectionDetails} Object containing JWS token, and a list of ETH accounts
+ * @param {ConnectionOptions} Object Host to connect to, and previous jwsToken if needed.
+ * @returns {ConnectionReceipt} Object containing JWS token, and a list of ETH accounts
  *
  * @example
  * ```typescript
@@ -107,17 +108,18 @@ export interface ConnectionDetails {
  *
  *
  * async function setupDB() {
- *    const connectionDetails = await connect("https://testnet.tableland.network");
+ *    const connectionReceipt = await connect("https://testnet.tableland.network");
  *    createTable("CREATE TABLE table_name (Foo varchar(255), Bar int)");
  * }
  * ```
  */
 async function connect(
-  options: Authenticator = {
+  options: ConnectionOptions = {
     validatorHost: "https://testnet.tableland.network",
     jwsToken: { token: "" },
+    network: "testnet",
   }
-): Promise<ConnectionDetails> {
+): Promise<ConnectionReceipt> {
   let { validatorHost, jwsToken } = options;
   if (!validatorHost) {
     throw Error(
