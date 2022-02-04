@@ -1,8 +1,8 @@
 /* eslint-disable node/no-missing-import */
-import { registerTable } from "./lib/eth-calls.js";
-import * as tablelandCalls from "./lib/tableland-calls.js";
-import { connect, connectionCheck } from "./lib/single.js";
-import { CreateTableOptions } from "./lib/tableland-calls.js";
+import { registerTable } from "./lib/eth-calls";
+import * as tablelandCalls from "./lib/tableland-calls";
+import { connect, connectionCheck } from "./lib/single";
+import { CreateTableOptions } from "./lib/tableland-calls";
 
 function isPositiveInteger(n: any) {
   return n >>> 0 === parseFloat(n);
@@ -30,6 +30,7 @@ async function createTable(
   query: string,
   options: CreateTableOptions = {}
 ): Promise<TableMeta> {
+  // throw Error("Please connect your account before trying anything.")
   connectionCheck();
 
   const authorized = await tablelandCalls.checkAuthorizedList();
@@ -71,9 +72,9 @@ async function runQuery(
   return await tablelandCalls.runQuery(query, tableId);
 }
 
-export { createTable, runQuery, connect };
-export { myTables } from "./lib/tableland-calls.js";
-export { ConnectionReceipt, ConnectionOptions, Token } from "./lib/single.js";
+import { myTables } from "./lib/myTables";
+export { createTable, runQuery, connect, myTables };
+export { ConnectionReceipt, ConnectionOptions, Token } from "./lib/single";
 export {
   Column,
   ColumnDescriptor,
@@ -82,4 +83,4 @@ export {
   TableMetadata,
   CreateTableOptions,
   CreateTableReceipt,
-} from "./lib/tableland-calls.js";
+} from "./lib/tableland-calls";

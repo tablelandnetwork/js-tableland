@@ -2,7 +2,7 @@
 // eslint-disable-next-line node/no-unpublished-import, camelcase
 import { TablelandTables__factory } from "@textile/eth-tableland";
 import { ContractReceipt } from "ethers";
-import { getSigner } from "./single.js";
+import { getSigner } from "./single";
 
 
 const rinkbyContract = "0x30867AD98A520287CCc28Cde70fCF63E3Cdb9c3C"

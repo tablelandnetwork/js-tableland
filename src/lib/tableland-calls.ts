@@ -1,5 +1,5 @@
 /* eslint-disable node/no-missing-import */
-import { getSigner, getHost, getToken } from "./single.js";
+import { getSigner, getHost, getToken } from "./single";
 
 /**
  * ColumnDescriptor gives metadata about a colum (name, type)
@@ -97,20 +97,5 @@ async function runQuery(
   );
 }
 
-export interface TableMetadata {
-  id: string;
-  type: string;
-}
-
-async function myTables(): Promise<TableMetadata[]> {
-  const signer = await getSigner();
-  const address = await signer.getAddress();
-  const host = await getHost();
-  const resp: TableMetadata[] = await fetch(
-    `${host}/tables/controller/${address}`
-  ).then((r) => r.json());
-
-  return resp;
-}
-
-export { createTable, runQuery, myTables, checkAuthorizedList };
+import { myTables, TableMetadata } from "./myTables";
+export { createTable, runQuery, myTables, checkAuthorizedList, TableMetadata };

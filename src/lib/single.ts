@@ -1,5 +1,5 @@
 import { ethers, utils, Signer } from "ethers";
-import { createToken } from "./token.js";
+import { createToken } from "./token";
 
 export interface Token {
   token: string;
