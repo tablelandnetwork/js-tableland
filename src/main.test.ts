@@ -1,5 +1,11 @@
 import fetch from "jest-fetch-mock";
 import { myTables } from './lib/myTables';
+import { createTable } from './main';
+
+test("Throw error when not connected", async function() {
+  await expect(createTable(" ")).rejects.toThrow("Please connect your account before trying anything.");
+});
+
 
 beforeEach(() => {
   fetch.resetMocks();
@@ -23,13 +29,3 @@ test("the data is peanut butter", async function() {
   
 });
 
-import { createTable } from '../src/main';
-
-describe('createTable', function () {
-
-
-  test('should error if not connected', async function () {
-    await expect(createTable('foozbarz')).rejects.toThrow('Please connect your account before trying anything.');
-  });
-
-});

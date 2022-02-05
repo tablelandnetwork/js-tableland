@@ -11,6 +11,7 @@ module.exports = {
   },
   setupFiles: ["./src/setupTest.ts"],
   moduleNameMapper: {
-    "^@textile/eth-tableland$": "<rootDir>/test/mock_modules/eth-tableland"
+    "^@textile/eth-tableland$": "<rootDir>/test/mock_modules/eth-tableland",
+    "^ethers$": "<rootDir>/test/mock_modules/ethers.ts"
   }
 }

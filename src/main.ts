@@ -30,7 +30,6 @@ async function createTable(
   query: string,
   options: CreateTableOptions = {}
 ): Promise<TableMeta> {
-  // throw Error("Please connect your account before trying anything.")
   connectionCheck();
 
   const authorized = await tablelandCalls.checkAuthorizedList();

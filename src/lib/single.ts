@@ -1,6 +1,5 @@
 import { ethers, utils, Signer } from "ethers";
 import { createToken } from "./token";
-
 export interface Token {
   token: string;
 }
@@ -70,6 +69,7 @@ async function getSigner(): Promise<Signer> {
 }
 
 function getHost(): string {
+  
   if (!host) {
     throw Error("No host set");
   }
