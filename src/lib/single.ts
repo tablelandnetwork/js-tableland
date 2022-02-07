@@ -83,9 +83,9 @@ async function setHost(newHost: string) {
 }
 
 export interface ConnectionOptions {
-  jwsToken: Token;
+  jwsToken?: Token;
   validatorHost: string;
-  network: string;
+  network?: string;
 }
 
 export interface ConnectionReceipt {

@@ -9,3 +9,15 @@ fetch.enableMocks();
 //   }
 // });
 
+
+
+declare global {
+    var ethereum: any;
+  }
+  
+  globalThis.ethereum = {
+    request: function() {
+      return [""];
+    }
+  }
+  

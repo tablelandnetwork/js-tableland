@@ -42,7 +42,7 @@ async function createTable(
     options
   );
   return {
-    id: tableId,
+    id: createTableReceipt.id,
     name: createTableReceipt.name,
   };
 }

@@ -9,7 +9,7 @@ module.exports = {
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest"
   },
-  setupFiles: ["./src/setupTest.ts"],
+  setupFiles: ["./test/setupTest.ts"],
   moduleNameMapper: {
     "^@textile/eth-tableland$": "<rootDir>/test/mock_modules/eth-tableland",
     "^ethers$": "<rootDir>/test/mock_modules/ethers.ts"

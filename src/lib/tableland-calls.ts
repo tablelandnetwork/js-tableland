@@ -74,8 +74,8 @@ export interface CreateTableOptions {
 
 export interface CreateTableReceipt {
   name: string;
-  id: number;
-  description: string;
+  id: string;
+  description?: string;
 }
 
 async function createTable(

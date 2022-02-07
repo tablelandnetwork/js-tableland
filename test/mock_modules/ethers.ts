@@ -13,9 +13,17 @@ export const ethers = {
                         signMessage: async function () {
                             return "testsignedmessage";
                         },
+                        getNetwork: async function () {
+                            return {name: ""}
+                        }
                     };
                 },
             };
         },
     },
 };
+export const utils = {
+    arrayify: function() {
+        return new Uint8Array(5);
+    }
+}
