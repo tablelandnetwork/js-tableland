@@ -1,5 +1,3 @@
-/* eslint-disable node/no-missing-import */
-// eslint-disable-next-line node/no-unpublished-import, camelcase
 import { TablelandTables__factory } from "@textile/eth-tableland";
 import { ContractReceipt } from "ethers";
 import { getSigner } from "./single";
@@ -16,7 +14,7 @@ async function registerTable(): Promise<TableRegistrationReceipt> {
   const signer = await getSigner();
   const address = await signer.getAddress();
   const contract = TablelandTables__factory.connect(
-  rinkbyContract,
+    rinkbyContract,
     signer
   );
 
