@@ -1,6 +1,6 @@
 {
   "name": "@textile/tableland",
-  "version": "0.0.3",
+  "version": "0.0.5-dev4",
   "description": "Boilerplate for TypeScript projects (Node.js and browser modules)",
   "author": "Allen Muncy <allen@textile.io>",
   "repository": "https://github.com/textileio/js-tableland",
@@ -13,8 +13,8 @@
     "node": ">=12.0.0"
   },
   "type": "module",
-  "main": "./dist/tsc/main",
-  "types": "./dist/tsc/main.d.ts",
+  "main": "./dist/tsc/src/main",
+  "types": "./dist/tsc/src/main.d.ts",
   "files": [
     "dist/**/*.js?(.map)",
     "dist/**/*.d.ts"
@@ -66,7 +66,7 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@stablelib/base64": "^1.0.1",
-    "@textile/eth-tableland": "0.0.1",
+    "@textile/eth-tableland": "0.0.2",
     "add-js-extension": "^1.0.4",
     "ethers": "^5.5.2"
   }
