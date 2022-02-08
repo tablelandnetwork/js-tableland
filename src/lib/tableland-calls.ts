@@ -1,6 +1,8 @@
 /* eslint-disable node/no-missing-import */
 import { getSigner, getHost, getToken } from "./single";
 
+import { myTables, TableMetadata } from "./myTables";
+
 /**
  * ColumnDescriptor gives metadata about a colum (name, type)
  */
@@ -96,6 +98,4 @@ async function runQuery(
     (r) => r.json()
   );
 }
-
-import { myTables, TableMetadata } from "./myTables";
 export { createTable, runQuery, myTables, checkAuthorizedList, TableMetadata };

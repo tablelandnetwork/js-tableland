@@ -69,7 +69,6 @@ async function getSigner(): Promise<Signer> {
 }
 
 function getHost(): string {
-  
   if (!host) {
     throw Error("No host set");
   }
@@ -122,7 +121,7 @@ async function connect(
 ): Promise<ConnectionReceipt> {
   let { host, jwsToken, network } = options;
   if (!host) {
-    if(network==="testnet") {
+    if (network === "testnet") {
       host = "https://testnet.tableland.network";
     }
     throw Error(

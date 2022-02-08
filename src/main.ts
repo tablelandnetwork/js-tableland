@@ -3,15 +3,13 @@ import { registerTable } from "./lib/eth-calls";
 import * as tablelandCalls from "./lib/tableland-calls";
 import { connect, connectionCheck } from "./lib/single";
 import { CreateTableOptions } from "./lib/tableland-calls";
-import { BigNumber } from 'ethers';
+import { BigNumber } from "ethers";
+
+import { myTables } from "./lib/myTables";
 
 function isPositiveInteger(n: any) {
   return n >>> 0 === parseFloat(n);
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// eslint-disable-next-line no-unused-expressions
-(globalThis as any).ethereum;
 
 export interface TableMeta {
   id: string;
@@ -37,8 +35,7 @@ async function createTable(
   if (!authorized) throw new Error("You are not authorized to create a table");
   // Validation
   const { tableId } = await registerTable();
-  let returnedId = BigNumber.from(tableId);
-  let normalizedId = returnedId.toString();
+  const normalizedId = BigNumber.from(tableId).toString();
   const createTableReceipt = await tablelandCalls.createTable(
     query,
     normalizedId,
@@ -73,8 +70,6 @@ async function runQuery(
 
   return await tablelandCalls.runQuery(query, tableId);
 }
-
-import { myTables } from "./lib/myTables";
 export { createTable, runQuery, connect, myTables };
 export { ConnectionReceipt, ConnectionOptions, Token } from "./lib/single";
 export {
