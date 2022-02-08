@@ -1,14 +1,9 @@
 /* eslint-disable-next-line camelcase */
 import { TablelandTables__factory } from "@textile/eth-tableland";
-import { BigNumber, ContractReceipt } from "ethers";
+import { TableRegistrationReceipt } from "../interfaces";
 import { getSigner } from "./single";
 
 const rinkbyContract = "0x30867AD98A520287CCc28Cde70fCF63E3Cdb9c3C";
-
-interface TableRegistrationReceipt {
-  receipt: ContractReceipt;
-  tableId: BigNumber;
-}
 
 async function registerTable(): Promise<TableRegistrationReceipt> {
   const signer = await getSigner();

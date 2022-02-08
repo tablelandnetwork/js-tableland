@@ -2,21 +2,18 @@
 import { registerTable } from "./lib/eth-calls";
 import * as tablelandCalls from "./lib/tableland-calls";
 import { connect, connectionCheck } from "./lib/single";
-import { CreateTableOptions } from "./lib/tableland-calls";
-import { BigNumber } from "ethers";
 
+import {
+  CreateTableOptions,
+  TableMetadata,
+  ReadQueryResult,
+} from "./interfaces";
+import { BigNumber } from "ethers";
 import { myTables } from "./lib/myTables";
 
 function isPositiveInteger(n: any) {
   return n >>> 0 === parseFloat(n);
 }
-
-export interface TableMeta {
-  id: string;
-  name?: string;
-  fullName?: string;
-}
-// TODO: Potentially merge TableMeta and CreateTableReceipt
 
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register
@@ -28,7 +25,7 @@ export interface TableMeta {
 async function createTable(
   query: string,
   options: CreateTableOptions = {}
-): Promise<TableMeta> {
+): Promise<TableMetadata> {
   connectionCheck();
 
   const authorized = await tablelandCalls.checkAuthorizedList();
@@ -52,9 +49,7 @@ async function createTable(
  * @param query A SQL query to run
  * @returns If read query, result-set. If write query, nothing.
  */
-async function runQuery(
-  query: string
-): Promise<tablelandCalls.ReadQueryResult | null> {
+async function runQuery(query: string): Promise<ReadQueryResult | null> {
   connectionCheck(); // Check that the client has already connected to their signer
   const tablename =
     query.match(/\b(?:FROM|JOIN|UPDATE|INTO)\s+(\S+(?:.\s)*)/) ?? []; // Find table name
@@ -71,7 +66,6 @@ async function runQuery(
   return await tablelandCalls.runQuery(query, tableId);
 }
 export { createTable, runQuery, connect, myTables };
-export { ConnectionReceipt, ConnectionOptions, Token } from "./lib/single";
 export {
   Column,
   ColumnDescriptor,
@@ -80,4 +74,7 @@ export {
   TableMetadata,
   CreateTableOptions,
   CreateTableReceipt,
-} from "./lib/tableland-calls";
+  ConnectionReceipt,
+  ConnectionOptions,
+  Token,
+} from "./interfaces";

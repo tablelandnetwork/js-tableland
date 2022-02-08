@@ -1,9 +1,5 @@
 import { getSigner, getHost } from "./single";
-
-export interface TableMetadata {
-  id: string;
-  type: string;
-}
+import { TableMetadata } from "../interfaces";
 
 export async function myTables(): Promise<TableMetadata[]> {
   const signer = await getSigner();

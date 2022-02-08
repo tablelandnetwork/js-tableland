@@ -1,27 +1,13 @@
 /* eslint-disable node/no-missing-import */
 import { getSigner, getHost, getToken } from "./single";
 
-import { myTables, TableMetadata } from "./myTables";
-
-/**
- * ColumnDescriptor gives metadata about a colum (name, type)
- */
-export interface ColumnDescriptor {
-  name: string;
-}
-
-export interface Column extends Array<any> {
-  [index: number]: ColumnDescriptor;
-}
-
-export interface Row extends Array<any> {
-  [index: number]: string | number;
-}
-
-export interface ReadQueryResult {
-  columns: Array<Column>;
-  rows: Array<Row>;
-}
+import {
+  TableMetadata,
+  ReadQueryResult,
+  CreateTableReceipt,
+  CreateTableOptions,
+} from "../interfaces";
+import { myTables } from "./myTables";
 
 async function SendCall(rpcBody: Object) {
   return await fetch(`${getHost()}/rpc`, {
@@ -67,17 +53,6 @@ async function checkAuthorizedList(): Promise<boolean> {
     return r.status === 200;
   });
   return authorized;
-}
-
-export interface CreateTableOptions {
-  /** A human readable description of the nature and purpoe of the table */
-  description?: string;
-}
-
-export interface CreateTableReceipt {
-  name: string;
-  id: string;
-  description?: string;
 }
 
 async function createTable(

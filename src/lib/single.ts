@@ -1,8 +1,6 @@
 import { ethers, utils, Signer } from "ethers";
 import { createToken } from "./token";
-export interface Token {
-  token: string;
-}
+import { ConnectionOptions, Token, ConnectionReceipt } from "../interfaces";
 
 let signer: Signer;
 let host: string;
@@ -79,17 +77,6 @@ function getHost(): string {
 async function setHost(newHost: string) {
   // Should probably validate newHost is a valid host.
   host = newHost;
-}
-
-export interface ConnectionOptions {
-  jwsToken?: Token;
-  host: string;
-  network?: string;
-}
-
-export interface ConnectionReceipt {
-  jwsToken: Token;
-  ethAccounts: Array<string>;
 }
 
 /**
