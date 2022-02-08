@@ -3,6 +3,7 @@ import { registerTable } from "./lib/eth-calls";
 import * as tablelandCalls from "./lib/tableland-calls";
 import { connect, connectionCheck } from "./lib/single";
 import { CreateTableOptions } from "./lib/tableland-calls";
+import { BigNumber } from 'ethers';
 
 function isPositiveInteger(n: any) {
   return n >>> 0 === parseFloat(n);
@@ -36,9 +37,11 @@ async function createTable(
   if (!authorized) throw new Error("You are not authorized to create a table");
   // Validation
   const { tableId } = await registerTable();
+  let returnedId = BigNumber.from(tableId);
+  let normalizedId = returnedId.toString();
   const createTableReceipt = await tablelandCalls.createTable(
     query,
-    tableId,
+    normalizedId,
     options
   );
   return {
@@ -57,8 +60,8 @@ async function runQuery(
 ): Promise<tablelandCalls.ReadQueryResult | null> {
   connectionCheck(); // Check that the client has already connected to their signer
   const tablename =
-    query.match(/\b(?:FROM|JOIN|UPDATE|INTO)\s+(\w+(?:.\w+)*)/) ?? []; // Find table name
-  const tablenameArray = tablename[1].split("_"); // Split tablename into chunks divided by _
+    query.match(/\b(?:FROM|JOIN|UPDATE|INTO)\s+(\S+(?:.\s)*)/) ?? []; // Find table name
+  const tablenameArray = tablename[1].split("_t"); // Split tablename into chunks divided by _
   const tableId = tablenameArray[tablenameArray.length - 1]; // The find the last chunk, which should be ID
 
   if (!isPositiveInteger(tableId)) {

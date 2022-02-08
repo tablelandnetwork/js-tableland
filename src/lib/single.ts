@@ -84,7 +84,7 @@ async function setHost(newHost: string) {
 
 export interface ConnectionOptions {
   jwsToken?: Token;
-  validatorHost: string;
+  host: string;
   network?: string;
 }
 
@@ -115,19 +115,22 @@ export interface ConnectionReceipt {
  */
 async function connect(
   options: ConnectionOptions = {
-    validatorHost: "https://testnet.tableland.network",
+    host: "https://testnet.tableland.network",
     jwsToken: { token: "" },
     network: "testnet",
   }
 ): Promise<ConnectionReceipt> {
-  let { validatorHost, jwsToken } = options;
-  if (!validatorHost) {
+  let { host, jwsToken, network } = options;
+  if (!host) {
+    if(network==="testnet") {
+      host = "https://testnet.tableland.network";
+    }
     throw Error(
       `You haven't specified a tableland validator. If you don't have your own, try https://testnet.tableland.network.`
     );
   }
 
-  setHost(validatorHost);
+  setHost(host);
 
   const ethAccounts = await globalThis.ethereum.request({
     method: "eth_requestAccounts",

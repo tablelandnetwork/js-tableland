@@ -44,7 +44,7 @@ async function GeneralizedRPC(
   const params = [
     {
       statement: statement,
-      tableId: tableId,
+      id: tableId,
       controller: address,
       type: options?.type,
     },
@@ -84,7 +84,7 @@ async function createTable(
   options: CreateTableOptions
 ): Promise<CreateTableReceipt> {
   return await SendCall(
-    await GeneralizedRPC("createTable", query, tableId.slice(2), options)
+    await GeneralizedRPC("createTable", query, tableId, options)
   ).then((r) => r.json());
 }
 
