@@ -61,7 +61,7 @@ async function runQuery(
   const tablenameArray = tablename[1].split("_t"); // Split tablename into chunks divided by _
   const tableId = tablenameArray[tablenameArray.length - 1]; // The find the last chunk, which should be ID
 
-  if (!isPositiveInteger(tableId) && tablename[1]==="system_table") {
+  if (!isPositiveInteger(tableId) && tablename[1] === "system_table") {
     // If ID isn't a postive interger, throw error.
     throw Error(
       "No ID found in query. Remember to add the table's ID after it's name. Ex; TableName_0000"
