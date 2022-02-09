@@ -5,6 +5,7 @@ import { connect, connectionCheck } from "./lib/single";
 
 import {
   CreateTableOptions,
+  CreateTableReceipt,
   TableMetadata,
   ReadQueryResult,
 } from "./interfaces";
@@ -38,10 +39,7 @@ async function createTable(
     normalizedId,
     options
   );
-  return {
-    id: createTableReceipt.id,
-    name: createTableReceipt.name,
-  };
+  return createTableReceipt.result as CreateTableReceipt;
 }
 
 /**
@@ -63,7 +61,8 @@ async function runQuery(query: string): Promise<ReadQueryResult | null> {
     );
   }
 
-  return await tablelandCalls.runQuery(query, tableId);
+  const readQueryReceipt = await tablelandCalls.runQuery(query, tableId);
+  return readQueryReceipt.result as ReadQueryResult;
 }
 export { createTable, runQuery, connect, myTables };
 export {

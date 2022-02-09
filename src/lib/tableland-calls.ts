@@ -3,8 +3,7 @@ import { getSigner, getHost, getToken } from "./single";
 
 import {
   TableMetadata,
-  ReadQueryResult,
-  CreateTableReceipt,
+  RpcReceipt,
   CreateTableOptions,
 } from "../interfaces";
 import { myTables } from "./myTables";
@@ -59,18 +58,23 @@ async function createTable(
   query: string,
   tableId: string,
   options: CreateTableOptions
-): Promise<CreateTableReceipt> {
+): Promise<RpcReceipt> {
   return await SendCall(
     await GeneralizedRPC("createTable", query, tableId, options)
-  ).then((r) => r.json());
+  ).then(function (res) {
+    if (!res.ok) throw new Error(res.statusText);
+    return res.json();
+  });
 }
 
 async function runQuery(
   query: string,
   tableId: string
-): Promise<ReadQueryResult> {
-  return await SendCall(await GeneralizedRPC("runSQL", query, tableId)).then(
-    (r) => r.json()
-  );
+): Promise<RpcReceipt> {
+  return await SendCall(await GeneralizedRPC("runSQL", query, tableId)).then(function (res) {
+    if (!res.ok) throw new Error(res.statusText);
+    return res.json();
+  });
 }
+
 export { createTable, runQuery, myTables, checkAuthorizedList, TableMetadata };

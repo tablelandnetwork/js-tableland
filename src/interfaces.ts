@@ -2,9 +2,12 @@ import { BigNumber, ContractReceipt } from "ethers";
 
 export interface TableMetadata {
   id: string;
-  type?: string;
+  created_at?: string;
+  description?: string;
+  tablename?: string;
   name?: string;
-  fullName?: string;
+  controller?: string;
+  structure?: string;
 }
 
 export interface Token {
@@ -56,4 +59,10 @@ export interface CreateTableReceipt {
 export interface TableRegistrationReceipt {
   receipt: ContractReceipt;
   tableId: BigNumber;
+}
+
+export interface RpcReceipt {
+  jsonrpc: string;
+  id: number;
+  result: any;
 }
