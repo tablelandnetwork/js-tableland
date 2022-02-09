@@ -6,7 +6,6 @@ import { connect, connectionCheck } from "./lib/single";
 import {
   CreateTableOptions,
   CreateTableReceipt,
-  TableMetadata,
   ReadQueryResult,
 } from "./interfaces";
 import { BigNumber } from "ethers";
@@ -26,7 +25,7 @@ function isPositiveInteger(n: any) {
 async function createTable(
   query: string,
   options: CreateTableOptions = {}
-): Promise<TableMetadata> {
+): Promise<CreateTableReceipt> {
   connectionCheck();
 
   const authorized = await tablelandCalls.checkAuthorizedList();
