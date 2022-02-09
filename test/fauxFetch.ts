@@ -1,27 +1,29 @@
-import { myTableResponseBody } from '../test/constants';
+import { myTableResponseBody } from "../test/constants";
 
 export const FetchMyTables = async () => {
-    return {
-        body: JSON.stringify(myTableResponseBody)
-    };
-}
+  return {
+    body: JSON.stringify(myTableResponseBody),
+  };
+};
 
 export const FetchAuthorizedListSuccess = async () => {
-    return {
-        status: 200
-    };
-}
+  return {
+    status: 200,
+  };
+};
 
 export const FetchCreateTableOnTablelandSuccess = async () => {
-    return {
-        body: JSON.stringify({
-            tablename: "Hello_t115"
-        })
-    }
-}
+  return {
+    body: JSON.stringify({
+      result: {
+        name: "Hello_115",
+      },
+    }),
+  };
+};
 
 export const FetchRunQuerySuccess = async () => {
-    return { 
-        body: []
-    }
-}
+  return {
+    body: [],
+  };
+};

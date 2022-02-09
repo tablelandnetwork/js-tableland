@@ -19,5 +19,5 @@ test("Create table works", async function () {
   const createTableReceipt = await createTable(
     "CREATE TABLE Hello (id int primary key, val text)"
   );
-  expect(createTableReceipt.tablename).toEqual("Hello_t115");
+  expect(createTableReceipt.name).toEqual("Hello_115");
 });
