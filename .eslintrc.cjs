@@ -23,13 +23,14 @@ module.exports = {
       },
     },
   ],
-  plugins: ["@typescript-eslint", "jest"],
+  // plugins: ["@typescript-eslint", "jest"],
   extends: [
     "standard",
     "plugin:prettier/recommended",
     "plugin:node/recommended",
   ],
   parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint"],
   parserOptions: {
     ecmaVersion: 12,
   },

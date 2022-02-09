@@ -1,13 +1,12 @@
 import { ethers, utils, Signer } from "ethers";
 import { createToken } from "./token";
-export interface Token {
-  token: string;
-}
+import { ConnectionOptions, Token, ConnectionReceipt } from "../interfaces";
 
 let signer: Signer;
 let host: string;
 let token: Token;
 let connected: boolean;
+let network: string = "https://testnet.tableland.network";
 
 declare let globalThis: any;
 
@@ -69,7 +68,6 @@ async function getSigner(): Promise<Signer> {
 }
 
 function getHost(): string {
-  
   if (!host) {
     throw Error("No host set");
   }
@@ -77,20 +75,17 @@ function getHost(): string {
   return host;
 }
 
+function getNetwork() {
+  return network;
+}
+
+function setNetwork(setNetworkTo: string) {
+  network = setNetworkTo;
+}
+
 async function setHost(newHost: string) {
   // Should probably validate newHost is a valid host.
   host = newHost;
-}
-
-export interface ConnectionOptions {
-  jwsToken?: Token;
-  validatorHost: string;
-  network?: string;
-}
-
-export interface ConnectionReceipt {
-  jwsToken: Token;
-  ethAccounts: Array<string>;
 }
 
 /**
@@ -115,19 +110,24 @@ export interface ConnectionReceipt {
  */
 async function connect(
   options: ConnectionOptions = {
-    validatorHost: "https://testnet.tableland.network",
+    host: "https://testnet.tableland.network",
     jwsToken: { token: "" },
     network: "testnet",
   }
 ): Promise<ConnectionReceipt> {
-  let { validatorHost, jwsToken } = options;
-  if (!validatorHost) {
+  let { host, jwsToken } = options;
+  network = options.network ?? network;
+
+  if (!host) {
+    if (network === "staging") {
+      host = "https://staging.tableland.network";
+    }
     throw Error(
       `You haven't specified a tableland validator. If you don't have your own, try https://testnet.tableland.network.`
     );
   }
 
-  setHost(validatorHost);
+  setHost(host);
 
   const ethAccounts = await globalThis.ethereum.request({
     method: "eth_requestAccounts",
@@ -153,6 +153,8 @@ export {
   setHost,
   setToken,
   getToken,
+  setNetwork,
+  getNetwork,
   isConnected,
   connectionCheck,
 };

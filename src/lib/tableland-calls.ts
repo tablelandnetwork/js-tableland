@@ -1,25 +1,8 @@
 /* eslint-disable node/no-missing-import */
 import { getSigner, getHost, getToken } from "./single";
 
-/**
- * ColumnDescriptor gives metadata about a colum (name, type)
- */
-export interface ColumnDescriptor {
-  name: string;
-}
-
-export interface Column extends Array<any> {
-  [index: number]: ColumnDescriptor;
-}
-
-export interface Row extends Array<any> {
-  [index: number]: string | number;
-}
-
-export interface ReadQueryResult {
-  columns: Array<Column>;
-  rows: Array<Row>;
-}
+import { TableMetadata, RpcReceipt, CreateTableOptions } from "../interfaces";
+import { myTables } from "./myTables";
 
 async function SendCall(rpcBody: Object) {
   return await fetch(`${getHost()}/rpc`, {
@@ -44,7 +27,7 @@ async function GeneralizedRPC(
   const params = [
     {
       statement: statement,
-      tableId: tableId,
+      id: tableId,
       controller: address,
       type: options?.type,
     },
@@ -67,35 +50,26 @@ async function checkAuthorizedList(): Promise<boolean> {
   return authorized;
 }
 
-export interface CreateTableOptions {
-  /** A human readable description of the nature and purpoe of the table */
-  description?: string;
-}
-
-export interface CreateTableReceipt {
-  name: string;
-  id: string;
-  description?: string;
-}
-
 async function createTable(
   query: string,
   tableId: string,
   options: CreateTableOptions
-): Promise<CreateTableReceipt> {
+): Promise<RpcReceipt> {
   return await SendCall(
-    await GeneralizedRPC("createTable", query, tableId.slice(2), options)
-  ).then((r) => r.json());
+    await GeneralizedRPC("createTable", query, tableId, options)
+  ).then(function (res) {
+    if (!res.ok) throw new Error(res.statusText);
+    return res.json();
+  });
 }
 
-async function runQuery(
-  query: string,
-  tableId: string
-): Promise<ReadQueryResult> {
+async function runQuery(query: string, tableId: string): Promise<RpcReceipt> {
   return await SendCall(await GeneralizedRPC("runSQL", query, tableId)).then(
-    (r) => r.json()
+    function (res) {
+      if (!res.ok) throw new Error(res.statusText);
+      return res.json();
+    }
   );
 }
 
-import { myTables, TableMetadata } from "./myTables";
 export { createTable, runQuery, myTables, checkAuthorizedList, TableMetadata };

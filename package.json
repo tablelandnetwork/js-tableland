@@ -1,6 +1,6 @@
 {
   "name": "@textile/tableland",
-  "version": "0.0.5-dev4",
+  "version": "0.0.5-dev7",
   "description": "Boilerplate for TypeScript projects (Node.js and browser modules)",
   "author": "Allen Muncy <allen@textile.io>",
   "repository": "https://github.com/textileio/js-tableland",
@@ -30,9 +30,9 @@
     "docs": "typedoc --entryPoints src/main.ts",
     "docs:html": "typedoc --entryPoints src/main.ts --plugin none",
     "tsbuild": "tsc -p tsconfig.json",
-    "build": "esbuild src/main.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/main.js --format=esm",
-    "build:dev": "esbuild src/main.ts --bundle --outfile=dist/esbuild/main.js --format=esm",
-    "build:watch": "esbuild src/main.ts --bundle --watch --outfile=dist/esbuild/main.js --format=esm",
+    "build": "esbuild src/main.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/main.js --format=esm  && node ./node_modules/add-js-extension/dist/bin.js ./dist/tsc --once",
+    "build:dev": "esbuild src/main.ts --bundle --outfile=dist/esbuild/main.js --format=esm --sourcemap=inline",
+    "build:watch": "esbuild src/main.ts --bundle --watch --outfile=dist/esbuild/main.js --format=esm && node ./node_modules/add-js-extension/dist/bin.js ./dist/tsc --once",
     "build-all": "npm run tsbuild && npm run build && node ./node_modules/add-js-extension/dist/bin.js ./dist/tsc --once"
   },
   "devDependencies": {
