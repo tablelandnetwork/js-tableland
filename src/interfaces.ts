@@ -2,6 +2,7 @@ import { BigNumber, ContractReceipt } from "ethers";
 
 export interface TableMetadata {
   id: string;
+  /* eslint-disable-next-line camelcase */
   created_at?: string;
   description?: string;
   tablename?: string;

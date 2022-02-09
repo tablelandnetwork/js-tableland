@@ -1,11 +1,7 @@
 /* eslint-disable node/no-missing-import */
 import { getSigner, getHost, getToken } from "./single";
 
-import {
-  TableMetadata,
-  RpcReceipt,
-  CreateTableOptions,
-} from "../interfaces";
+import { TableMetadata, RpcReceipt, CreateTableOptions } from "../interfaces";
 import { myTables } from "./myTables";
 
 async function SendCall(rpcBody: Object) {
@@ -67,14 +63,13 @@ async function createTable(
   });
 }
 
-async function runQuery(
-  query: string,
-  tableId: string
-): Promise<RpcReceipt> {
-  return await SendCall(await GeneralizedRPC("runSQL", query, tableId)).then(function (res) {
-    if (!res.ok) throw new Error(res.statusText);
-    return res.json();
-  });
+async function runQuery(query: string, tableId: string): Promise<RpcReceipt> {
+  return await SendCall(await GeneralizedRPC("runSQL", query, tableId)).then(
+    function (res) {
+      if (!res.ok) throw new Error(res.statusText);
+      return res.json();
+    }
+  );
 }
 
 export { createTable, runQuery, myTables, checkAuthorizedList, TableMetadata };
