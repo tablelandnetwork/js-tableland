@@ -6,6 +6,7 @@ let signer: Signer;
 let host: string;
 let token: Token;
 let connected: boolean;
+let network: string = "https://testnet.tableland.network";
 
 declare let globalThis: any;
 
@@ -74,6 +75,14 @@ function getHost(): string {
   return host;
 }
 
+function getNetwork() {
+  return network;
+}
+
+function setNetwork(setNetworkTo: string) {
+  network = setNetworkTo;
+}
+
 async function setHost(newHost: string) {
   // Should probably validate newHost is a valid host.
   host = newHost;
@@ -106,10 +115,12 @@ async function connect(
     network: "testnet",
   }
 ): Promise<ConnectionReceipt> {
-  let { host, jwsToken, network } = options;
+  let { host, jwsToken } = options;
+  network = options.network ?? network;
+
   if (!host) {
-    if (network === "testnet") {
-      host = "https://testnet.tableland.network";
+    if (network === "staging") {
+      host = "https://staging.tableland.network";
     }
     throw Error(
       `You haven't specified a tableland validator. If you don't have your own, try https://testnet.tableland.network.`
@@ -142,6 +153,8 @@ export {
   setHost,
   setToken,
   getToken,
+  setNetwork,
+  getNetwork,
   isConnected,
   connectionCheck,
 };

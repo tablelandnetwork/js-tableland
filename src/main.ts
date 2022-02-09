@@ -53,7 +53,7 @@ async function runQuery(query: string): Promise<ReadQueryResult | null> {
   connectionCheck(); // Check that the client has already connected to their signer
   const tablename =
     query.match(/\b(?:FROM|JOIN|UPDATE|INTO)\s+(\S+(?:.\s)*)/) ?? []; // Find table name
-  const tablenameArray = tablename[1].split("_t"); // Split tablename into chunks divided by _
+  const tablenameArray = tablename[1].split("_"); // Split tablename into chunks divided by _
   const tableId = tablenameArray[tablenameArray.length - 1]; // The find the last chunk, which should be ID
 
   if (!isPositiveInteger(tableId) && tablename[1] === "system_table") {
