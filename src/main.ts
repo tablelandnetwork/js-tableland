@@ -5,7 +5,7 @@ import { connect, connectionCheck } from "./lib/single";
 
 import {
   CreateTableOptions,
-  TableMetadata,
+  CreateTableReceipt,
   ReadQueryResult,
 } from "./interfaces";
 import { BigNumber } from "ethers";
@@ -25,7 +25,7 @@ function isPositiveInteger(n: any) {
 async function createTable(
   query: string,
   options: CreateTableOptions = {}
-): Promise<TableMetadata> {
+): Promise<CreateTableReceipt> {
   connectionCheck();
 
   const authorized = await tablelandCalls.checkAuthorizedList();
@@ -38,10 +38,7 @@ async function createTable(
     normalizedId,
     options
   );
-  return {
-    id: createTableReceipt.id,
-    name: createTableReceipt.name,
-  };
+  return createTableReceipt.result as CreateTableReceipt;
 }
 
 /**
@@ -63,7 +60,8 @@ async function runQuery(query: string): Promise<ReadQueryResult | null> {
     );
   }
 
-  return await tablelandCalls.runQuery(query, tableId);
+  const readQueryReceipt = await tablelandCalls.runQuery(query, tableId);
+  return readQueryReceipt.result as ReadQueryResult;
 }
 export { createTable, runQuery, connect, myTables };
 export {

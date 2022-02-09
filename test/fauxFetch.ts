@@ -15,8 +15,7 @@ export const FetchAuthorizedListSuccess = async () => {
 export const FetchCreateTableOnTablelandSuccess = async () => {
     return {
         body: JSON.stringify({
-            id: "115",
-            name: "Hello"
+            tablename: "Hello_t115"
         })
     }
 }
