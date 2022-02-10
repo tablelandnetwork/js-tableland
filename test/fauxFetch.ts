@@ -22,7 +22,7 @@ export const FetchCreateTableOnTablelandSuccess = async () => {
   };
 };
 
-export const FetchRunQuerySuccess = async () => {
+export const FetchQuerySuccess = async () => {
   return {
     body: [],
   };

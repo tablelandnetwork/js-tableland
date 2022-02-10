@@ -46,7 +46,7 @@ async function createTable(
  * @param query A SQL query to run
  * @returns If read query, result-set. If write query, nothing.
  */
-async function runQuery(query: string): Promise<ReadQueryResult | null> {
+async function query(query: string): Promise<ReadQueryResult | null> {
   connectionCheck(); // Check that the client has already connected to their signer
   const tablename =
     query.match(/\b(?:FROM|JOIN|UPDATE|INTO)\s+(\S+(?:.\s)*)/) ?? []; // Find table name
@@ -60,10 +60,10 @@ async function runQuery(query: string): Promise<ReadQueryResult | null> {
     );
   }
 
-  const readQueryReceipt = await tablelandCalls.runQuery(query, tableId);
+  const readQueryReceipt = await tablelandCalls.query(query, tableId);
   return readQueryReceipt.result as ReadQueryResult;
 }
-export { createTable, runQuery, connect, myTables };
+export { createTable, query, connect, myTables };
 export {
   Column,
   ColumnDescriptor,
