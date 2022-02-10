@@ -5,13 +5,15 @@ import {
   FetchCreateTableOnTablelandSuccess,
 } from "./fauxFetch";
 
-
-describe('createTable method', function () {
+describe("create method", function () {
   let connection: any;
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
-    connection = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
+    connection = await connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+    });
   });
 
   afterEach(function () {
@@ -23,10 +25,9 @@ describe('createTable method', function () {
     fetch.mockResponseOnce(FetchAuthorizedListSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-    const createTableReceipt = await connection.create(
+    const createReceipt = await connection.create(
       "CREATE TABLE Hello (id int primary key, val text)"
     );
-    await expect(createTableReceipt.name).toEqual("Hello_115");
+    await expect(createReceipt.name).toEqual("Hello_115");
   });
-
 });
