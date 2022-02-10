@@ -40,8 +40,7 @@ async function userCreatesToken(signer: Signer): Promise<Token> {
 }
 
 export async function connect(options: ConnectionOptions): Promise<Connection> {
-  let network = "testnet";
-  network = options.network ?? network;
+  const  network = options.network ?? "testnet";
   let host = "https://testnet.tableland.network";
 
   if (network !== "testnet" && !options.host) {
