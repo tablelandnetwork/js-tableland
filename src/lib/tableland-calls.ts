@@ -74,7 +74,13 @@ export async function createTable(
   tableId: string,
   options: CreateTableOptions
 ): Promise<CreateTableReceipt> {
-  const message = await GeneralizedRPC.call(this, "createTable", query, tableId, options);
+  const message = await GeneralizedRPC.call(
+    this,
+    "createTable",
+    query,
+    tableId,
+    options
+  );
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 

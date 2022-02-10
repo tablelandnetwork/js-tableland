@@ -27,9 +27,5 @@ export async function query(
     );
   }
 
-  return await tablelandCalls.query.call(
-    this,
-    query,
-    tableId
-  );
+  return await tablelandCalls.query.call(this, query, tableId);
 }
