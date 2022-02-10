@@ -13,7 +13,7 @@ import { BigNumber } from "ethers";
  * @param {CreateTableOptions} options List of options
  * @returns {string} The token ID of the table created
  */
-export async function createTable(
+export async function create(
   this: Connection,
   query: string,
   options: CreateTableOptions = {}
@@ -21,12 +21,11 @@ export async function createTable(
   const authorized = await tablelandCalls.checkAuthorizedList.call(this);
   if (!authorized) throw new Error("You are not authorized to create a table");
   // Validation
-  const { tableId } = await registerTable.call(this);
-  const normalizedId = BigNumber.from(tableId).toString();
-  return await tablelandCalls.createTable.call(
-    this,
-    query,
-    normalizedId,
-    options
-  );
+  let id = options.id;
+  if (!id) {
+    const { tableId } = await registerTable.call(this);
+    id = BigNumber.from(tableId).toString();
+  }
+
+  return await tablelandCalls.create.call(this, query, id, options);
 }

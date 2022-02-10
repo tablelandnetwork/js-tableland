@@ -5,6 +5,7 @@ import {
   FetchCreateTableOnTablelandSuccess,
 } from "./fauxFetch";
 
+
 describe('createTable method', function () {
   let connection: any;
   beforeAll(async function () {
@@ -22,7 +23,7 @@ describe('createTable method', function () {
     fetch.mockResponseOnce(FetchAuthorizedListSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-    const createTableReceipt = await connection.createTable(
+    const createTableReceipt = await connection.create(
       "CREATE TABLE Hello (id int primary key, val text)"
     );
     await expect(createTableReceipt.name).toEqual("Hello_115");

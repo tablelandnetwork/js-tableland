@@ -3,7 +3,7 @@ import { ConnectionOptions, Connection, Token } from "../interfaces";
 import { myTables } from "./myTables";
 import { createToken } from "./token";
 import { query } from "./query";
-import { createTable } from "./createTable";
+import { create } from "./create";
 
 declare let globalThis: any;
 async function getSigner(): Promise<Signer> {
@@ -40,8 +40,7 @@ async function userCreatesToken(signer: Signer): Promise<Token> {
 }
 
 export async function connect(options: ConnectionOptions): Promise<Connection> {
-  let network = "testnet";
-  network = options.network ?? network;
+  const network = options.network ?? "testnet";
   let host = "https://testnet.tableland.network";
 
   if (network !== "testnet" && !options.host) {
@@ -71,8 +70,8 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     get query() {
       return query;
     },
-    get createTable() {
-      return createTable;
+    get create() {
+      return create;
     },
   };
 
