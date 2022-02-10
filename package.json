@@ -1,6 +1,6 @@
 {
   "name": "@textile/tableland",
-  "version": "0.0.5-dev7",
+  "version": "0.0.5",
   "description": "Boilerplate for TypeScript projects (Node.js and browser modules)",
   "author": "Allen Muncy <allen@textile.io>",
   "repository": "https://github.com/textileio/js-tableland",
