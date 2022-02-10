@@ -1,16 +1,25 @@
 import fetch from "jest-fetch-mock";
 import { FetchMyTables } from "../test/fauxFetch";
-import { connect, myTables } from "../src/main";
+import { connect } from "../src/main";
 
-beforeAll(function () {
-  connect({ network: "testnet", host: "https://testnet.tableland.network" });
-});
+describe("myTables method", function () {
+  let myTables: any, connection: any;
+  beforeAll(async function () {
+    // reset in case another test file hasn't cleaned up
+    fetch.resetMocks();
+    connection = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
+    myTables = connection.myTables;
+  });
 
-describe("These tests check the myTable SDK call.", function () {
+  afterEach(function () {
+    // ensure mocks don't bleed into other tests
+    fetch.resetMocks();
+  });
+
   test("When I fetch my tables, I get some tables", async function () {
-    fetch.mockResponse(FetchMyTables);
+    fetch.mockResponseOnce(FetchMyTables);
 
-    const resp = await myTables();
-    expect(resp[0].id).toEqual("71bb8c56-a44e-4a75-aa9c-8158cefda5d7");
+    const resp = await myTables.call(connection);
+    await expect(resp[0].id).toEqual("71bb8c56-a44e-4a75-aa9c-8158cefda5d7");
   });
 });

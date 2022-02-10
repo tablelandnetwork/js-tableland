@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt } from "ethers";
+import { BigNumber, ContractReceipt, Signer } from "ethers";
 
 export interface TableMetadata {
   id: string;
@@ -17,6 +17,7 @@ export interface Token {
 
 export interface ConnectionOptions {
   jwsToken?: Token;
+  signer?: Signer;
   host: string;
   network?: string;
 }
@@ -49,6 +50,8 @@ export interface ReadQueryResult {
 export interface CreateTableOptions {
   /** A human readable description of the nature and purpoe of the table */
   description?: string;
+  /** If your table was minted, but never created on tableland, use this param to create it. */
+  id?: string;
 }
 
 export interface CreateTableReceipt {
@@ -66,4 +69,17 @@ export interface RpcReceipt {
   jsonrpc: string;
   id: number;
   result: any;
+}
+
+export interface Connection {
+  host: string;
+  signer: Signer;
+  token: Token;
+  network: string;
+  myTables: () => Promise<TableMetadata[]>;
+  create: (
+    query: string,
+    options: { description: string }
+  ) => Promise<CreateTableReceipt>;
+  query: (query: string) => Promise<null | ReadQueryResult>;
 }
