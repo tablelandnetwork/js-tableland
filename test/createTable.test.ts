@@ -6,12 +6,11 @@ import {
 } from "./fauxFetch";
 
 describe('createTable method', function () {
-  let createTable: any, connection: any;
+  let connection: any;
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
-    connection = await connect({ network: "derpnet", host: "https://derp.tableland.network" });
-    createTable = connection.myTables;
+    connection = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
   });
 
   afterEach(function () {
@@ -19,19 +18,11 @@ describe('createTable method', function () {
     fetch.resetMocks();
   });
 
-  test("Throw error when not connected", async function () {
-    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
-    await expect(createTable.call(connection, "CREATE TABLE test (a INT);")).rejects.toThrow(
-      "Please connect your account before trying anything."
-    );
-  });
-
   test("Create table works", async function () {
-    await connect({ host: "https://derp.tableland.network" });
     fetch.mockResponseOnce(FetchAuthorizedListSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-    const createTableReceipt = await createTable.call(connection, 
+    const createTableReceipt = await connection.createTable(
       "CREATE TABLE Hello (id int primary key, val text)"
     );
     await expect(createTableReceipt.name).toEqual("Hello_115");

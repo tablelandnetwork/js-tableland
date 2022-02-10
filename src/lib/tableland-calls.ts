@@ -2,9 +2,9 @@
 
 import {
   TableMetadata,
-  RpcReceipt,
   ReadQueryResult,
   CreateTableOptions,
+  CreateTableReceipt,
   Connection,
 } from "../interfaces";
 import { myTables } from "./myTables";
@@ -73,14 +73,12 @@ export async function createTable(
   query: string,
   tableId: string,
   options: CreateTableOptions
-): Promise<RpcReceipt> {
-  return await SendCall.call(
-    this,
-    await GeneralizedRPC.call(this, "createTable", query, tableId, options)
-  ).then(function (res) {
-    if (!res.ok) throw new Error(res.statusText);
-    return res.json();
-  });
+): Promise<CreateTableReceipt> {
+  const message = await GeneralizedRPC.call(this, "createTable", query, tableId, options);
+  const response = await SendCall.call(this, message);
+  const json = await sendResponse(response);
+
+  return json;
 }
 
 async function query(

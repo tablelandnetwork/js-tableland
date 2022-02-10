@@ -23,11 +23,10 @@ export async function createTable(
   // Validation
   const { tableId } = await registerTable.call(this);
   const normalizedId = BigNumber.from(tableId).toString();
-  const createTableReceipt = await tablelandCalls.createTable.call(
+  return await tablelandCalls.createTable.call(
     this,
     query,
     normalizedId,
     options
   );
-  return createTableReceipt.result as CreateTableReceipt;
 }

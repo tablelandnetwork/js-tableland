@@ -7,7 +7,7 @@ describe("myTables method", function () {
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
-    connection = await connect({ network: "derpnet", host: "https://derp.tableland.network" });
+    connection = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
     myTables = connection.myTables;
   });
 

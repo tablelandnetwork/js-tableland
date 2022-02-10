@@ -3,12 +3,11 @@ import { connect } from "../src/main";
 import { FetchRunQueryError, FetchRunQuerySuccess } from "../test/fauxFetch";
 
 describe("query method", function () {
-  let query: any, connection: any;
+  let connection: any;
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
     connection = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
-    query = connection.query;
   });
 
   afterEach(function () {
@@ -19,7 +18,7 @@ describe("query method", function () {
   test("returns RPC result when request succeeds", async function () {
     fetch.mockResponseOnce(FetchRunQuerySuccess);
 
-    const res = await query.call(connection, "SELECT * FROM test_1;");
+    const res = await connection.query("SELECT * FROM test_1;");
     await expect(res).toEqual({columns: ["colname"], rows: ["val1"]});
   });
 
@@ -27,7 +26,7 @@ describe("query method", function () {
     fetch.mockResponseOnce(FetchRunQueryError);
 
     await expect(async function () {
-      await query.call(connection, "SELECT * FROM test;");
+      await connection.query("SELECT * FROM test;");
     }).rejects.toThrow("TEST ERROR: table name has wrong format");
   });
 
