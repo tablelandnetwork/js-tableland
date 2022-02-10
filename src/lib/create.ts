@@ -27,11 +27,5 @@ export async function create(
     id = BigNumber.from(tableId).toString();
   }
 
-  const createReceipt = await tablelandCalls.create.call(
-    this,
-    query,
-    id,
-    options
-  );
-  return createReceipt.result as CreateTableReceipt;
+  return await tablelandCalls.create.call(this, query, id, options);
 }

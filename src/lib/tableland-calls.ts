@@ -2,8 +2,9 @@
 
 import {
   TableMetadata,
-  RpcReceipt,
+  ReadQueryResult,
   CreateTableOptions,
+  CreateTableReceipt,
   Connection,
 } from "../interfaces";
 import { myTables } from "./myTables";
@@ -17,6 +18,17 @@ async function SendCall(this: Connection, rpcBody: Object) {
     },
     body: JSON.stringify(rpcBody),
   });
+}
+
+// parse the rpc response and throw if any of the different types of errors occur
+async function sendResponse(res: any) {
+  if (!res.ok) throw new Error(res.statusText);
+
+  const json = await res.json();
+  // NOTE: we are leaving behind the error code because the Error type does not allow for a `code` property
+  if (json.error) throw new Error(json.error.message);
+
+  return json.result;
 }
 
 async function GeneralizedRPC(
@@ -61,28 +73,30 @@ export async function create(
   query: string,
   tableId: string,
   options: CreateTableOptions
-): Promise<RpcReceipt> {
-  return await SendCall.call(
+): Promise<CreateTableReceipt> {
+  const message = await GeneralizedRPC.call(
     this,
-    await GeneralizedRPC.call(this, "create", query, tableId, options)
-  ).then(function (res) {
-    if (!res.ok) throw new Error(res.statusText);
-    return res.json();
-  });
+    "create",
+    query,
+    tableId,
+    options
+  );
+  const response = await SendCall.call(this, message);
+  const json = await sendResponse(response);
+
+  return json;
 }
 
 async function query(
   this: Connection,
   query: string,
   tableId: string
-): Promise<RpcReceipt> {
-  return await SendCall.call(
-    this,
-    await GeneralizedRPC.call(this, "runSQL", query, tableId)
-  ).then(function (res) {
-    if (!res.ok) throw new Error(res.statusText);
-    return res.json();
-  });
+): Promise<ReadQueryResult | null> {
+  const message = await GeneralizedRPC.call(this, "runSQL", query, tableId);
+  const response = await SendCall.call(this, message);
+  const json = await sendResponse(response);
+
+  return json;
 }
 
 export { query, myTables, TableMetadata };

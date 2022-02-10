@@ -27,10 +27,5 @@ export async function query(
     );
   }
 
-  const readQueryReceipt = await tablelandCalls.query.call(
-    this,
-    query,
-    tableId
-  );
-  return readQueryReceipt.result as ReadQueryResult;
+  return await tablelandCalls.query.call(this, query, tableId);
 }
