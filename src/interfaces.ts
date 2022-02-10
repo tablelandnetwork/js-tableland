@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt } from "ethers";
+import { BigNumber, ContractReceipt, Signer } from "ethers";
 
 export interface TableMetadata {
   id: string;
@@ -66,4 +66,17 @@ export interface RpcReceipt {
   jsonrpc: string;
   id: number;
   result: any;
+}
+
+export interface Connection {
+  host: string;
+  signer: Signer;
+  token: Token;
+  network: string;
+  myTables: () => Promise<TableMetadata[]>;
+  createTable: (
+    query: string,
+    options: { description: string }
+  ) => Promise<CreateTableReceipt>;
+  query: (query: string) => Promise<null | ReadQueryResult>;
 }

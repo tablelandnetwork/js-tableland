@@ -1,13 +1,10 @@
-import { getSigner, getHost } from "./single";
-import { TableMetadata } from "../interfaces";
+import { TableMetadata, Connection } from "../interfaces";
 
-export async function myTables(): Promise<TableMetadata[]> {
-  const signer = await getSigner();
-  const address = await signer.getAddress();
-  const host = await getHost();
+export async function myTables(this: Connection): Promise<TableMetadata[]> {
+  const address = await this.signer.getAddress();
 
   const resp: TableMetadata[] = await fetch(
-    `${host}/tables/controller/${address}`
+    `${this.host}/tables/controller/${address}`
   ).then((r) => r.json());
 
   return resp;
