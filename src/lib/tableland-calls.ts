@@ -3,6 +3,7 @@
 import {
   TableMetadata,
   RpcReceipt,
+  ReadQueryResult,
   CreateTableOptions,
   Connection,
 } from "../interfaces";
@@ -17,6 +18,17 @@ async function SendCall(this: Connection, rpcBody: Object) {
     },
     body: JSON.stringify(rpcBody),
   });
+}
+
+// parse the rpc response and throw if any of the different types of errors occur
+async function sendResponse(res: any) {
+  if (!res.ok) throw new Error(res.statusText);
+
+  const json = await res.json();
+  // NOTE: we are leaving behind the error code because the Error type does not allow for a `code` property
+  if (json.error) throw new Error(json.error.message);
+
+  return json.result;
 }
 
 async function GeneralizedRPC(
@@ -75,14 +87,12 @@ async function query(
   this: Connection,
   query: string,
   tableId: string
-): Promise<RpcReceipt> {
-  return await SendCall.call(
-    this,
-    await GeneralizedRPC.call(this, "runSQL", query, tableId)
-  ).then(function (res) {
-    if (!res.ok) throw new Error(res.statusText);
-    return res.json();
-  });
+): Promise<ReadQueryResult | null> {
+  const message = await GeneralizedRPC.call(this, "runSQL", query, tableId);
+  const response = await SendCall.call(this, message);
+  const json = await sendResponse(response);
+
+  return json;
 }
 
 export { query, myTables, TableMetadata };
