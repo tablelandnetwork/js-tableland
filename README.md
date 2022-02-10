@@ -43,15 +43,15 @@ npm i @textile/tableland
 Most common Tableland usage patterns will follow something like the following. In general, you'll need to connect, create, mutate, and query your tables. In that order :)
 
 ```typescript
-import { connect, createTable, runQuery, myTables } from "@textile/tableland";
+import { connect, createTable, query, myTables } from "@textile/tableland";
 
 await connect({ host: "http://testnet.tableland.network" });
 
 let id = createTable(
   `CREATE TABLE table (name text, id int, primary key (id))`
 );
-let res = await runQuery(`INSERT (firstname) VALUES ('Murray' INTO ${id})`);
-res = await runQuery(`SELECT * FROM ${id}`);
+let res = await query(`INSERT (firstname) VALUES ('Murray' INTO ${id})`);
+res = await query(`SELECT * FROM ${id}`);
 ```
 
 # API
@@ -123,17 +123,17 @@ An application can use the `myTables` function to discover a user's tables, and 
 
 ## Mutating Tables
 
-Now that we have a table to work with, it is easy to use vanilla SQL statements to insert new rows, update existing rows, and even delete old rows. These mutating SQL statements will eventually require network fees to be paid to network validators. For the current MVP trials, they remain free. The generic [`runQuery`](https://textileio.github.io/js-tableland/modules.html#runQuery) function can be used to mutate table rows. As an example, inserting new rows can be done like this:
+Now that we have a table to work with, it is easy to use vanilla SQL statements to insert new rows, update existing rows, and even delete old rows. These mutating SQL statements will eventually require network fees to be paid to network validators. For the current MVP trials, they remain free. The generic [`query`](https://textileio.github.io/js-tableland/modules.html#query) function can be used to mutate table rows. As an example, inserting new rows can be done like this:
 
 ```typescript
-import { runQuery } from "@textile/tableland";
+import { query } from "@textile/tableland";
 // Assumes a connection has already been established as above
 
-const one = await runQuery(
+const one = await query(
   `INSERT INTO ${tableId} (id, name) VALUES (0, 'Bobby Tables');`
 );
 
-const two = await runQuery(
+const two = await query(
   `INSERT INTO ${tableId} (id, name) VALUES (0, 'Bobby Tables');`
 );
 ```
@@ -143,17 +143,17 @@ const two = await runQuery(
 This inserted row can then be removed from the table state like this:
 
 ```typescript
-const remove = await runQuery(`DELETE FROM ${tableId} WHERE id = 0;`);
+const remove = await query(`DELETE FROM ${tableId} WHERE id = 0;`);
 ```
 
 > Warn: While rows can be deleted from the table state, row information will remain in the table's history for obvious reasons.
 
 ## Querying Tables
 
-Finally, the moment we've all been waiting for; we are ready to query our table state! You already have all the tools required to get this done. Simply use the `runQuery` function imported previously to query the latest table state. Currently, queries are extremely flexible in Tableland. You have most SQL query features available to craft your query, though the most common will likely be the classic `SELECT * FROM` pattern shown here:
+Finally, the moment we've all been waiting for; we are ready to query our table state! You already have all the tools required to get this done. Simply use the `query` function imported previously to query the latest table state. Currently, queries are extremely flexible in Tableland. You have most SQL query features available to craft your query, though the most common will likely be the classic `SELECT * FROM` pattern shown here:
 
 ```typescript
-const { rows, columns } = await runQuery(`SELECT * FROM ${tableId};`);
+const { rows, columns } = await query(`SELECT * FROM ${tableId};`);
 ```
 
 The response from a read query contains a [`ReadQueryResult`](https://textileio.github.io/js-tableland/interfaces/ReadQueryResult.html) object, with properties for `columns` and `rows`. The `columns` property contains an enumerated array of column ids and their corresponding [`ColumnDescriptor`](https://textileio.github.io/js-tableland/interfaces/ColumnDescriptor.html) information. The `rows` property is an array of row-wise table data. The rows can be iterated over and used to populate UIs etc.

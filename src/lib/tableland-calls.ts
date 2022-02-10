@@ -63,7 +63,7 @@ async function createTable(
   });
 }
 
-async function runQuery(query: string, tableId: string): Promise<RpcReceipt> {
+async function query(query: string, tableId: string): Promise<RpcReceipt> {
   return await SendCall(await GeneralizedRPC("runSQL", query, tableId)).then(
     function (res) {
       if (!res.ok) throw new Error(res.statusText);
@@ -72,4 +72,4 @@ async function runQuery(query: string, tableId: string): Promise<RpcReceipt> {
   );
 }
 
-export { createTable, runQuery, myTables, checkAuthorizedList, TableMetadata };
+export { createTable, query, myTables, checkAuthorizedList, TableMetadata };
