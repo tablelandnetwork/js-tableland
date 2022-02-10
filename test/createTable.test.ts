@@ -1,12 +1,12 @@
 import fetch from "jest-fetch-mock";
-import { connect, createTable } from "../src/main";
+import { connect, create } from "../src/main";
 import {
   FetchAuthorizedListSuccess,
   FetchCreateTableOnTablelandSuccess,
 } from "./fauxFetch";
 
 test("Throw error when not connected", async function () {
-  await expect(createTable(" ")).rejects.toThrow(
+  await expect(create(" ")).rejects.toThrow(
     "Please connect your account before trying anything."
   );
 });
@@ -16,8 +16,8 @@ test("Create table works", async function () {
   fetch.mockResponseOnce(FetchAuthorizedListSuccess);
   fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-  const createTableReceipt = await createTable(
+  const createReceipt = await create(
     "CREATE TABLE Hello (id int primary key, val text)"
   );
-  expect(createTableReceipt.name).toEqual("Hello_115");
+  expect(createReceipt.name).toEqual("Hello_115");
 });

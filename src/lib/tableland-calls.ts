@@ -56,7 +56,7 @@ export async function checkAuthorizedList(this: Connection): Promise<boolean> {
   return authorized;
 }
 
-export async function createTable(
+export async function create(
   this: Connection,
   query: string,
   tableId: string,
@@ -64,7 +64,7 @@ export async function createTable(
 ): Promise<RpcReceipt> {
   return await SendCall.call(
     this,
-    await GeneralizedRPC.call(this, "createTable", query, tableId, options)
+    await GeneralizedRPC.call(this, "create", query, tableId, options)
   ).then(function (res) {
     if (!res.ok) throw new Error(res.statusText);
     return res.json();

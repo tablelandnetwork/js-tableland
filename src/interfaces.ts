@@ -49,6 +49,8 @@ export interface ReadQueryResult {
 export interface CreateTableOptions {
   /** A human readable description of the nature and purpoe of the table */
   description?: string;
+  /** If your table was minted, but never created on tableland, use this param to create it. */
+  id?: string;
 }
 
 export interface CreateTableReceipt {
@@ -74,7 +76,7 @@ export interface Connection {
   token: Token;
   network: string;
   myTables: () => Promise<TableMetadata[]>;
-  createTable: (
+  create: (
     query: string,
     options: { description: string }
   ) => Promise<CreateTableReceipt>;

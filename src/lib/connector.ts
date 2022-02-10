@@ -3,7 +3,7 @@ import { ConnectionOptions, Connection, Token } from "../interfaces";
 import { myTables } from "./myTables";
 import { createToken } from "./token";
 import { query } from "./query";
-import { createTable } from "./createTable";
+import { create } from "./create";
 
 declare let globalThis: any;
 async function getSigner(): Promise<Signer> {
@@ -71,8 +71,8 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     get query() {
       return query;
     },
-    get createTable() {
-      return createTable;
+    get create() {
+      return create;
     },
   };
 
