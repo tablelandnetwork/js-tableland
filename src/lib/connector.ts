@@ -1,6 +1,6 @@
 import { Signer, utils, ethers } from "ethers";
 import { ConnectionOptions, Connection, Token } from "../interfaces";
-import { myTables } from "./myTables";
+import { list } from "./list";
 import { createToken } from "./token";
 import { query } from "./query";
 import { create } from "./create";
@@ -64,8 +64,8 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     get signer() {
       return signer;
     },
-    get myTables() {
-      return myTables;
+    get list() {
+      return list;
     },
     get query() {
       return query;

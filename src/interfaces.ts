@@ -76,7 +76,7 @@ export interface Connection {
   signer: Signer;
   token: Token;
   network: string;
-  myTables: () => Promise<TableMetadata[]>;
+  list: () => Promise<TableMetadata[]>;
   create: (
     query: string,
     options: { description: string }

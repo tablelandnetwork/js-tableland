@@ -7,7 +7,7 @@ import {
   CreateTableReceipt,
   Connection,
 } from "../interfaces";
-import { myTables } from "./myTables";
+import { list } from "./list";
 
 async function SendCall(this: Connection, rpcBody: Object) {
   return await fetch(`${this.host}/rpc`, {
@@ -99,4 +99,4 @@ async function query(
   return json;
 }
 
-export { query, myTables, TableMetadata };
+export { query, list, TableMetadata };

@@ -1,6 +1,6 @@
 import { TableMetadata, Connection } from "../interfaces";
 
-export async function myTables(this: Connection): Promise<TableMetadata[]> {
+export async function list(this: Connection): Promise<TableMetadata[]> {
   const address = await this.signer.getAddress();
 
   const resp: TableMetadata[] = await fetch(
