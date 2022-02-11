@@ -76,7 +76,7 @@ export async function create(
 ): Promise<CreateTableReceipt> {
   const message = await GeneralizedRPC.call(
     this,
-    "create",
+    "createTable",
     query,
     tableId,
     options
