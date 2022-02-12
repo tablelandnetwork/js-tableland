@@ -2,9 +2,9 @@ import {
   CreateTableOptions,
   CreateTableReceipt,
   Connection,
-} from "../interfaces";
-import * as tablelandCalls from "./tableland-calls";
-import { registerTable } from "./eth-calls";
+} from "../interfaces.js";
+import * as tablelandCalls from "./tableland-calls.js";
+import { registerTable } from "./eth-calls.js";
 import { BigNumber } from "ethers";
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register

@@ -1,4 +1,4 @@
-import { TableMetadata, Connection } from "../interfaces";
+import { TableMetadata, Connection } from "../interfaces.js";
 
 export async function list(this: Connection): Promise<TableMetadata[]> {
   const address = await this.signer.getAddress();

@@ -4,8 +4,8 @@
  * @returns If read query, result-set. If write query, nothing.
  */
 
-import { ReadQueryResult, Connection } from "../interfaces";
-import * as tablelandCalls from "./tableland-calls";
+import { ReadQueryResult, Connection } from "../interfaces.js";
+import * as tablelandCalls from "./tableland-calls.js";
 
 function isPositiveInteger(n: any) {
   return n >>> 0 === parseFloat(n);

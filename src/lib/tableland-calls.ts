@@ -6,8 +6,8 @@ import {
   CreateTableOptions,
   CreateTableReceipt,
   Connection,
-} from "../interfaces";
-import { list } from "./list";
+} from "../interfaces.js";
+import { list } from "./list.js";
 
 async function SendCall(this: Connection, rpcBody: Object) {
   return await fetch(`${this.host}/rpc`, {

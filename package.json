@@ -1,6 +1,6 @@
 {
   "name": "@textile/tableland",
-  "version": "0.0.7",
+  "version": "0.0.8-dev3",
   "description": "A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.",
   "author": "Allen Muncy <allen@textile.io>",
   "repository": "https://github.com/textileio/js-tableland",
@@ -23,6 +23,7 @@
     "jest.config.js": "cjs"
   },
   "scripts": {
+    "prepublish": "npm run build-all",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "test": "jest --verbose",
     "clean": "rm -rf dist build package",
@@ -33,7 +34,7 @@
     "build": "esbuild src/main.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/main.js --format=esm  && node ./node_modules/add-js-extension/dist/bin.js ./dist/tsc --once",
     "build:dev": "esbuild src/main.ts --bundle --outfile=dist/esbuild/main.js --format=esm --sourcemap=inline",
     "build:watch": "esbuild src/main.ts --bundle --watch --outfile=dist/esbuild/main.js --format=esm && node ./node_modules/add-js-extension/dist/bin.js ./dist/tsc --once",
-    "build-all": "npm run tsbuild && npm run build && node ./node_modules/add-js-extension/dist/bin.js ./dist/tsc --once"
+    "build-all": "npm run tsbuild && npm run build"
   },
   "devDependencies": {
     "@types/chai": "^4.2.22",

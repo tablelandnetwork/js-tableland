@@ -1,12 +1,13 @@
 import { Signer, utils, ethers } from "ethers";
-import { ConnectionOptions, Connection, Token } from "../interfaces";
-import { list } from "./list";
-import { createToken } from "./token";
-import { query } from "./query";
-import { create } from "./create";
+import { ConnectionOptions, Connection, Token } from "../interfaces.js";
+import { list } from "./list.js";
+import { createToken } from "./token.js";
+import { query } from "./query.js";
+import { create } from "./create.js";
 
 declare let globalThis: any;
 async function getSigner(): Promise<Signer> {
+  await globalThis.ethereum.request({ method: "eth_requestAccounts" });
   const provider = new ethers.providers.Web3Provider(globalThis.ethereum);
   const signer = provider.getSigner();
   return signer;

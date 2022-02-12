@@ -1,2 +1,2 @@
-export { connect } from "./lib/connector";
-export * from "./interfaces";
+export { connect } from "./lib/connector.js";
+export * from "./interfaces.js";
