@@ -24,11 +24,31 @@ export const FetchCreateTableOnTablelandSuccess = async () => {
   };
 };
 
-export const FetchRunQuerySuccess = async () => {
+export const FetchSelectQuerySuccess = async () => {
   return JSON.stringify({
     jsonrpc: "2.0",
     id: 1,
     result: {columns: ['colname'], rows: ['val1']}
+  });
+};
+
+export const FetchInsertQuerySuccess = async () => {
+  return JSON.stringify({
+    jsonrpc: "2.0",
+    id: 1,
+    result: {
+      data: null
+    }
+  });
+};
+
+export const FetchUpdateQuerySuccess = async () => {
+  return JSON.stringify({
+    jsonrpc: "2.0",
+    id: 1,
+    result: {
+      data: null
+    }
   });
 };
 
@@ -38,7 +58,7 @@ export const FetchRunQueryError = async () => {
     id: 1,
     error: {
       code: -32000,
-      message: "TEST ERROR: table name has wrong format"
+      message: "TEST ERROR: tableland validator mock error."
     }
   });
 };

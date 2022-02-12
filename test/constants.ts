@@ -1,1 +1,9 @@
-export const myTableResponseBody = [{"id":"71bb8c56-a44e-4a75-aa9c-8158cefda5d7","controller":"0xbDA5747bFD65F08deb54cb465eB87D40e51B197E","type":"","created_at":"2021-12-22T15:38:27.614321Z"},{"uuid":"e7fb1cdd-a231-43c3-ba4e-6dc51112c110","controller":"0xbDA5747bFD65F08deb54cb465eB87D40e51B197E","type":"","created_at":"2021-12-22T15:38:48.547678Z"},{"uuid":"95841d21-6687-4bd5-bbf2-8ecae917bb23","controller":"0xbDA5747bFD65F08deb54cb465eB87D40e51B197E","type":"LootProjectAttributes","created_at":"2022-01-06T23:03:44.823089Z"},{"uuid":"d9163b48-670f-4549-813a-6f66888bc1fb","controller":"0xbDA5747bFD65F08deb54cb465eB87D40e51B197E","type":"LootProjectInventory","created_at":"2022-01-12T14:45:49.499665Z"},{"uuid":"a1cece0a-d593-425c-8c21-399c69acd14e","controller":"0xbDA5747bFD65F08deb54cb465eB87D40e51B197E","type":"","created_at":"2022-01-21T21:28:34.057286Z"},{"uuid":"01e8d4e2-298c-41ad-a4c3-3775473f6e80","controller":"0xbDA5747bFD65F08deb54cb465eB87D40e51B197E","type":"","created_at":"2022-01-31T21:10:28.416444Z"}];
+export const myTableResponseBody = [
+  {
+    "controller": "0xd535bAd504CDd77e2C51dE26F416693DF7a01ac8",
+    "name": "test_list_query_table",
+    "description": "",
+    "structure": "7837fa79ed5151d99da5051b41d7387e7c249a2b0321d440138c81108160cdd9",
+    "created_at": "2022-02-11T02:12:19.80809Z"
+  }
+];
