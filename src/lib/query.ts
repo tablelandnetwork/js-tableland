@@ -27,8 +27,7 @@ export async function query(
   //       get the table id if the table name is the last word in the statement
   const tablename =
     statement[0].match(/\b(?:FROM|JOIN|UPDATE|INTO)\s+(\S+(?:.\s)*)/i) ?? []; // Find table name
-  console.log(query);
-  console.log(tablename);
+
   if (!(tablename && tablename[1])) {
     // If ID isn't a postive interger, throw error.
     throw new Error(
@@ -39,8 +38,6 @@ export async function query(
 
   const tablenameArray = tablename[1].split("_"); // Split tablename into chunks divided by _
   const tableId = tablenameArray[tablenameArray.length - 1]; // The find the last chunk, which should be ID
-
-  console.log(`${tableId} ${isPositiveInteger(tableId)} ${tablename[1]}`);
 
   if (!isPositiveInteger(tableId) && tablename[1] !== "system_table") {
     // If ID isn't a postive interger, throw error.
