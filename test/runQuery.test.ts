@@ -22,6 +22,13 @@ describe("query method", function () {
     await expect(res).toEqual({columns: ["colname"], rows: ["val1"]});
   });
 
+  test("is case insensitive", async function () {
+    fetch.mockResponseOnce(FetchRunQuerySuccess);
+
+    const res = await connection.query("select * from test_1;");
+    await expect(res).toEqual({columns: ["colname"], rows: ["val1"]});
+  });
+
   test("throws RPC error when request query tablename is invalid", async function () {
     fetch.mockResponseOnce(FetchRunQueryError);
 

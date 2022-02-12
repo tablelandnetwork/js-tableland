@@ -16,7 +16,7 @@ export async function query(
   query: string
 ): Promise<ReadQueryResult | null> {
   const tablename =
-    query.match(/\b(?:FROM|JOIN|UPDATE|INTO)\s+(\S+(?:.\s)*)/) ?? []; // Find table name
+    query.match(/\b(?:FROM|JOIN|UPDATE|INTO)\s+(\S+(?:.\s)*)/i) ?? []; // Find table name
   const tablenameArray = tablename[1].split("_"); // Split tablename into chunks divided by _
   const tableId = tablenameArray[tablenameArray.length - 1]; // The find the last chunk, which should be ID
 
