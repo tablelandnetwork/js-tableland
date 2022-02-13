@@ -18,7 +18,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "outDir": "./dist/tsc/",
+    "outDir": "./dist/esm/",
     "types": [
       "node",
       "jest"
@@ -29,8 +29,9 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
-, "test/setupTest.ts"  ],
+    "src/**/*.ts",
+    "test/setupTest.ts"
+  ],
   "exclude": [
     "node_modules",
     "**/*.test.ts"
