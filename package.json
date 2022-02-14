@@ -1,6 +1,6 @@
 {
   "name": "@textile/tableland",
-  "version": "0.0.8-dev4",
+  "version": "0.0.8-dev6",
   "description": "A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.",
   "author": "Allen Muncy <allen@textile.io>",
   "repository": "https://github.com/textileio/js-tableland",
@@ -26,7 +26,8 @@
   },
   "files": [
     "dist/**/*.js?(.map)",
-    "dist/**/*.d.ts"
+    "dist/**/*.d.ts",
+    "dist/**/package.json"
   ],
   "moduleTypes": {
     "jest.config.js": "cjs"
