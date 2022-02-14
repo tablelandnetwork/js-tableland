@@ -13,5 +13,6 @@ module.exports = {
   moduleNameMapper: {
     "^@textile/eth-tableland$": "<rootDir>/test/mock_modules/eth-tableland",
     "^ethers$": "<rootDir>/test/mock_modules/ethers.ts"
-  }
+  },
+  resolver: "jest-ts-webcompat-resolver"
 }
