@@ -35,6 +35,7 @@ module.exports = {
     ecmaVersion: 12,
   },
   rules: {
+    "node/no-missing-import": "off",
     "node/no-unsupported-features/es-syntax": [
       "error",
       { ignores: ["modules"] },
