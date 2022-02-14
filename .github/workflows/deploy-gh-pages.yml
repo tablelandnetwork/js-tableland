@@ -30,7 +30,7 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm install
-          npm run build
+          npm run build:all
           npm run docs:html
           touch docs/.nojekyll
 
