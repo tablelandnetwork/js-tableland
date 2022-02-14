@@ -32,7 +32,7 @@
     "jest.config.js": "cjs"
   },
   "scripts": {
-    "prepublish": "npm run build-all",
+    "prepublish": "npm run build:all",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "test": "jest --verbose",
     "clean": "rm -rf dist build package",
