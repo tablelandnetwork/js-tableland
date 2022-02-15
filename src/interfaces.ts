@@ -79,7 +79,7 @@ export interface Connection {
   list: () => Promise<TableMetadata[]>;
   create: (
     query: string,
-    options: { description: string }
+    options: CreateTableOptions
   ) => Promise<CreateTableReceipt>;
   query: (query: string) => Promise<null | ReadQueryResult>;
 }

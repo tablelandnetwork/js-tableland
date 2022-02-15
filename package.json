@@ -1,6 +1,6 @@
 {
   "name": "@textile/tableland",
-  "version": "0.0.8-dev6",
+  "version": "0.0.8-dev7",
   "description": "A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.",
   "author": "Allen Muncy <allen@textile.io>",
   "repository": "https://github.com/textileio/js-tableland",
