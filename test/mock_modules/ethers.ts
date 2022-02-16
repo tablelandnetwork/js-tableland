@@ -7,15 +7,17 @@ export const ethers = {
         getSigner: function () {
           // mock signer
           return {
+            provider: {
+              getNetwork: async function () {
+                return { name: "rinkeby" };
+              }
+            },
             getAddress: function () {
               return "testaddress";
             },
             signMessage: async function () {
               return "testsignedmessage";
-            },
-            getNetwork: async function () {
-              return { name: "" };
-            },
+            }
           };
         },
       };
