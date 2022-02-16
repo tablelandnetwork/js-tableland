@@ -27,6 +27,11 @@ export interface ConnectionReceipt {
   ethAccounts: Array<string>;
 }
 
+export interface SupportedNetwork {
+  key: string;
+  phrase: string;
+}
+
 /**
  * ColumnDescriptor gives metadata about a colum (name, type)
  */
