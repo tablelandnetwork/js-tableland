@@ -85,7 +85,7 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     );
   }
 
-  const token = await userCreatesToken(signer);
+  const token = options.token ?? (await userCreatesToken(signer));
   const connectionObject: Connection = {
     get token() {
       return token;

@@ -16,7 +16,7 @@ export interface Token {
 }
 
 export interface ConnectionOptions {
-  jwsToken?: Token;
+  token?: Token;
   signer?: Signer;
   host?: string;
   network?: string;
