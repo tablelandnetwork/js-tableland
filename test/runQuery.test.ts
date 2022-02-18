@@ -53,6 +53,30 @@ describe("query method", function () {
     await expect(res2).toEqual({columns: ["colname"], rows: ["val1"]});
   });
 
+  test("parses tablename regardless of whitespace", async function () {
+    fetch.mockResponseOnce(FetchSelectQuerySuccess);
+
+    const res1 = await connection.query("INSERT INTO test_1(colname) Values ('val6');");
+    await expect(res1).toEqual({columns: ["colname"], rows: ["val1"]});
+
+    fetch.mockResponseOnce(FetchSelectQuerySuccess);
+
+    const res2 = await connection.query("sELEct * frOM test_1;");
+    await expect(res2).toEqual({columns: ["colname"], rows: ["val1"]});
+  });
+
+  test("parses tablename when inside double-quotes", async function () {
+    fetch.mockResponseOnce(FetchSelectQuerySuccess);
+
+    const res1 = await connection.query("INSERT INTO \"test_1\" (colname) Values ('val6');");
+    await expect(res1).toEqual({columns: ["colname"], rows: ["val1"]});
+
+    fetch.mockResponseOnce(FetchSelectQuerySuccess);
+
+    const res2 = await connection.query("sELEct * frOM test_1;");
+    await expect(res2).toEqual({columns: ["colname"], rows: ["val1"]});
+  });
+
   test("throws error when query tablename is invalid", async function () {
     fetch.mockResponseOnce(FetchRunQueryError);
 

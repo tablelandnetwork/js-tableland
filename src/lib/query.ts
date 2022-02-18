@@ -25,10 +25,21 @@ export async function query(
 
   // note: statement[0] is the query **without** the semicolon, this lets us split on `_` and still
   //       get the table id if the table name is the last word in the statement
-  const tablename =
-    statement[0].match(/\b(?:FROM|JOIN|UPDATE|INTO)\s+(\S+(?:.\s)*)/i) ?? []; // Find table name
+  const tablenameMatches =
+    statement[0].match(
+      /\b(?:FROM|JOIN|UPDATE|INTO)\s+(\S+(?=\()|\S+(?:.\s)*)/i
+    ) ?? []; // Find table name
 
-  if (!(tablename && tablename[1])) {
+  let tablename = tablenameMatches[1] ?? "";
+
+  if (tablename[0] === '"') {
+    tablename = tablename.slice(1);
+  }
+  if (tablename[tablename.length - 1] === '"') {
+    tablename = tablename.slice(0, -1);
+  }
+
+  if (!tablename) {
     // If ID isn't a postive interger, throw error.
     throw new Error(
       "No table name identifier found in query. Tableland does not support sql statements that do not" +
@@ -36,10 +47,10 @@ export async function query(
     );
   }
 
-  const tablenameArray = tablename[1].split("_"); // Split tablename into chunks divided by _
+  const tablenameArray = tablename.split("_"); // Split tablename into chunks divided by _
   const tableId = tablenameArray[tablenameArray.length - 1]; // The find the last chunk, which should be ID
 
-  if (!isPositiveInteger(tableId) && tablename[1] !== "system_table") {
+  if (!isPositiveInteger(tableId) && tablename !== "system_table") {
     // If ID isn't a postive interger, throw error.
     throw Error(
       "No ID found in query. Remember to add the table's ID after it's name. Ex; TableName_0000"
