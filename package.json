@@ -22,6 +22,11 @@
       "require": "./dist/cjs/main.js",
       "import": "./dist/esm/src/main.js",
       "default": "./dist/esm/src/main.js"
+    },
+    "./connector": {
+      "require": "./dist/cjs/lib/connector.js",
+      "import": "./dist/esm/src/lib/connector.js",
+      "default": "./dist/esm/src/lib/connector.js"
     }
   },
   "files": [

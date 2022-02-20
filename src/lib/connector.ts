@@ -19,14 +19,14 @@ const SUPPORTED_NETWORKS: SupportedNetwork[] = [
   },
 ];
 
-async function getSigner(): Promise<Signer> {
+export async function getSigner(): Promise<Signer> {
   await globalThis.ethereum.request({ method: "eth_requestAccounts" });
   const provider = new ethers.providers.Web3Provider(globalThis.ethereum);
   const signer = provider.getSigner();
   return signer;
 }
 
-async function userCreatesToken(signer: Signer): Promise<Token> {
+export async function userCreatesToken(signer: Signer): Promise<Token> {
   const sign = {
     signMessage: async (message: Uint8Array): Promise<Uint8Array> => {
       const sig = await signer.signMessage(message);
