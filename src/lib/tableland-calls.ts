@@ -35,7 +35,7 @@ async function GeneralizedRPC(
   this: Connection,
   method: string,
   statement: string,
-  tableId: string,
+  tableId?: string,
   options?: any
 ) {
   const signer = this.signer;
@@ -89,10 +89,9 @@ export async function create(
 
 async function query(
   this: Connection,
-  query: string,
-  tableId: string
+  query: string
 ): Promise<ReadQueryResult | null> {
-  const message = await GeneralizedRPC.call(this, "runSQL", query, tableId);
+  const message = await GeneralizedRPC.call(this, "runSQL", query);
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 
