@@ -12,16 +12,39 @@ export const FetchAuthorizedListSuccess = async () => {
   };
 };
 
+export const FetchCreateDryRunSuccess = async () => {
+  return {
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      result: {
+        name: "hello_1",
+      },
+    }),
+  };
+};
+
 export const FetchCreateTableOnTablelandSuccess = async () => {
   return {
     body: JSON.stringify({
       jsonrpc: "2.0",
       id: 1,
       result: {
-        name: "Hello_115",
+        name: "hello_115",
       },
     }),
   };
+};
+
+export const FetchCreateDryRunError = async () => {
+  return JSON.stringify({
+    jsonrpc: "2.0",
+    id: 1,
+    error: {
+      code: -32000,
+      message: "TEST ERROR: invalid sql near 123"
+    }
+  });
 };
 
 export const FetchSelectQuerySuccess = async () => {
