@@ -1,8 +1,8 @@
 # @textile/tableland
 
 [![Lint and test](https://github.com/textileio/js-tableland/actions/workflows/lint-and-test.yml/badge.svg)](https://github.com/textileio/js-tableland/actions/workflows/lint-and-test.yml)
-[![GitHub package.json version](https://img.shields.io/github/package-json/v/textileio/js-tableland.svg)](./package.json)
-[![Release](https://img.shields.io/github/release/textileio/js-tableland.svg)](https://github.com/textileio/js-tableland/releases/latest)
+[![GitHub package.json version](https://img.shields.io/github/package-json/v/textileio/js-tableland)](./package.json)
+[![Release](https://img.shields.io/github/v/release/textileio/js-tableland?sort=semver)](https://github.com/textileio/js-tableland/releases/latest)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg)](https://github.com/RichardLitt/standard-readme)
 
 A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.
