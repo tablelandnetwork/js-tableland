@@ -47,6 +47,7 @@ async function GeneralizedRPC(
       id: tableId,
       controller: address,
       type: options?.type,
+      dryrun: options?.dryrun,
     },
   ];
 

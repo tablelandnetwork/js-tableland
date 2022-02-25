@@ -57,6 +57,8 @@ export interface CreateTableOptions {
   description?: string;
   /** If your table was minted, but never created on tableland, use this param to create it. */
   id?: string;
+  /** do a dry run of create to see if the create statement is valid without creating the table */
+  dryrun?: boolean;
 }
 
 export interface CreateTableReceipt {
