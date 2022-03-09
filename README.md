@@ -1,15 +1,15 @@
-# @textile/tableland
+# @tableland/sdk
 
-[![Lint and test](https://github.com/textileio/js-tableland/actions/workflows/lint-and-test.yml/badge.svg)](https://github.com/textileio/js-tableland/actions/workflows/lint-and-test.yml)
-[![GitHub package.json version](https://img.shields.io/github/package-json/v/textileio/js-tableland.svg)](./package.json)
-[![Release](https://img.shields.io/github/release/textileio/js-tableland.svg)](https://github.com/textileio/js-tableland/releases/latest)
+[![Lint and test](https://github.com/tablelandnetwork/js-tableland/actions/workflows/lint-and-test.yml/badge.svg)](https://github.com/tablelandnetwork/js-tableland/actions/workflows/lint-and-test.yml)
+[![GitHub package.json version](https://img.shields.io/github/package-json/v/tablelandnetwork/js-tableland.svg)](./package.json)
+[![Release](https://img.shields.io/github/release/tablelandnetwork/js-tableland.svg)](https://github.com/tablelandnetwork/js-tableland/releases/latest)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg)](https://github.com/RichardLitt/standard-readme)
 
 A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.
 
 # Table of Contents
 
-- [@textile/tableland](#textiletableland)
+- [@tableland/sdk](#tablelandsdk)
 - [Table of Contents](#table-of-contents)
 - [Background](#background)
 - [Install](#install)
@@ -28,7 +28,7 @@ A TypeScript/JavaScript library for creating and querying Tables on the Tablelan
 
 # Background
 
-The Tableland project provides a zero-config Typescript/Javascript SDK that make it easy to interact with the Tableland network from Ethereum-based applications. The [`@textile/tableland`](https://github.com/textileio/js-tableland) SDK should feel comfortable to developers already familiar with the [`ethersjs` Javascript library](https://docs.ethers.io/). The Tableland SDK provides a small but powerful API surface that integrates nicely with existing ETH development best practices.
+The Tableland project provides a zero-config Typescript/Javascript SDK that make it easy to interact with the Tableland network from Ethereum-based applications. The [`@tableland/sdk`](https://github.com/tablelandnetwork/js-tableland) SDK should feel comfortable to developers already familiar with the [`ethersjs` Javascript library](https://docs.ethers.io/). The Tableland SDK provides a small but powerful API surface that integrates nicely with existing ETH development best practices.
 
 Simply import the library, connect to the Tableland network, and you are ready to start creating and updating tables.
 
@@ -39,7 +39,7 @@ Simply import the library, connect to the Tableland network, and you are ready t
 Installation is easy using npm or yarn. An ES bundle is also available for those operating purely in a browser environnement.
 
 ```bash
-npm i @textile/tableland
+npm i @tableland/sdk
 ```
 
 > Note: Not seeing the build type you need for your project or idea? Let us know, we're happy to work with you to improve the SDK usability!
@@ -49,39 +49,44 @@ npm i @textile/tableland
 Most common Tableland usage patterns will follow something like the following. In general, you'll need to connect, create, mutate, and query your tables. In that order :)
 
 ```typescript
-import { connect } from "@textile/tableland";
+import { connect } from "@tableland/sdk";
 
 const connection = await connect({ network: "testnet" });
 
 let id = connection.create(
   `CREATE TABLE table (id int primary key, name text, primary key (id))`
 );
-let res = await connection.query(`INSERT (firstname) VALUES ('Murray' INTO ${id})`);
+let res = await connection.query(
+  `INSERT (firstname) VALUES ('Murray' INTO ${id})`
+);
 res = await connection.query(`SELECT * FROM ${id}`);
 ```
 
 # API
 
-[Full library documentation available on GitHub](https://textileio.github.io/js-tableland/)!
+[Full library documentation available on GitHub](https://tablelandnetwork.github.io/js-tableland/)!
 
 ## Connecting to Tableland
 
-The `@textile/tableland` library includes functions for connecting to remote clients, creating and mutating tables, querying existing tables, and listing all user tables. These top level exports are available as individual function.
+The `@tableland/sdk` library includes functions for connecting to remote clients, creating and mutating tables, querying existing tables, and listing all user tables. These top level exports are available as individual function.
 
-The [`connect`](https://textileio.github.io/js-tableland/modules.html#connect) function can be used to connect to a remote Tableland host, which is required to interact with the Tableland network. If information about a known Tableland validator is available, this can be specified as the host parameter in the `options` argument to the connect function.
+The [`connect`](https://tablelandnetwork.github.io/js-tableland/modules.html#connect) function can be used to connect to a remote Tableland host, which is required to interact with the Tableland network. If information about a known Tableland validator is available, this can be specified as the host parameter in the `options` argument to the connect function.
 
 Upon calling `connect`, the user will be prompted to sign a self-signed JSON web token. This token is used to verify ownership of the given Ethereum address, and to avoid the user having to sign subsequent Tableland transactions/method calls.
 
 ```typescript
-import { connect } from "@textile/tableland";
+import { connect } from "@tableland/sdk";
 
 // By default, connect uses the tableland testnet validator
-const connection = await connect({ network: 'testnet', host: "http://testnet.tableland.network" });
+const connection = await connect({
+  network: "testnet",
+  host: "http://testnet.tableland.network",
+});
 ```
 
 ## Creating Tables
 
-Like most relational database systems, Tableland requires the user to create tables for storing, querying, and relating data. This is done via the [`create`](https://textileio.github.io/js-tableland/modules.html#create) function. The `create` function takes a plain SQL statement string. All tables require a primary key field called `id` to be valid. Most valid SQL _constraints_ are supported, and the following data types are currently [supported](https://github.com/textileio/go-tableland/blob/main/pkg/parsing/query_validator.go):
+Like most relational database systems, Tableland requires the user to create tables for storing, querying, and relating data. This is done via the [`create`](https://tablelandnetwork.github.io/js-tableland/modules.html#create) function. The `create` function takes a plain SQL statement string. All tables require a primary key field called `id` to be valid. Most valid SQL _constraints_ are supported, and the following data types are currently supported:
 
 - `int2`, `int4`, `int8`, `serial`, `bigserial`
 - `text`, `uri`, `varchar`, `bpchar`
@@ -107,10 +112,9 @@ Currently, tables created by a given Ethereum address are owned by that address.
 
 ## Listing Tables
 
-Once tables have been created for a given address, they can be listed via the [`list`](https://textileio.github.io/js-tableland/modules.html#list) function. This function takes no arguments and returns a list of [`TableMetadata`](https://textileio.github.io/js-tableland/interfaces/TableMetadata.html) objects, which contains table `name`, `id`, `description`, and `type`. The `type` of a table is defined by its normalized schema, whereas `name` and `description` can be specified by the caller upon creation. `id` is auto-generated by the `create` function.
+Once tables have been created for a given address, they can be listed via the [`list`](https://tablelandnetwork.github.io/js-tableland/modules.html#list) function. This function takes no arguments and returns a list of [`TableMetadata`](https://tablelandnetwork.github.io/js-tableland/interfaces/TableMetadata.html) objects, which contains table `name`, `id`, `description`, and `type`. The `type` of a table is defined by its normalized schema, whereas `name` and `description` can be specified by the caller upon creation. `id` is auto-generated by the `create` function.
 
 ```typescript
-
 // Assumes a connection has already been established as above
 
 const tables = await connection.list();
@@ -128,7 +132,7 @@ An application can use the `list` function to discover a user's tables, and dete
 
 ## Mutating Tables
 
-Now that we have a table to work with, it is easy to use vanilla SQL statements to insert new rows, update existing rows, and even delete old rows. These mutating SQL statements will eventually require network fees to be paid to network validators. For the current MVP trials, they remain free. The generic [`query`](https://textileio.github.io/js-tableland/modules.html#query) function can be used to mutate table rows. As an example, inserting new rows can be done like this:
+Now that we have a table to work with, it is easy to use vanilla SQL statements to insert new rows, update existing rows, and even delete old rows. These mutating SQL statements will eventually require network fees to be paid to network validators. For the current MVP trials, they remain free. The generic [`query`](https://tablelandnetwork.github.io/js-tableland/modules.html#query) function can be used to mutate table rows. As an example, inserting new rows can be done like this:
 
 ```typescript
 // Assumes a connection has already been established as above
@@ -160,7 +164,7 @@ Finally, the moment we've all been waiting for; we are ready to query our table 
 const { rows, columns } = await connection.query(`SELECT * FROM ${tableId};`);
 ```
 
-The response from a read query contains a [`ReadQueryResult`](https://textileio.github.io/js-tableland/interfaces/ReadQueryResult.html) object, with properties for `columns` and `rows`. The `columns` property contains an enumerated array of column ids and their corresponding [`ColumnDescriptor`](https://textileio.github.io/js-tableland/interfaces/ColumnDescriptor.html) information. The `rows` property is an array of row-wise table data. The rows can be iterated over and used to populate UIs etc.
+The response from a read query contains a [`ReadQueryResult`](https://tablelandnetwork.github.io/js-tableland/interfaces/ReadQueryResult.html) object, with properties for `columns` and `rows`. The `columns` property contains an enumerated array of column ids and their corresponding [`ColumnDescriptor`](https://tablelandnetwork.github.io/js-tableland/interfaces/ColumnDescriptor.html) information. The `rows` property is an array of row-wise table data. The rows can be iterated over and used to populate UIs etc.
 
 ```typescript
 for (const [rowId, row] of Object.entries(rows)) {
@@ -172,19 +176,19 @@ for (const [rowId, row] of Object.entries(rows)) {
 }
 ```
 
-And now you're ready to start building your next web3 experience with Tableland! If you want to dive deeper, you can check out the [full API documentation here](https://textileio.github.io/js-tableland/).
+And now you're ready to start building your next web3 experience with Tableland! If you want to dive deeper, you can check out the [full API documentation here](https://tablelandnetwork.github.io/js-tableland/).
 
 # Feedback
 
 Reach out with feedback and ideas:
 
-- [twitter.com/textileio](https://twitter.com/textileio)
-- [Create a new issue](https://github.com/textileio/js-tableland/issues)
+- [twitter.com/tableland\_\_](https://twitter.com/tableland__)
+- [Create a new issue](https://github.com/tablelandnetwork/js-tableland/issues)
 
 # Examples
 
-- [To-do App](https://github.com/textileio/tableland-example-apps/) ([source](https://github.com/textileio/tableland-example-apps/tree/loot-extension/tableland-todo))
-- [Loot Extension](https://github.com/textileio/tableland-example-apps/) ([source](https://github.com/textileio/tableland-example-apps/tree/loot-extension/loot-extension))
+- [To-do App](https://github.com/tablelandnetwork/example-apps/) ([source](https://github.com/tablelandnetwork/example-apps/tree/loot-extension/tableland-todo))
+- [Loot Extension](https://github.com/tablelandnetwork/example-apps/) ([source](https://github.com/tablelandnetwork/example-apps/tree/loot-extension/loot-extension))
 - More on the way!
 
 # Maintainers
@@ -211,4 +215,4 @@ Small note: If editing the README, please conform to the
 
 # License
 
-MIT AND Apache-2.0, © 2021 Textile.io
+MIT AND Apache-2.0, © 2021-2022 Tableland Network Contributors
