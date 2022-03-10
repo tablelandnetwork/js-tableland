@@ -4,6 +4,8 @@ import camelCase from "camelcase";
 import {
   TableMetadata,
   StructureHashReceipt,
+  RpcParams,
+  RpcRequestParam,
   ReadQueryResult,
   KeyVal,
   CreateTableOptions,
@@ -49,35 +51,34 @@ function camelCaseKeys(obj: object) {
 async function GeneralizedRPC(
   this: Connection,
   method: string,
-  statement: string,
-  tableId?: string,
-  options?: any
+  params: RpcParams = {}
 ) {
-  const signer = this.signer;
-  const address = await signer.getAddress();
+  const param: RpcRequestParam = {
+    create_statement: params.createStatement,
+    description: params.description,
+    dryrun: params.dryrun,
+    id: params.tableId,
+    statement: params.statement,
+  };
 
-  const params = [
-    {
-      statement: statement,
-      id: tableId,
-      controller: address,
-      type: options?.type,
-      dryrun: options?.dryrun,
-    },
-  ];
+  if (params.controller) {
+    const signer = this.signer;
+    const address = await signer.getAddress();
+    param.controller = address;
+  }
 
   return {
     jsonrpc: "2.0",
     method: `tableland_${method}`,
     id: 1,
-    params,
+    params: [param],
   };
 }
 
 export async function checkAuthorizedList(this: Connection): Promise<boolean> {
   const authorized: boolean = await SendCall.call(
     this,
-    await GeneralizedRPC.call(this, "authorize", "", "")
+    await GeneralizedRPC.call(this, "authorize")
   ).then((r) => {
     return r.status === 200;
   });
@@ -90,13 +91,13 @@ export async function create(
   tableId: string,
   options: CreateTableOptions
 ): Promise<CreateTableReceipt> {
-  const message = await GeneralizedRPC.call(
-    this,
-    "createTable",
-    query,
-    tableId,
-    options
-  );
+  const message = await GeneralizedRPC.call(this, "createTable", {
+    tableId: tableId,
+    statement: query,
+    dryrun: options.dryrun,
+    controller: true,
+  });
+
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 
@@ -107,7 +108,10 @@ async function hash(
   this: Connection,
   query: string
 ): Promise<StructureHashReceipt> {
-  const message = await GeneralizedRPC.call(this, "calculateTableHash", query);
+  const message = await GeneralizedRPC.call(this, "calculateTableHash", {
+    createStatement: query,
+  });
+
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 
@@ -118,7 +122,10 @@ async function query(
   this: Connection,
   query: string
 ): Promise<ReadQueryResult | null> {
-  const message = await GeneralizedRPC.call(this, "runSQL", query);
+  const message = await GeneralizedRPC.call(this, "runSQL", {
+    statement: query,
+    controller: true,
+  });
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 

@@ -22,6 +22,25 @@ export interface ConnectionOptions {
   network?: string;
 }
 
+export interface RpcParams {
+  controller?: boolean;
+  createStatement?: string;
+  description?: string;
+  dryrun?: boolean;
+  statement?: string;
+  tableId?: string;
+}
+
+export interface RpcRequestParam {
+  controller?: string;
+  /* eslint-disable-next-line camelcase */
+  create_statement?: string;
+  description?: string;
+  dryrun?: boolean;
+  id?: string;
+  statement?: string;
+}
+
 export interface ConnectionReceipt {
   jwsToken: Token;
   ethAccounts: Array<string>;

@@ -40,6 +40,19 @@ describe("query method", function () {
     await expect(res).toEqual({data: null});
   });
 
+  test("maps arguments to correct RPC params", async function () {
+    fetch.mockResponseOnce(FetchSelectQuerySuccess);
+
+    const queryStaement = "SELECT * FROM test_1;";
+    await connection.query(queryStaement);
+    const payload = JSON.parse(fetch.mock.calls[0][1]?.body as string);
+
+    await expect(payload.params[0]?.controller).toEqual("testaddress");
+    await expect(payload.params[0]?.statement).toEqual(queryStaement);
+    await expect(payload.params[0]).not.toHaveProperty("id");
+    await expect(payload.params[0]).not.toHaveProperty("create_statement");
+  });
+
   test("is case insensitive", async function () {
     fetch.mockResponseOnce(FetchSelectQuerySuccess);
 

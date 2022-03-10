@@ -24,10 +24,18 @@ describe("has method", function () {
   test("Hashing a table works", async function () {
     fetch.mockResponseOnce(FetchHashTableSuccess);
 
-    const hashResponse = await connection.hash(
-      "CREATE TABLE hello (id int primary key, val text);"
-    );
+    const createStatement = "CREATE TABLE hello (id int primary key, val text);";
+    const hashResponse = await connection.hash(createStatement);
+
+    const payload = JSON.parse(fetch.mock.calls[0][1]?.body as string);
+
+    // test that faux response makes it through
     await expect(hashResponse.structureHash).toEqual("ef7be01282ea97380e4d3bbcba6774cbc7242c46ee51b7e611f1efdfa3623e53");
+
+    // test that fetch is called how validator expects
+    await expect(payload.params[0]?.create_statement).toEqual(createStatement);
+    await expect(payload.params[0]).not.toHaveProperty("id");
+    await expect(payload.params[0]).not.toHaveProperty("controller");
   });
 
   test("Hashing a table throws if statement is not valid", async function () {

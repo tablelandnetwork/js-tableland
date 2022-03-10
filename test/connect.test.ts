@@ -75,4 +75,14 @@ describe("connect function", function () {
       "Only Ethereum Rinkeby network is currently supported. Switch your wallet connection and reconnect."
     );
   });
+
+  test("throws error if connection network is not supported and no host is provided", async function () {
+    await expect(async function () {
+      await connect({
+        network: "furrykitties"
+      });
+    } as ConnectionOptions).rejects.toThrow(
+      "Please specify a host to connect to. (Example: https://env.tableland.network)"
+    );
+  });
 });
