@@ -4,6 +4,9 @@
   "description": "A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.",
   "repository": "https://github.com/tablelandnetwork/js-tableland",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "tableland",
     "sql",
