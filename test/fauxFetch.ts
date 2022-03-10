@@ -31,6 +31,7 @@ export const FetchCreateTableOnTablelandSuccess = async () => {
       id: 1,
       result: {
         name: "hello_115",
+        structure_hash: "ef7be01282ea97380e4d3bbcba6774cbc7242c46ee51b7e611f1efdfa3623e53"
       },
     }),
   };

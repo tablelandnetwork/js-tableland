@@ -1,8 +1,10 @@
 /* eslint-disable node/no-missing-import */
 
+import camelCase from "camelcase";
 import {
   TableMetadata,
   ReadQueryResult,
+  KeyVal,
   CreateTableOptions,
   CreateTableReceipt,
   Connection,
@@ -29,6 +31,18 @@ async function sendResponse(res: any) {
   if (json.error) throw new Error(json.error.message);
 
   return json.result;
+}
+
+// Take an Object with any symantic for key naming and return a new Object with keys that are lowerCamelCase
+// Example: `camelCaseKeys({structure_hash: "123"})` returns `{structureHash: "123"}`
+function camelCaseKeys(obj: object) {
+  return Object.fromEntries(
+    Object.entries(obj).map((entry: KeyVal) => {
+      const key = entry[0];
+      const val = entry[1];
+      return [camelCase(key), val];
+    })
+  );
 }
 
 async function GeneralizedRPC(
@@ -85,7 +99,7 @@ export async function create(
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 
-  return json;
+  return camelCaseKeys(json) as CreateTableReceipt;
 }
 
 async function query(
@@ -96,7 +110,7 @@ async function query(
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 
-  return json;
+  return camelCaseKeys(json) as ReadQueryResult;
 }
 
 export { query, list, TableMetadata };

@@ -32,6 +32,7 @@ describe("create method", function () {
       "CREATE TABLE hello (id int primary key, val text);"
     );
     await expect(createReceipt.name).toEqual("hello_115");
+    await expect(createReceipt.structureHash).toEqual("ef7be01282ea97380e4d3bbcba6774cbc7242c46ee51b7e611f1efdfa3623e53");
   });
 
   test("Create table throws if dryrun fails", async function () {

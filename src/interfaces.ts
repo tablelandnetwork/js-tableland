@@ -47,6 +47,11 @@ export interface Row extends Array<any> {
   [index: number]: string | number;
 }
 
+export interface KeyVal {
+  0: string;
+  1: any;
+}
+
 export interface ReadQueryResult {
   columns: Array<Column>;
   rows: Array<Row>;
@@ -63,7 +68,7 @@ export interface CreateTableOptions {
 
 export interface CreateTableReceipt {
   name: string;
-  id: string;
+  structureHash: string;
   description?: string;
 }
 
