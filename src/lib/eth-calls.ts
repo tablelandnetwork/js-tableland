@@ -1,5 +1,5 @@
 /* eslint-disable-next-line camelcase */
-import { TablelandTables__factory } from "@textile/eth-tableland";
+import { TablelandTables__factory } from "@tableland/eth";
 import { TableRegistrationReceipt, Connection } from "../interfaces.js";
 
 async function registerTable(
