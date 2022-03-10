@@ -72,6 +72,10 @@ export interface CreateTableReceipt {
   description?: string;
 }
 
+export interface StructureHashReceipt {
+  structureHash: string;
+}
+
 export interface TableRegistrationReceipt {
   receipt: ContractReceipt;
   tableId: BigNumber;
@@ -94,4 +98,5 @@ export interface Connection {
     options: CreateTableOptions
   ) => Promise<CreateTableReceipt>;
   query: (query: string) => Promise<null | ReadQueryResult>;
+  hash: (query: string) => Promise<StructureHashReceipt>;
 }

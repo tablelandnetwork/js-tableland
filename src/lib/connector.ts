@@ -9,6 +9,7 @@ import { list } from "./list.js";
 import { createToken } from "./token.js";
 import { query } from "./query.js";
 import { create } from "./create.js";
+import { hash } from "./hash.js";
 
 declare let globalThis: any;
 
@@ -107,6 +108,9 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     },
     get create() {
       return create;
+    },
+    get hash() {
+      return hash;
     },
   };
 

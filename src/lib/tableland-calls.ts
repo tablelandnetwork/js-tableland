@@ -3,6 +3,7 @@
 import camelCase from "camelcase";
 import {
   TableMetadata,
+  StructureHashReceipt,
   ReadQueryResult,
   KeyVal,
   CreateTableOptions,
@@ -102,6 +103,17 @@ export async function create(
   return camelCaseKeys(json) as CreateTableReceipt;
 }
 
+async function hash(
+  this: Connection,
+  query: string
+): Promise<StructureHashReceipt> {
+  const message = await GeneralizedRPC.call(this, "calculateTableHash", query);
+  const response = await SendCall.call(this, message);
+  const json = await sendResponse(response);
+
+  return camelCaseKeys(json) as StructureHashReceipt;
+}
+
 async function query(
   this: Connection,
   query: string
@@ -113,4 +125,4 @@ async function query(
   return camelCaseKeys(json) as ReadQueryResult;
 }
 
-export { query, list, TableMetadata };
+export { query, list, hash, TableMetadata };
