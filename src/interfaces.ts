@@ -66,10 +66,7 @@ export interface Row extends Array<any> {
   [index: number]: string | number;
 }
 
-export interface KeyVal {
-  0: string;
-  1: any;
-}
+export type KeyVal<T = any> = [string, T];
 
 export interface ReadQueryResult {
   columns: Array<Column>;
@@ -100,10 +97,10 @@ export interface TableRegistrationReceipt {
   tableId: BigNumber;
 }
 
-export interface RpcReceipt {
+export interface RpcReceipt<T = any> {
   jsonrpc: string;
   id: number;
-  result: any;
+  result: T;
 }
 
 export interface Connection {

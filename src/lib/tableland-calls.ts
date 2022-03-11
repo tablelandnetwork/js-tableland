@@ -33,7 +33,7 @@ async function sendResponse(res: any) {
   // NOTE: we are leaving behind the error code because the Error type does not allow for a `code` property
   if (json.error) throw new Error(json.error.message);
 
-  return json.result;
+  return camelCaseKeys(json.result);
 }
 
 // Take an Object with any symantic for key naming and return a new Object with keys that are lowerCamelCase
@@ -101,7 +101,7 @@ export async function create(
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 
-  return camelCaseKeys(json) as CreateTableReceipt;
+  return json as CreateTableReceipt;
 }
 
 async function hash(
@@ -115,7 +115,7 @@ async function hash(
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 
-  return camelCaseKeys(json) as StructureHashReceipt;
+  return json as StructureHashReceipt;
 }
 
 async function query(
@@ -129,7 +129,7 @@ async function query(
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
 
-  return camelCaseKeys(json) as ReadQueryResult;
+  return json as ReadQueryResult;
 }
 
 export { query, list, hash, TableMetadata };
