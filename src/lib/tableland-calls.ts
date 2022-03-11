@@ -53,19 +53,17 @@ async function GeneralizedRPC(
   method: string,
   params: RpcParams = {}
 ) {
+  const signer = this.signer;
+  const address = await signer.getAddress();
+
   const param: RpcRequestParam = {
+    controller: address,
     create_statement: params.createStatement,
     description: params.description,
     dryrun: params.dryrun,
     id: params.tableId,
     statement: params.statement,
   };
-
-  if (params.controller) {
-    const signer = this.signer;
-    const address = await signer.getAddress();
-    param.controller = address;
-  }
 
   return {
     jsonrpc: "2.0",
@@ -95,7 +93,6 @@ export async function create(
     tableId: tableId,
     statement: query,
     dryrun: options.dryrun,
-    controller: true,
   });
 
   const response = await SendCall.call(this, message);
@@ -124,7 +121,6 @@ async function query(
 ): Promise<ReadQueryResult | null> {
   const message = await GeneralizedRPC.call(this, "runSQL", {
     statement: query,
-    controller: true,
   });
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
