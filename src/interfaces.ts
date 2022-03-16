@@ -22,6 +22,25 @@ export interface ConnectionOptions {
   network?: string;
 }
 
+export interface RpcParams {
+  controller?: boolean;
+  createStatement?: string;
+  description?: string;
+  dryrun?: boolean;
+  statement?: string;
+  tableId?: string;
+}
+
+export interface RpcRequestParam {
+  controller?: string;
+  /* eslint-disable-next-line camelcase */
+  create_statement?: string;
+  description?: string;
+  dryrun?: boolean;
+  id?: string;
+  statement?: string;
+}
+
 export interface ConnectionReceipt {
   jwsToken: Token;
   ethAccounts: Array<string>;
@@ -47,6 +66,8 @@ export interface Row extends Array<any> {
   [index: number]: string | number;
 }
 
+export type KeyVal<T = any> = [string, T];
+
 export interface ReadQueryResult {
   columns: Array<Column>;
   rows: Array<Row>;
@@ -63,8 +84,12 @@ export interface CreateTableOptions {
 
 export interface CreateTableReceipt {
   name: string;
-  id: string;
+  structureHash: string;
   description?: string;
+}
+
+export interface StructureHashReceipt {
+  structureHash: string;
 }
 
 export interface TableRegistrationReceipt {
@@ -72,10 +97,10 @@ export interface TableRegistrationReceipt {
   tableId: BigNumber;
 }
 
-export interface RpcReceipt {
+export interface RpcReceipt<T = any> {
   jsonrpc: string;
   id: number;
-  result: any;
+  result: T;
 }
 
 export interface Connection {
@@ -89,4 +114,5 @@ export interface Connection {
     options: CreateTableOptions
   ) => Promise<CreateTableReceipt>;
   query: (query: string) => Promise<null | ReadQueryResult>;
+  hash: (query: string) => Promise<StructureHashReceipt>;
 }

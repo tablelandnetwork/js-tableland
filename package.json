@@ -64,6 +64,7 @@
     "@typescript-eslint/parser": "^4.33.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^27.4.6",
+    "camelcase": "^6.3.0",
     "esbuild": "^0.14.18",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",

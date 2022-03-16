@@ -28,10 +28,16 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-    const createReceipt = await connection.create(
-      "CREATE TABLE hello (id int primary key, val text);"
-    );
+    const createStatement = "CREATE TABLE hello (id int primary key, val text);";
+    const createReceipt = await connection.create(createStatement);
     await expect(createReceipt.name).toEqual("hello_115");
+    await expect(createReceipt.structureHash).toEqual("ef7be01282ea97380e4d3bbcba6774cbc7242c46ee51b7e611f1efdfa3623e53");
+
+    const payload = JSON.parse(fetch.mock.calls[2][1]?.body as string);
+
+    await expect(payload.params[0]?.statement).toEqual(createStatement);
+    await expect(payload.params[0]?.id).toEqual("1143");
+    await expect(payload.params[0]?.controller).toEqual("testaddress");
   });
 
   test("Create table throws if dryrun fails", async function () {
