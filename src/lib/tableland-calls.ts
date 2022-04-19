@@ -90,9 +90,9 @@ export async function create(
   options: CreateTableOptions
 ): Promise<CreateTableReceipt> {
   const message = await GeneralizedRPC.call(this, "createTable", {
+    ...options,
     tableId: tableId,
     statement: query,
-    dryrun: options.dryrun,
   });
 
   const response = await SendCall.call(this, message);

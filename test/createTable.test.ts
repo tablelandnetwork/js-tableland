@@ -52,4 +52,18 @@ describe("create method", function () {
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
 
   });
+
+  test("Create table sends a description with the statement, if provided", async function () {
+    fetch.mockResponseOnce(FetchAuthorizedListSuccess);
+    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
+    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
+
+    const createStatement = "CREATE TABLE hello (id int primary key, val text);";
+    const description = "desciption of the table being created.  It can be any string.";
+    await connection.create(createStatement, {description: description});
+
+    const payload = JSON.parse(fetch.mock.calls[2][1]?.body as string);
+
+    await expect(payload.params[0].description).toEqual(description)
+  });
 });
