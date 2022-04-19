@@ -34,7 +34,8 @@
   "files": [
     "dist/**/*.js?(.map)",
     "dist/**/*.d.ts",
-    "dist/**/package.json"
+    "dist/**/package.json",
+    "src/**/*.ts"
   ],
   "moduleTypes": {
     "jest.config.js": "cjs"
