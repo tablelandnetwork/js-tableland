@@ -69,8 +69,10 @@ export interface Row extends Array<any> {
 export type KeyVal<T = any> = [string, T];
 
 export interface ReadQueryResult {
-  columns: Array<Column>;
-  rows: Array<Row>;
+  data: {
+    columns: Array<Column>;
+    rows: Array<Row>;
+  };
 }
 
 export interface CreateTableOptions {
