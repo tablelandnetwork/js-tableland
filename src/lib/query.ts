@@ -1,3 +1,5 @@
+/* eslint-disable node/no-unpublished-import */
+
 /**
  * Send a SQL query to tableland network
  * @param query A SQL query to run
