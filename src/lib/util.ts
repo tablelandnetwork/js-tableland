@@ -1,7 +1,7 @@
 declare let globalThis: any;
 
 // From https://www.npmjs.com/package/btoa
-const ployfills = {
+const polyfills = {
   btoa: function (str: string | Buffer) {
     let buffer;
 
@@ -15,4 +15,4 @@ const ployfills = {
   },
 };
 
-export const btoa = globalThis.btoa ?? ployfills.btoa;
+export const btoa = globalThis.btoa ?? polyfills.btoa;
