@@ -1,5 +1,5 @@
 /* eslint-disable node/no-missing-import */
-
+/* eslint-disable node/no-unpublished-import */
 import camelCase from "camelcase";
 import {
   TableMetadata,
