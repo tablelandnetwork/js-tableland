@@ -1,4 +1,3 @@
-/* eslint-disable node/no-unpublished-import */
 import { StructureHashReceipt, Connection } from "../interfaces.js";
 import * as tablelandCalls from "./tableland-calls.js";
 /**

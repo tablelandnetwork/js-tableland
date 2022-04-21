@@ -1,4 +1,3 @@
-/* eslint-disable node/no-unpublished-import */
 import { TableMetadata, Connection } from "../interfaces.js";
 
 export async function list(this: Connection): Promise<TableMetadata[]> {
