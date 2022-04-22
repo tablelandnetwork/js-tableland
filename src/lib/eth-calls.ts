@@ -1,3 +1,5 @@
+/* eslint-disable node/no-unpublished-import */
+
 /* eslint-disable-next-line camelcase */
 import { TablelandTables__factory } from "@tableland/eth";
 import { TableRegistrationReceipt, Connection } from "../interfaces.js";

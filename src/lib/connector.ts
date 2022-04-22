@@ -1,4 +1,5 @@
-import { Signer, utils, ethers } from "ethers";
+/* eslint-disable node/no-unpublished-import */
+import { Signer, ethers } from "ethers";
 import {
   ConnectionOptions,
   Connection,
@@ -27,31 +28,20 @@ export async function getSigner(): Promise<Signer> {
   return signer;
 }
 
-export async function userCreatesToken(signer: Signer): Promise<Token> {
-  const sign = {
-    signMessage: async (message: Uint8Array): Promise<Uint8Array> => {
-      const sig = await signer.signMessage(message);
-      return utils.arrayify(sig);
-    },
-  };
-  const iat = ~~(Date.now() / 1000);
-  const exp = iat + 60 * 60 * 10; // Default to ~10 hours
+export async function userCreatesToken(
+  signer: Signer,
+  chainId: number
+): Promise<Token> {
+  const now = Date.now();
+  const exp = new Date(now + 10 * 60 * 60 * 1000).toISOString(); // Default to ~10 hours
 
-  // WARN: This is a non-standard JWT
-  // Borrows ideas from: https://github.com/ethereum/EIPs/issues/1341
-  const iss = await signer.getAddress();
-  const network = await signer.provider?.getNetwork();
-  const chain = network?.chainId ?? "unknown";
-  let net = network?.name;
-  if (net?.startsWith("matic")) net = "poly";
-  else net = "eth";
-  const kid = `${net}:${chain}:${iss}`;
-
-  return await createToken(
-    sign,
-    { kid: kid, alg: "ETH" },
-    { iss: iss, exp: exp }
-  );
+  return await createToken(signer, {
+    chainId: chainId,
+    expirationTime: exp,
+    uri: globalThis.document?.location.origin,
+    version: "1",
+    statement: "Official Tableland SDK",
+  });
 }
 
 export async function connect(options: ConnectionOptions): Promise<Connection> {
@@ -86,7 +76,8 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     );
   }
 
-  const token = options.token ?? (await userCreatesToken(signer));
+  const token =
+    options.token ?? (await userCreatesToken(signer, providerNetwork.chainId));
   const connectionObject: Connection = {
     get token() {
       return token;
