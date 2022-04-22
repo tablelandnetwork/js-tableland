@@ -50,6 +50,7 @@ export interface ConnectionReceipt {
 export interface SupportedNetwork {
   key: string;
   phrase: string;
+  chainId: number;
 }
 
 /**

@@ -18,7 +18,12 @@ const SUPPORTED_NETWORKS: SupportedNetwork[] = [
   {
     key: "rinkeby",
     phrase: "Ethereum Rinkeby",
-  },
+    chainId: 4,
+  }, {
+    key: "hardhat",
+    phrase: "Local Hardhat",
+    chainId: 31337,
+  }
 ];
 
 export async function getSigner(): Promise<Signer> {
@@ -59,7 +64,7 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
 
   if (
     !providerNetwork?.name ||
-    !SUPPORTED_NETWORKS.find((net) => net.key === providerNetwork.name)
+    !SUPPORTED_NETWORKS.find((net) => net.key === providerNetwork.name || net.chainId === providerNetwork.chainId)
   ) {
     const plural = SUPPORTED_NETWORKS.length > 1;
     const phrase = plural
