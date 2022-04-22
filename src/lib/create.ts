@@ -1,12 +1,8 @@
 /* eslint-disable node/no-unpublished-import */
-import {
-  CreateTableOptions,
-  CreateTableReceipt,
-  Connection,
-} from "../interfaces.js";
+import { ContractReceipt } from "ethers";
+import { CreateTableOptions, Connection } from "../interfaces.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import { registerTable } from "./eth-calls.js";
-import { BigNumber } from "ethers";
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register
  * a new Table on Tableland
@@ -18,7 +14,7 @@ export async function create(
   this: Connection,
   query: string,
   options: CreateTableOptions = {}
-): Promise<CreateTableReceipt> {
+): Promise<ContractReceipt> {
   const authorized = await tablelandCalls.checkAuthorizedList.call(this);
   if (!authorized) throw new Error("You are not authorized to create a table");
   // Validation
@@ -31,11 +27,7 @@ export async function create(
     ...options,
   });
 
-  let id = options.id;
-  if (!id) {
-    const { tableId } = await registerTable.call(this);
-    id = BigNumber.from(tableId).toString();
-  }
+  return await registerTable.call(this, query);
 
-  return await tablelandCalls.create.call(this, query, id, options);
+  // TODO: we can potentially listen to Execution Tracker here and wait to return
 }

@@ -90,6 +90,7 @@ export interface StructureHashReceipt {
   structureHash: string;
 }
 
+// TODO: don't think we need this anymore... double check and remove
 export interface TableRegistrationReceipt {
   receipt: ContractReceipt;
   tableId: BigNumber;
@@ -110,7 +111,7 @@ export interface Connection {
   create: (
     query: string,
     options: CreateTableOptions
-  ) => Promise<CreateTableReceipt>;
+  ) => Promise<ContractReceipt>;
   query: (query: string) => Promise<null | ReadQueryResult>;
   hash: (query: string) => Promise<StructureHashReceipt>;
 }
