@@ -1,3 +1,4 @@
+/* eslint-disable node/no-unpublished-import */
 /* eslint-disable node/no-missing-import */
 
 import camelCase from "camelcase";
@@ -32,13 +33,22 @@ async function sendResponse(res: any) {
   const json = await res.json();
   // NOTE: we are leaving behind the error code because the Error type does not allow for a `code` property
   if (json.error) throw new Error(json.error.message);
+  if (!json.result) throw new Error("Malformed RPC response");
 
-  return camelCaseKeys(json.result);
+  // response to reads is in `result.data` key, note: data === null for writes
+  if (json.result.data) return camelCaseKeys(json.result.data);
+  // response to create or hash is in `result`
+  if (json.result.name || json.result.structure_hash) {
+    return camelCaseKeys(json.result);
+  }
+
+  // return undefined for writes
+  return undefined;
 }
 
 // Take an Object with any symantic for key naming and return a new Object with keys that are lowerCamelCase
 // Example: `camelCaseKeys({structure_hash: "123"})` returns `{structureHash: "123"}`
-function camelCaseKeys(obj: object) {
+function camelCaseKeys(obj: any) {
   return Object.fromEntries(
     Object.entries(obj).map((entry: KeyVal) => {
       const key = entry[0];

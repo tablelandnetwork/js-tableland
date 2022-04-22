@@ -58,15 +58,11 @@ export interface ColumnDescriptor {
   name: string;
 }
 
-export interface Column extends Array<any> {
-  [index: number]: ColumnDescriptor;
-}
-
-export interface Row extends Array<any> {
-  [index: number]: string | number;
-}
-
 export type KeyVal<T = any> = [string, T];
+
+export type Column = Array<ColumnDescriptor>;
+
+export type Row = Array<string | number | boolean>;
 
 export interface ReadQueryResult {
   columns: Array<Column>;

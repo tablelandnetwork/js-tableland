@@ -1,3 +1,4 @@
+/* eslint-disable node/no-unpublished-import */
 import { Signer, utils, ethers } from "ethers";
 import {
   ConnectionOptions,

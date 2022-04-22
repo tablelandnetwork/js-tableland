@@ -52,7 +52,7 @@ export const FetchSelectQuerySuccess = async () => {
   return JSON.stringify({
     jsonrpc: "2.0",
     id: 1,
-    result: {columns: ['colname'], rows: ['val1']}
+    result: {data: {columns: [{name: 'colname'}], rows: ['val1']}}
   });
 };
 
