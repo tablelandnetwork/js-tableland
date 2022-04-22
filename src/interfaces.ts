@@ -1,4 +1,3 @@
-/* eslint-disable node/no-unpublished-import */
 import { BigNumber, ContractReceipt, Signer } from "ethers";
 
 export interface TableMetadata {

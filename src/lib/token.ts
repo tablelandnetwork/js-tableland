@@ -1,4 +1,3 @@
-/* eslint-disable node/no-unpublished-import */
 import { SiweMessage, generateNonce } from "siwe";
 import { Signer } from "ethers";
 import { btoa } from "./util";

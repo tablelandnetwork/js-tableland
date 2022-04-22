@@ -1,4 +1,3 @@
-/* eslint-disable node/no-unpublished-import */
 import { ContractReceipt } from "ethers";
 /* eslint-disable-next-line camelcase */
 import { TablelandTables__factory } from "@tableland/eth";

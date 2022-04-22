@@ -1,4 +1,3 @@
-/* eslint-disable node/no-unpublished-import */
 import { Signer, ethers } from "ethers";
 import { ConnectionOptions, Connection, Token } from "../interfaces.js";
 import { list } from "./list.js";
