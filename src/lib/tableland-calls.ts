@@ -92,11 +92,9 @@ async function hash(
   this: Connection,
   query: string
 ): Promise<StructureHashReceipt> {
-  const message = await GeneralizedRPC.call(
-    this,
-    "validateCreateTable",
-    { createStatement: query }
-  );
+  const message = await GeneralizedRPC.call(this, "validateCreateTable", {
+    createStatement: query,
+  });
 
   const response = await SendCall.call(this, message);
   const json = await sendResponse(response);
