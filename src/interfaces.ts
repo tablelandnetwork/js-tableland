@@ -1,4 +1,3 @@
-/* eslint-disable node/no-unpublished-import */
 import { BigNumber, ContractReceipt, Signer } from "ethers";
 
 export interface TableMetadata {
@@ -50,6 +49,7 @@ export interface ConnectionReceipt {
 export interface SupportedNetwork {
   key: string;
   phrase: string;
+  chainId: number;
 }
 
 /**
@@ -89,6 +89,7 @@ export interface StructureHashReceipt {
   structureHash: string;
 }
 
+// TODO: don't think we need this anymore... double check and remove
 export interface TableRegistrationReceipt {
   receipt: ContractReceipt;
   tableId: BigNumber;
@@ -109,7 +110,7 @@ export interface Connection {
   create: (
     query: string,
     options: CreateTableOptions
-  ) => Promise<CreateTableReceipt>;
+  ) => Promise<ContractReceipt>;
   query: (query: string) => Promise<null | ReadQueryResult>;
   hash: (query: string) => Promise<StructureHashReceipt>;
 }

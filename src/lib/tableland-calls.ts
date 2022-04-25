@@ -1,5 +1,4 @@
 /* eslint-disable node/no-missing-import */
-/* eslint-disable node/no-unpublished-import */
 import camelCase from "camelcase";
 import {
   TableMetadata,
@@ -8,8 +7,6 @@ import {
   RpcRequestParam,
   ReadQueryResult,
   KeyVal,
-  CreateTableOptions,
-  CreateTableReceipt,
   Connection,
 } from "../interfaces.js";
 import { list } from "./list.js";
@@ -69,7 +66,6 @@ async function GeneralizedRPC(
     controller: address,
     create_statement: params.createStatement,
     description: params.description,
-    dryrun: params.dryrun,
     id: params.tableId,
     statement: params.statement,
   };
@@ -92,29 +88,11 @@ export async function checkAuthorizedList(this: Connection): Promise<boolean> {
   return authorized;
 }
 
-export async function create(
-  this: Connection,
-  query: string,
-  tableId: string,
-  options: CreateTableOptions
-): Promise<CreateTableReceipt> {
-  const message = await GeneralizedRPC.call(this, "createTable", {
-    ...options,
-    tableId: tableId,
-    statement: query,
-  });
-
-  const response = await SendCall.call(this, message);
-  const json = await sendResponse(response);
-
-  return json as CreateTableReceipt;
-}
-
 async function hash(
   this: Connection,
   query: string
 ): Promise<StructureHashReceipt> {
-  const message = await GeneralizedRPC.call(this, "calculateTableHash", {
+  const message = await GeneralizedRPC.call(this, "validateCreateTable", {
     createStatement: query,
   });
 

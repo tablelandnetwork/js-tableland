@@ -2,7 +2,7 @@ module.exports = {
   TablelandTables__factory: {
     connect: function () {
       return {
-        safeMint: function () {
+        createTable: function () {
           return {
             wait: async function () {
               return {

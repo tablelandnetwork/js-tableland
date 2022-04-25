@@ -1,25 +1,13 @@
-/* eslint-disable node/no-unpublished-import */
 import { Signer, ethers } from "ethers";
-import {
-  ConnectionOptions,
-  Connection,
-  Token,
-  SupportedNetwork,
-} from "../interfaces.js";
+import { ConnectionOptions, Connection, Token } from "../interfaces.js";
 import { list } from "./list.js";
 import { createToken } from "./token.js";
 import { query } from "./query.js";
 import { create } from "./create.js";
 import { hash } from "./hash.js";
+import { SUPPORTED_NETWORKS } from "./util.js";
 
 declare let globalThis: any;
-
-const SUPPORTED_NETWORKS: SupportedNetwork[] = [
-  {
-    key: "rinkeby",
-    phrase: "Ethereum Rinkeby",
-  },
-];
 
 export async function getSigner(): Promise<Signer> {
   await globalThis.ethereum.request({ method: "eth_requestAccounts" });
@@ -59,7 +47,12 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
 
   if (
     !providerNetwork?.name ||
-    !SUPPORTED_NETWORKS.find((net) => net.key === providerNetwork.name)
+    !SUPPORTED_NETWORKS.find((net) => {
+      return (
+        net.key === providerNetwork.name ||
+        net.chainId === providerNetwork.chainId
+      );
+    })
   ) {
     const plural = SUPPORTED_NETWORKS.length > 1;
     const phrase = plural
