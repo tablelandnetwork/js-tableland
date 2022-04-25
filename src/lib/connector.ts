@@ -5,6 +5,7 @@ import { createToken } from "./token.js";
 import { query } from "./query.js";
 import { create } from "./create.js";
 import { hash } from "./hash.js";
+import { receipt } from "./tableland-calls.js";
 import { SUPPORTED_NETWORKS } from "./util.js";
 
 declare let globalThis: any;
@@ -95,6 +96,9 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     },
     get hash() {
       return hash;
+    },
+    get receipt() {
+      return receipt;
     },
   };
 

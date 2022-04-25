@@ -23,7 +23,10 @@ export async function create(
   // then fail to create the table on the Tableland network
   await tablelandCalls.hash.call(this, query);
 
-  return await registerTable.call(this, query);
+  const txn = await registerTable.call(this, query);
 
   // TODO: we can potentially listen to Execution Tracker here and wait to return
+  const receipt = await tablelandCalls.receipt.call(this, txn.transactionHash)
+  console.log(receipt);
+  return txn;
 }
