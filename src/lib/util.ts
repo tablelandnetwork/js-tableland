@@ -5,7 +5,7 @@ declare let globalThis: any;
 // From https://www.npmjs.com/package/btoa
 const polyfills = {
   btoa: function (str: string) {
-    const buffer = Buffer.from(str.toString(), "binary");
+    const buffer = Buffer.from(str, "binary");
 
     return buffer.toString("base64");
   },
