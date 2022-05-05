@@ -8,8 +8,8 @@ export async function list(this: Connection): Promise<TableMetadata[]> {
     {
       headers: {
         Authorization: `Bearer ${this.token.token}`,
-      }
-    },
+      },
+    }
   ).then((r) => r.json());
 
   return resp;

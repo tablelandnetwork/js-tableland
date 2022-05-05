@@ -59,7 +59,11 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     const phrase = plural
       ? SUPPORTED_NETWORKS.map((net: any, i: number) => {
           const last = i === SUPPORTED_NETWORKS.length - 1;
-          return last ? `and ${net.phrase}` : net.phrase;
+          const first = i === 0;
+
+          if (first) return net.phrase;
+          if (last) return ` and ${net.phrase}`;
+          return ` ${net.phrase}`;
         })
       : SUPPORTED_NETWORKS[0].phrase;
 
