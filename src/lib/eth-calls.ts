@@ -12,12 +12,9 @@ async function registerTable(
   const address = await signer.getAddress();
   /* eslint-disable-next-line camelcase */
 
-  const network = this.network;
+  const contractAddress = this.contract ?? contractAddresses[this.network];
 
-  const contract = TablelandTables__factory.connect(
-    contractAddresses[network],
-    signer
-  );
+  const contract = TablelandTables__factory.connect(contractAddress, signer);
 
   const tx = await contract.createTable(address, query);
 
