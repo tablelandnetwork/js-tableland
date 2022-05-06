@@ -19,7 +19,8 @@ export async function create(
 
   const txn = await registerTable.call(this, query);
 
-  // TODO: we can potentially listen to Execution Tracker here and wait to return until we have the receipt
+  // TODO: we can potentially listen to Execution Tracker here and wait to return
+  //       until we have the receipt, but I'm sure if that makes sense.
   // const receipt = await tablelandCalls.receipt.call(this, txn.transactionHash)
   // console.log(receipt);
   return txn;

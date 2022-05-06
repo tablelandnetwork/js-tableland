@@ -39,6 +39,10 @@ async function sendResponse(res: any) {
     return camelCaseKeys(json.result);
   }
 
+  if (json.result.receipt) {
+    return camelCaseKeys(json.result.receipt);
+  }
+
   // return undefined for writes
   return undefined;
 }

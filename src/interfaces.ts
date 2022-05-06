@@ -74,21 +74,13 @@ export interface ReadQueryResult {
 }
 
 export interface ReceiptResult {
-  /** ok indicates the transaction has been processed by the validator, does NOT indicate if the event was executed */
-  ok: boolean;
-  /*
-   * presense if the error field indicates failure of, or refusal to execute, the event associated with the transaction
-   * absense of the error field indicates succes for execution of the event associated with the transaction
-   */
-  receipt: {
-    /* eslint-disable-next-line camelcase */
-    chain_id: number;
-    /* eslint-disable-next-line camelcase */
-    txn_hash: string;
-    /* eslint-disable-next-line camelcase */
-    block_number: number;
-    error?: string;
-  };
+  /* eslint-disable-next-line camelcase */
+  chain_id: number;
+  /* eslint-disable-next-line camelcase */
+  txn_hash: string;
+  /* eslint-disable-next-line camelcase */
+  block_number: number;
+  error?: string;
 }
 
 export interface CreateTableOptions {
