@@ -90,7 +90,7 @@ const connection = await connect({
  - signer: Optionally pass in a Signer object. This can be used if the caller wants to use a signer other than the browser default. This is useful in the node.js enviroment, or really anywhere except within a browser that has a built-in wallet.
  - host: This is the http url of the validator that the caller wants to connect to. This is optional and defaults to https://testnet.tableland.network. If host is not specified then network must be equal to 'testnet'
  - network: This is the name of the network, and as of this pr can be one of local, optimism-kovan-staging, staging, or testnet. This name is mapped to the address of a contract that has been deployed and is being watched by a Tableland network Validator on that chain. Note: 'local' is a locally running hardhat node, which requires that the caller has already got that running. This is useful for contributors.
- - contract: This PR will add the optional contract option. If specified the SDKs direct calls to the SC will go to this address. This is potentially useful for testing and local development. Note: the abi of the contract must match the abi of the version of eth-tableland was used for the build of the SDK. This is useful for contributors.
+ - contract: Optionally pass in the address of a contract for making direct calls. If specified, the SDK's direct calls to the smart contract will go to _this_ address (rather than the default contract). This is potentially useful for testing and local development. Note: the ABI of the contract must match the ABI of the version of `eth-tableland` that was used to build the SDK. This is useful for contributors.
 
 ## Creating Tables
 
