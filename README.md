@@ -84,6 +84,14 @@ const connection = await connect({
 });
 ```
 
+### Connection options
+
+ - token: Optionally pass in a Bearer token. This can be used if the caller doesn't want the SDK to generate a SIWE token. Potential uses include apps that save the user's SIWE token so they don't have to prompt the user to sign a new token on every page refresh
+ - signer: Optionally pass in a Signer object. This can be used if the caller wants to use a signer other than the browser default. This is useful in the node.js enviroment, or really anywhere except within a browser that has a built-in wallet.
+ - host: This is the http url of the validator that the caller wants to connect to. This is optional and defaults to https://testnet.tableland.network. If host is not specified then network must be equal to 'testnet'
+ - network: This is the name of the network, and as of this pr can be one of local, optimism-kovan-staging, staging, or testnet. This name is mapped to the address of a contract that has been deployed and is being watched by a Tableland network Validator on that chain. Note: 'local' is a locally running hardhat node, which requires that the caller has already got that running. This is useful for contributors.
+ - contract: This PR will add the optional contract option. If specified the SDKs direct calls to the SC will go to this address. This is potentially useful for testing and local development. Note: the abi of the contract must match the abi of the version of eth-tableland was used for the build of the SDK. This is useful for contributors.
+
 ## Creating Tables
 
 Like most relational database systems, Tableland requires the user to create tables for storing, querying, and relating data. This is done via the [`create`](https://tablelandnetwork.github.io/js-tableland/modules.html#create) function. The `create` function takes a plain SQL statement string. All tables require a primary key field called `id` to be valid. Most valid SQL _constraints_ are supported, and the following data types are currently supported:
