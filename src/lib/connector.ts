@@ -36,6 +36,7 @@ export async function userCreatesToken(
 export async function connect(options: ConnectionOptions): Promise<Connection> {
   const network = options.network ?? "testnet";
   const host = options.host ?? "https://testnet.tableland.network";
+  const contract = options.contract ?? "";
 
   if (network !== "testnet" && !options.host) {
     throw Error(
@@ -85,6 +86,9 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     },
     get host() {
       return host;
+    },
+    get contract() {
+      return contract;
     },
     get signer() {
       return signer;

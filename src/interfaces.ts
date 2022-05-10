@@ -20,6 +20,7 @@ export interface ConnectionOptions {
   signer?: Signer;
   host?: string;
   network?: string;
+  contract?: string;
 }
 
 export interface RpcParams {
@@ -119,6 +120,7 @@ export interface Connection {
   signer: Signer;
   token: Token;
   network: string;
+  contract: string;
   list: () => Promise<TableMetadata[]>;
   create: (
     query: string,
