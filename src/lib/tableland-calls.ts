@@ -6,6 +6,7 @@ import {
   RpcParams,
   RpcRequestParam,
   ReadQueryResult,
+  ReceiptResult,
   KeyVal,
   Connection,
 } from "../interfaces.js";
@@ -38,6 +39,10 @@ async function sendResponse(res: any) {
     return camelCaseKeys(json.result);
   }
 
+  if (json.result.receipt) {
+    return camelCaseKeys(json.result.receipt);
+  }
+
   // return undefined for writes
   return undefined;
 }
@@ -65,7 +70,7 @@ async function GeneralizedRPC(
   const param: RpcRequestParam = {
     controller: address,
     create_statement: params.createStatement,
-    description: params.description,
+    txn_hash: params.txnHash,
     id: params.tableId,
     statement: params.statement,
   };
@@ -115,4 +120,17 @@ async function query(
   return json as ReadQueryResult;
 }
 
-export { query, list, hash, TableMetadata };
+async function receipt(
+  this: Connection,
+  txnHash: string
+): Promise<ReceiptResult> {
+  const message = await GeneralizedRPC.call(this, "getReceipt", {
+    txnHash,
+  });
+  const response = await SendCall.call(this, message);
+  const json = await sendResponse(response);
+
+  return json as ReceiptResult;
+}
+
+export { receipt, query, list, hash, TableMetadata };

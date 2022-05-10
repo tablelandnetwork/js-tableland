@@ -29,6 +29,7 @@ export interface RpcParams {
   dryrun?: boolean;
   statement?: string;
   tableId?: string;
+  txnHash?: string;
 }
 
 export interface RpcRequestParam {
@@ -39,6 +40,8 @@ export interface RpcRequestParam {
   dryrun?: boolean;
   id?: string;
   statement?: string;
+  /* eslint-disable-next-line camelcase */
+  txn_hash?: string;
 }
 
 export interface ConnectionReceipt {
@@ -68,6 +71,16 @@ export type Row = Array<string | number | boolean>;
 export interface ReadQueryResult {
   columns: Array<Column>;
   rows: Array<Row>;
+}
+
+export interface ReceiptResult {
+  /* eslint-disable-next-line camelcase */
+  chain_id: number;
+  /* eslint-disable-next-line camelcase */
+  txn_hash: string;
+  /* eslint-disable-next-line camelcase */
+  block_number: number;
+  error?: string;
 }
 
 export interface CreateTableOptions {
@@ -113,4 +126,5 @@ export interface Connection {
   ) => Promise<ContractReceipt>;
   query: (query: string) => Promise<null | ReadQueryResult>;
   hash: (query: string) => Promise<StructureHashReceipt>;
+  receipt: (txnHash: string) => Promise<ReceiptResult>;
 }

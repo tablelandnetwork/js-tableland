@@ -1,7 +1,6 @@
 import fetch from "jest-fetch-mock";
 import { connect } from "../src/main";
 import {
-  FetchAuthorizedListSuccess,
   FetchCreateDryRunError,
   FetchCreateDryRunSuccess,
   FetchCreateTableOnTablelandSuccess,
@@ -24,7 +23,6 @@ describe("create method", function () {
   });
 
   test("Create table works", async function () {
-    fetch.mockResponseOnce(FetchAuthorizedListSuccess);
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
@@ -35,7 +33,6 @@ describe("create method", function () {
   });
 
   test("Create table throws if dryrun fails", async function () {
-    fetch.mockResponseOnce(FetchAuthorizedListSuccess);
     fetch.mockResponseOnce(FetchCreateDryRunError);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
