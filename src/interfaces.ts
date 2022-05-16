@@ -124,7 +124,7 @@ export interface Connection {
   list: () => Promise<TableMetadata[]>;
   create: (
     query: string,
-    options: CreateTableOptions
+    options?: CreateTableOptions
   ) => Promise<ContractReceipt>;
   query: (query: string) => Promise<null | ReadQueryResult>;
   hash: (query: string) => Promise<StructureHashReceipt>;

@@ -1,8 +1,14 @@
 import fetch from "jest-fetch-mock";
 import { Signer } from "ethers";
 import flushPromises from 'flush-promises';
+import { TablelandTables__factory } from "@tableland/eth";
 import { connect } from "../src/main";
+import { contractAddresses } from "../src/lib/util";
 import { ConnectionOptions } from "../src/interfaces";
+import {
+  FetchCreateDryRunSuccess,
+  FetchCreateTableOnTablelandSuccess,
+} from "./fauxFetch";
 
 describe("connect function", function () {
   beforeAll(async function () {
@@ -32,6 +38,20 @@ describe("connect function", function () {
     await expect(typeof connection.list).toBe("function");
     await expect(typeof connection.query).toBe("function");
     await expect(typeof connection.create).toBe("function");
+  });
+
+  test("allows specifying connection network", async function () {
+    const factorySpy = jest.spyOn(TablelandTables__factory, 'connect');
+    const connection = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
+
+    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
+    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
+
+    const createStatement = "CREATE TABLE hello (id int primary key, val text);";
+    await connection.create(createStatement);
+
+    expect(factorySpy).toHaveBeenCalled();
+    await expect(contractAddresses["testnet"]).toBe(factorySpy.mock.calls[0][0])
   });
 
   test("allows specifying connection token", async function () {
