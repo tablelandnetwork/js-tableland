@@ -47,8 +47,7 @@ describe("connect function", function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-    const createStatement = "CREATE TABLE hello (id int primary key, val text);";
-    await connection.create(createStatement);
+    await connection.create(31337, "id int primary key, val text", "hello");
 
     expect(factorySpy).toHaveBeenCalled();
     await expect(contractAddresses["testnet"]).toBe(factorySpy.mock.calls[0][0])

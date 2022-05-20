@@ -26,8 +26,7 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-    const createStatement = "CREATE TABLE hello (id int primary key, val text);";
-    const txReceipt = await connection.create(createStatement);
+    const txReceipt = await connection.create(31337, "id int primary key, val text");
     const createReceipt = txReceipt.events[0];
     await expect(createReceipt.args.tokenId._hex).toEqual("0x015");
   });
@@ -38,7 +37,9 @@ describe("create method", function () {
 
     await expect(async function () {
       await connection.create(
-        "CREATE TABLE 123hello (id int primary key, val text);"
+        31337,
+        "id int primary key, val text",
+        "123test"
       )
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
 

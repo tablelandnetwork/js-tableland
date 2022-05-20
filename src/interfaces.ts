@@ -84,15 +84,6 @@ export interface ReceiptResult {
   error?: string;
 }
 
-export interface CreateTableOptions {
-  /** A human readable description of the nature and purpoe of the table */
-  description?: string;
-  /** If your table was minted, but never created on tableland, use this param to create it. */
-  id?: string;
-  /** do a dry run of create to see if the create statement is valid without creating the table */
-  dryrun?: boolean;
-}
-
 export interface CreateTableReceipt {
   name: string;
   structureHash: string;
@@ -123,10 +114,26 @@ export interface Connection {
   contract: string;
   list: () => Promise<TableMetadata[]>;
   create: (
-    query: string,
-    options?: CreateTableOptions
+    /** The ChainId of the chain this table should be created on.
+     *  MUST match the chain that the SDK connected to
+     **/
+    chainId: number,
+    /** The schema that defines the columns and constraints of the table,
+     *  e.g.
+     * `id int NOT NULL,
+     *  name char(50) NOT NULL,
+     *  favorite_food char(50),
+     *  PRIMARY KEY (id)`
+     */
+    schema: string,
+    /** an optional prefix to the tablename that will be assigned to this table.
+     *  If supplied, it must conform to the rules of SQL table names
+     **/
+    prefix?: string
   ) => Promise<ContractReceipt>;
-  query: (query: string) => Promise<null | ReadQueryResult>;
+  query: (query: string) => Promise<null | ReadQueryResult>; // TODO
+  // read: (query: string) => Promise<null | ReadQueryResult>;
+  // write: (query: string) => Promise<null | {data: null}>;
   hash: (query: string) => Promise<StructureHashReceipt>;
   receipt: (txnHash: string) => Promise<ReceiptResult>;
 }

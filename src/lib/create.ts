@@ -10,8 +10,11 @@ import { registerTable } from "./eth-calls.js";
  */
 export async function create(
   this: Connection,
-  query: string
+  chainId: number,
+  schema: string,
+  prefix: string = ""
 ): Promise<ContractReceipt> {
+  const query = `CREATE TABLE ${prefix}_${chainId} (${schema});`;
   // This "dryrun" is done to validate that the query statement is considered valid.
   // We check this before minting the token, so the caller won't succeed at minting a token
   // then fail to create the table on the Tableland network
