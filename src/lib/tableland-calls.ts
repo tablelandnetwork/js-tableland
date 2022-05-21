@@ -111,7 +111,8 @@ async function query(
   this: Connection,
   query: string
 ): Promise<ReadQueryResult | null> {
-  const message = await GeneralizedRPC.call(this, "runSQL", {
+  // TODO: this only allows reads, this method should become `read`
+  const message = await GeneralizedRPC.call(this, "runReadQuery", {
     statement: query,
   });
   const response = await SendCall.call(this, message);
