@@ -36,7 +36,8 @@ describe("connect function", function () {
     await expect(typeof connection.token.token).toBe("string");
     await expect(connection.signer instanceof Object).toBe(true);
     await expect(typeof connection.list).toBe("function");
-    await expect(typeof connection.query).toBe("function");
+    await expect(typeof connection.read).toBe("function");
+    await expect(typeof connection.write).toBe("function");
     await expect(typeof connection.create).toBe("function");
   });
 
