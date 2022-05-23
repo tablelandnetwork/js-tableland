@@ -6,6 +6,7 @@ import {
   RpcParams,
   RpcRequestParam,
   ReadQueryResult,
+  WriteQueryResult,
   ReceiptResult,
   KeyVal,
   Connection,
@@ -107,11 +108,10 @@ async function hash(
   return json as StructureHashReceipt;
 }
 
-async function query(
+async function read(
   this: Connection,
   query: string
 ): Promise<ReadQueryResult | null> {
-  // TODO: this only allows reads, this method should become `read`
   const message = await GeneralizedRPC.call(this, "runReadQuery", {
     statement: query,
   });
@@ -119,6 +119,19 @@ async function query(
   const json = await sendResponse(response);
 
   return json as ReadQueryResult;
+}
+
+async function write(
+  this: Connection,
+  query: string
+): Promise<WriteQueryResult | null> {
+  const message = await GeneralizedRPC.call(this, "relayWriteQuery", {
+    statement: query,
+  });
+  const response = await SendCall.call(this, message);
+  const json = await sendResponse(response);
+
+  return json as WriteQueryResult;
 }
 
 async function receipt(
@@ -134,4 +147,4 @@ async function receipt(
   return json as ReceiptResult;
 }
 
-export { receipt, query, list, hash, TableMetadata };
+export { hash, list, receipt, read, TableMetadata, write };

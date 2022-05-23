@@ -4,12 +4,23 @@
  * @returns If read query, result-set. If write query, nothing.
  */
 
-import { ReadQueryResult, Connection } from "../interfaces.js";
+import {
+  ReadQueryResult,
+  WriteQueryResult,
+  Connection,
+} from "../interfaces.js";
 import * as tablelandCalls from "./tableland-calls.js";
 
-export async function query(
+export async function read(
   this: Connection,
   query: string
 ): Promise<ReadQueryResult | null> {
-  return await tablelandCalls.query.call(this, query);
+  return await tablelandCalls.read.call(this, query);
+}
+
+export async function write(
+  this: Connection,
+  query: string
+): Promise<WriteQueryResult | null> {
+  return await tablelandCalls.write.call(this, query);
 }

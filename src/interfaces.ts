@@ -69,6 +69,10 @@ export type Column = Array<ColumnDescriptor>;
 
 export type Row = Array<string | number | boolean>;
 
+export interface WriteQueryResult {
+  data: null;
+}
+
 export interface ReadQueryResult {
   columns: Array<Column>;
   rows: Array<Row>;
@@ -131,9 +135,8 @@ export interface Connection {
      **/
     prefix?: string
   ) => Promise<ContractReceipt>;
-  query: (query: string) => Promise<null | ReadQueryResult>; // TODO
-  // read: (query: string) => Promise<null | ReadQueryResult>;
-  // write: (query: string) => Promise<null | {data: null}>;
+  read: (query: string) => Promise<null | ReadQueryResult>;
+  write: (query: string) => Promise<null | WriteQueryResult>;
   hash: (query: string) => Promise<StructureHashReceipt>;
   receipt: (txnHash: string) => Promise<ReceiptResult>;
 }
