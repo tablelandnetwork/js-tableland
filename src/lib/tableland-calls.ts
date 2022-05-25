@@ -105,7 +105,7 @@ async function write(
 async function receipt(
   this: Connection,
   txnHash: string
-): Promise<ReceiptResult | void> {
+): Promise<ReceiptResult | undefined> {
   const message = await GeneralizedRPC.call(this, "getReceipt", {
     txn_hash: txnHash,
   });
@@ -113,6 +113,7 @@ async function receipt(
 
   if (json.result.receipt) return camelCaseKeys(json.result.receipt);
   // if the transaction hasn't been digested return undefined
+  return undefined;
 }
 
 export { hash, list, receipt, read, write };

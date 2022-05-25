@@ -39,11 +39,11 @@ export type KeyVal<T = any> = [string, T];
 
 export type Column = Array<{ name: string }>;
 
-export type Row = Array<string | number | boolean>;
-
-export interface ReadQueryResult {
+export interface ReadQueryResult<
+  Row extends Array<string | number | boolean> = Array<any>
+> {
   columns: Array<Column>;
-  rows: Array<Row>;
+  rows: Row;
 }
 
 export interface WriteQueryResult {
@@ -106,5 +106,5 @@ export interface Connection {
   read: (query: string) => Promise<ReadQueryResult>;
   write: (query: string) => Promise<WriteQueryResult>;
   hash: (query: string) => Promise<StructureHashReceipt>;
-  receipt: (txnHash: string) => Promise<ReceiptResult | void>;
+  receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
 }
