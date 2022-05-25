@@ -14,13 +14,13 @@ import * as tablelandCalls from "./tableland-calls.js";
 export async function read(
   this: Connection,
   query: string
-): Promise<ReadQueryResult | null> {
+): Promise<ReadQueryResult> {
   return await tablelandCalls.read.call(this, query);
 }
 
 export async function write(
   this: Connection,
   query: string
-): Promise<WriteQueryResult | null> {
+): Promise<WriteQueryResult> {
   return await tablelandCalls.write.call(this, query);
 }
