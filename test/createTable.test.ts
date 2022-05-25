@@ -1,4 +1,5 @@
 import fetch from "jest-fetch-mock";
+//import { ethers } from "./mock_modules/ethers";
 import { connect } from "../src/main";
 import {
   FetchCreateDryRunError,
@@ -11,6 +12,7 @@ describe("create method", function () {
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
+    //const signer = ethers.providers.Web3Provider().getSigner();
     connection = await connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
@@ -26,7 +28,7 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-    const txReceipt = await connection.create(31337, "id int primary key, val text");
+    const txReceipt = await connection.create("id int primary key, val text");
     const createReceipt = txReceipt.events[0];
     await expect(createReceipt.args.tokenId._hex).toEqual("0x015");
   });
@@ -37,7 +39,6 @@ describe("create method", function () {
 
     await expect(async function () {
       await connection.create(
-        31337,
         "id int primary key, val text",
         "123test"
       )

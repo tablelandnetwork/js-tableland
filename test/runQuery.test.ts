@@ -30,14 +30,14 @@ describe("read and write methods", function () {
     fetch.mockResponseOnce(FetchInsertQuerySuccess);
 
     const res = await connection.write("INSERT INTO test_1 (colname) values (val2);");
-    await expect(res).toEqual(undefined);
+    await expect(res).toEqual({"hash": "testhashinsertresponse"});
   });
 
   test("returns RPC result when update query succeeds", async function () {
     fetch.mockResponseOnce(FetchUpdateQuerySuccess);
 
     const res = await connection.write("UPDATE test_1 SET colname = val3 where colname = val2;");
-    await expect(res).toEqual(undefined);
+    await expect(res).toEqual({"hash": "testhashinsertresponse"});
   });
 
   test("maps arguments to correct RPC params", async function () {
@@ -51,41 +51,5 @@ describe("read and write methods", function () {
     await expect(payload.params[0]?.statement).toEqual(queryStaement);
     await expect(payload.params[0]).not.toHaveProperty("id");
     await expect(payload.params[0]).not.toHaveProperty("create_statement");
-  });
-
-  test("is case insensitive", async function () {
-    fetch.mockResponseOnce(FetchSelectQuerySuccess);
-
-    const res1 = await connection.read("select * from test_1;");
-    await expect(res1).toEqual({columns: [{name: "colname"}], rows: ["val1"]});
-
-    fetch.mockResponseOnce(FetchSelectQuerySuccess);
-
-    const res2 = await connection.read("sELEct * frOM test_1;");
-    await expect(res2).toEqual({columns: [{name: "colname"}], rows: ["val1"]});
-  });
-
-  test("parses tablename regardless of whitespace", async function () {
-    fetch.mockResponseOnce(FetchSelectQuerySuccess);
-
-    const res1 = await connection.write("INSERT INTO test_1(colname) Values ('val6');");
-    await expect(res1).toEqual({columns: [{name: "colname"}], rows: ["val1"]});
-
-    fetch.mockResponseOnce(FetchSelectQuerySuccess);
-
-    const res2 = await connection.read("sELEct * frOM test_1;");
-    await expect(res2).toEqual({columns: [{name: "colname"}], rows: ["val1"]});
-  });
-
-  test("parses tablename when inside double-quotes", async function () {
-    fetch.mockResponseOnce(FetchSelectQuerySuccess);
-
-    const res1 = await connection.write("INSERT INTO \"test_1\" (colname) Values ('val6');");
-    await expect(res1).toEqual({columns: [{name: "colname"}], rows: ["val1"]});
-
-    fetch.mockResponseOnce(FetchSelectQuerySuccess);
-
-    const res2 = await connection.read("sELEct * frOM test_1;");
-    await expect(res2).toEqual({columns: [{name: "colname"}], rows: ["val1"]});
   });
 });
