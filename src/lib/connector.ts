@@ -2,7 +2,7 @@ import { Signer, ethers } from "ethers";
 import { ConnectionOptions, Connection, Token } from "../interfaces.js";
 import { list } from "./list.js";
 import { createToken } from "./token.js";
-import { query } from "./query.js";
+import { read, write } from "./query.js";
 import { create } from "./create.js";
 import { hash } from "./hash.js";
 import { receipt } from "./tableland-calls.js";
@@ -96,8 +96,11 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
     get list() {
       return list;
     },
-    get query() {
-      return query;
+    get read() {
+      return read;
+    },
+    get write() {
+      return write;
     },
     get create() {
       return create;

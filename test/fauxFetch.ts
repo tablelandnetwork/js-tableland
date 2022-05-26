@@ -61,7 +61,7 @@ export const FetchInsertQuerySuccess = async () => {
     jsonrpc: "2.0",
     id: 1,
     result: {
-      data: null
+      tx: { hash: 'testhashinsertresponse' }
     }
   });
 };
@@ -71,7 +71,7 @@ export const FetchUpdateQuerySuccess = async () => {
     jsonrpc: "2.0",
     id: 1,
     result: {
-      data: null
+      tx: { hash: 'testhashinsertresponse' }
     }
   });
 };

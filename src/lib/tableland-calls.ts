@@ -1,11 +1,10 @@
 /* eslint-disable node/no-missing-import */
 import camelCase from "camelcase";
 import {
-  TableMetadata,
   StructureHashReceipt,
   RpcParams,
-  RpcRequestParam,
   ReadQueryResult,
+  WriteQueryResult,
   ReceiptResult,
   KeyVal,
   Connection,
@@ -13,7 +12,7 @@ import {
 import { list } from "./list.js";
 
 async function SendCall(this: Connection, rpcBody: Object) {
-  return await fetch(`${this.host}/rpc`, {
+  const res = await fetch(`${this.host}/rpc`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -21,10 +20,12 @@ async function SendCall(this: Connection, rpcBody: Object) {
     },
     body: JSON.stringify(rpcBody),
   });
+
+  return parseResponse(res);
 }
 
 // parse the rpc response and throw if any of the different types of errors occur
-async function sendResponse(res: any) {
+async function parseResponse(res: any): Promise<any> {
   if (!res.ok) throw new Error(res.statusText);
 
   const json = await res.json();
@@ -32,24 +33,12 @@ async function sendResponse(res: any) {
   if (json.error) throw new Error(json.error.message);
   if (!json.result) throw new Error("Malformed RPC response");
 
-  // response to reads is in `result.data` key, note: data === null for writes
-  if (json.result.data) return camelCaseKeys(json.result.data);
-  // response to create or hash is in `result`
-  if (json.result.name || json.result.structure_hash) {
-    return camelCaseKeys(json.result);
-  }
-
-  if (json.result.receipt) {
-    return camelCaseKeys(json.result.receipt);
-  }
-
-  // return undefined for writes
-  return undefined;
+  return json;
 }
 
 // Take an Object with any symantic for key naming and return a new Object with keys that are lowerCamelCase
 // Example: `camelCaseKeys({structure_hash: "123"})` returns `{structureHash: "123"}`
-function camelCaseKeys(obj: any) {
+function camelCaseKeys(obj: any): any {
   return Object.fromEntries(
     Object.entries(obj).map((entry: KeyVal) => {
       const key = entry[0];
@@ -67,13 +56,7 @@ async function GeneralizedRPC(
   const signer = this.signer;
   const address = await signer.getAddress();
 
-  const param: RpcRequestParam = {
-    controller: address,
-    create_statement: params.createStatement,
-    txn_hash: params.txnHash,
-    id: params.tableId,
-    statement: params.statement,
-  };
+  const param: RpcParams = { controller: address, ...params };
 
   return {
     jsonrpc: "2.0",
@@ -83,54 +66,54 @@ async function GeneralizedRPC(
   };
 }
 
-export async function checkAuthorizedList(this: Connection): Promise<boolean> {
-  const authorized: boolean = await SendCall.call(
-    this,
-    await GeneralizedRPC.call(this, "authorize")
-  ).then((r) => {
-    return r.status === 200;
-  });
-  return authorized;
-}
-
 async function hash(
   this: Connection,
   query: string
 ): Promise<StructureHashReceipt> {
   const message = await GeneralizedRPC.call(this, "validateCreateTable", {
-    createStatement: query,
+    create_statement: query,
   });
+  const json = await SendCall.call(this, message);
 
-  const response = await SendCall.call(this, message);
-  const json = await sendResponse(response);
-
-  return json as StructureHashReceipt;
+  return camelCaseKeys(json.result);
 }
 
-async function query(
-  this: Connection,
-  query: string
-): Promise<ReadQueryResult | null> {
-  const message = await GeneralizedRPC.call(this, "runSQL", {
+async function read(this: Connection, query: string): Promise<ReadQueryResult> {
+  const message = await GeneralizedRPC.call(this, "runReadQuery", {
     statement: query,
   });
-  const response = await SendCall.call(this, message);
-  const json = await sendResponse(response);
+  const json = await SendCall.call(this, message);
 
-  return json as ReadQueryResult;
+  return camelCaseKeys(json.result.data);
+}
+
+// Note: This method returns right away, once the write request has been sent to a validator for
+//       writing to the Tableland smart contract. However, the write is not confirmed until a validator
+//       has picked up the write event from the smart contract, and digested the event locally.
+async function write(
+  this: Connection,
+  query: string
+): Promise<WriteQueryResult> {
+  const message = await GeneralizedRPC.call(this, "relayWriteQuery", {
+    statement: query,
+  });
+  const json = await SendCall.call(this, message);
+
+  return camelCaseKeys(json.result.tx);
 }
 
 async function receipt(
   this: Connection,
   txnHash: string
-): Promise<ReceiptResult> {
+): Promise<ReceiptResult | undefined> {
   const message = await GeneralizedRPC.call(this, "getReceipt", {
-    txnHash,
+    txn_hash: txnHash,
   });
-  const response = await SendCall.call(this, message);
-  const json = await sendResponse(response);
+  const json = await SendCall.call(this, message);
 
-  return json as ReceiptResult;
+  if (json.result.receipt) return camelCaseKeys(json.result.receipt);
+  // if the transaction hasn't been digested return undefined
+  return undefined;
 }
 
-export { receipt, query, list, hash, TableMetadata };
+export { hash, list, receipt, read, write };

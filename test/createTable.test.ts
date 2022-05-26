@@ -1,4 +1,5 @@
 import fetch from "jest-fetch-mock";
+//import { ethers } from "./mock_modules/ethers";
 import { connect } from "../src/main";
 import {
   FetchCreateDryRunError,
@@ -11,6 +12,7 @@ describe("create method", function () {
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
+    //const signer = ethers.providers.Web3Provider().getSigner();
     connection = await connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
@@ -26,8 +28,7 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-    const createStatement = "CREATE TABLE hello (id int primary key, val text);";
-    const txReceipt = await connection.create(createStatement);
+    const txReceipt = await connection.create("id int primary key, val text");
     const createReceipt = txReceipt.events[0];
     await expect(createReceipt.args.tokenId._hex).toEqual("0x015");
   });
@@ -38,7 +39,8 @@ describe("create method", function () {
 
     await expect(async function () {
       await connection.create(
-        "CREATE TABLE 123hello (id int primary key, val text);"
+        "id int primary key, val text",
+        "123test"
       )
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
 

@@ -1,14 +1,11 @@
 import { BigNumber, ContractReceipt, Signer } from "ethers";
 
 export interface TableMetadata {
-  id: string;
+  controller: string;
   /* eslint-disable-next-line camelcase */
-  created_at?: string;
-  description?: string;
-  tablename?: string;
-  name?: string;
-  controller?: string;
-  structure?: string;
+  created_at: string;
+  name: string;
+  structure: string;
 }
 
 export interface Token {
@@ -24,30 +21,12 @@ export interface ConnectionOptions {
 }
 
 export interface RpcParams {
-  controller?: boolean;
-  createStatement?: string;
-  description?: string;
-  dryrun?: boolean;
-  statement?: string;
-  tableId?: string;
-  txnHash?: string;
-}
-
-export interface RpcRequestParam {
   controller?: string;
   /* eslint-disable-next-line camelcase */
   create_statement?: string;
-  description?: string;
-  dryrun?: boolean;
-  id?: string;
   statement?: string;
   /* eslint-disable-next-line camelcase */
   txn_hash?: string;
-}
-
-export interface ConnectionReceipt {
-  jwsToken: Token;
-  ethAccounts: Array<string>;
 }
 
 export interface SupportedNetwork {
@@ -56,22 +35,19 @@ export interface SupportedNetwork {
   chainId: number;
 }
 
-/**
- * ColumnDescriptor gives metadata about a colum (name, type)
- */
-export interface ColumnDescriptor {
-  name: string;
-}
-
 export type KeyVal<T = any> = [string, T];
 
-export type Column = Array<ColumnDescriptor>;
+export type Column = Array<{ name: string }>;
 
-export type Row = Array<string | number | boolean>;
-
-export interface ReadQueryResult {
+export interface ReadQueryResult<
+  Row extends Array<string | number | boolean> = Array<any>
+> {
   columns: Array<Column>;
-  rows: Array<Row>;
+  rows: Row;
+}
+
+export interface WriteQueryResult {
+  hash: string;
 }
 
 export interface ReceiptResult {
@@ -82,15 +58,6 @@ export interface ReceiptResult {
   /* eslint-disable-next-line camelcase */
   block_number: number;
   error?: string;
-}
-
-export interface CreateTableOptions {
-  /** A human readable description of the nature and purpoe of the table */
-  description?: string;
-  /** If your table was minted, but never created on tableland, use this param to create it. */
-  id?: string;
-  /** do a dry run of create to see if the create statement is valid without creating the table */
-  dryrun?: boolean;
 }
 
 export interface CreateTableReceipt {
@@ -123,10 +90,21 @@ export interface Connection {
   contract: string;
   list: () => Promise<TableMetadata[]>;
   create: (
-    query: string,
-    options?: CreateTableOptions
+    /** The schema that defines the columns and constraints of the table,
+     *  e.g.
+     `id int NOT NULL,
+      name char(50) NOT NULL,
+      favorite_food char(50),
+      PRIMARY KEY (id)`
+     */
+    schema: string,
+    /** an optional prefix to the tablename that will be assigned to this table.
+     *  If supplied, it must conform to the rules of SQL table names
+     **/
+    prefix?: string
   ) => Promise<ContractReceipt>;
-  query: (query: string) => Promise<null | ReadQueryResult>;
+  read: (query: string) => Promise<ReadQueryResult>;
+  write: (query: string) => Promise<WriteQueryResult>;
   hash: (query: string) => Promise<StructureHashReceipt>;
-  receipt: (txnHash: string) => Promise<ReceiptResult>;
+  receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
 }

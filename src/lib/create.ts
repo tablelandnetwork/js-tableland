@@ -10,8 +10,15 @@ import { registerTable } from "./eth-calls.js";
  */
 export async function create(
   this: Connection,
-  query: string
+  schema: string,
+  prefix: string = ""
 ): Promise<ContractReceipt> {
+  // TODO: This is realted to issue#22, we might end up doing something like `await this.provider.getNetwork();`
+  const providerNetwork = await this.signer.provider?.getNetwork();
+  const chainId = providerNetwork?.chainId;
+  if (!chainId) throw new Error("cannot create table without provider network");
+
+  const query = `CREATE TABLE ${prefix}_${chainId} (${schema});`;
   // This "dryrun" is done to validate that the query statement is considered valid.
   // We check this before minting the token, so the caller won't succeed at minting a token
   // then fail to create the table on the Tableland network
