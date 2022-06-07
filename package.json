@@ -90,7 +90,7 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@stablelib/base64": "^1.0.1",
-    "@tableland/eth": "^0.1.0-dev.0",
+    "@tableland/eth": "^1.0.0",
     "add-js-extension": "^1.0.4",
     "ethers": "^5.5.2"
   },
