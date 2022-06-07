@@ -10,8 +10,8 @@ export const ethers = {
             provider: {
               getNetwork: async function () {
                 return {
-                  name: "rinkeby",
-                  chainId: 4
+                  name: "goerli",
+                  chainId: 5
                 };
               }
             },

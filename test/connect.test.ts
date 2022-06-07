@@ -92,7 +92,7 @@ describe("connect function", function () {
         } as unknown as Signer // convince type checks into letting us mock the signer
       });
     } as ConnectionOptions).rejects.toThrow(
-      "Only Ethereum Rinkeby, Optimism Kovan, and Local Hardhat networks are currently supported. Switch your wallet connection and reconnect."
+      "Only Ethereum Goerli, Optimism Kovan, Polygon Testnet, and Local Hardhat networks are currently supported. Switch your wallet connection and reconnect."
     );
   });
 
