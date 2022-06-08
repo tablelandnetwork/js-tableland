@@ -5,7 +5,7 @@ export async function list(this: Connection): Promise<TableMetadata[]> {
 
   // TODO: this check is potentially too restrictive, see issue #22
   const providerNetwork = await this.signer.provider?.getNetwork();
-  const chainId = providerNetwork?.chainId ?? "4";
+  const chainId = providerNetwork?.chainId ?? "5";
 
   const resp: TableMetadata[] = await fetch(
     `${this.host}/chain/${chainId}/tables/controller/${address}`
