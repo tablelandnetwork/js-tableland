@@ -1,6 +1,7 @@
 import { Connection, CreateTableReceipt } from "../interfaces.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import { registerTable } from "./eth-calls.js";
+import { BigNumber } from "ethers";
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register
  * a new Table on Tableland
@@ -28,6 +29,6 @@ export async function create(
   const [, event] = txn.events ?? [];
   const txnHash = txn.transactionHash;
   const blockNumber = txn.blockNumber;
-  const tableId = (event?.args?.tableId ?? "").toString();
+  const tableId: BigNumber | undefined = event?.args?.tableId;
   return { tableId, prefix, chainId, txnHash, blockNumber };
 }

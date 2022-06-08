@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt, Signer } from "ethers";
+import { BigNumber, Signer } from "ethers";
 
 export interface TableMetadata {
   controller: string;
@@ -66,7 +66,7 @@ export interface StructureHashReceipt {
 }
 
 export interface CreateTableReceipt {
-  tableId: number;
+  tableId?: BigNumber;
   prefix: string;
   chainId: number;
   txnHash: string;
@@ -99,7 +99,7 @@ export interface Connection {
      *  If supplied, it must conform to the rules of SQL table names
      **/
     prefix?: string
-  ) => Promise<ContractReceipt>;
+  ) => Promise<CreateTableReceipt>;
   read: (query: string) => Promise<ReadQueryResult>;
   write: (query: string) => Promise<WriteQueryResult>;
   hash: (query: string) => Promise<StructureHashReceipt>;

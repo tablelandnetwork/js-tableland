@@ -7,6 +7,7 @@ module.exports = {
             wait: async function () {
               return {
                 events: [
+                  {},
                   { args: { tableId: { _hex: "0x015", type: "BigNumber" } } },
                 ],
               };

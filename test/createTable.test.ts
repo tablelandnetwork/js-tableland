@@ -29,8 +29,8 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
     const txReceipt = await connection.create("id int primary key, val text");
-    const createReceipt = txReceipt.events[0];
-    expect(createReceipt.args.tableId._hex).toEqual("0x015");
+    console.log(txReceipt);
+    expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
   test("Create table throws if dryrun fails", async function () {
