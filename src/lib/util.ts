@@ -1,4 +1,4 @@
-import { SupportedNetwork } from "../interfaces.js";
+import { SupportedNetwork, ReadQueryResult } from "../interfaces.js";
 
 declare let globalThis: any;
 
@@ -47,3 +47,9 @@ export const SUPPORTED_NETWORKS: SupportedNetwork[] = [
     chainId: 31337,
   },
 ];
+
+export function resultsToObjects({ rows, columns }: ReadQueryResult) {
+  return rows.map((row: any[]) =>
+    Object.fromEntries(row.map((k, i) => [columns[i].name, k]))
+  );
+}

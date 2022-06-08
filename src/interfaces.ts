@@ -38,13 +38,13 @@ export interface SupportedNetwork {
 
 export type KeyVal<T = any> = [string, T];
 
-export type Column = Array<{ name: string }>;
+export type Columns = Array<{ name: string }>;
 
 export interface ReadQueryResult<
-  Row extends Array<string | number | boolean> = Array<any>
+  Rows extends Array<string | number | boolean> = Array<any>
 > {
-  columns: Array<Column>;
-  rows: Row;
+  columns: Columns;
+  rows: Rows;
 }
 
 export interface WriteQueryResult {
