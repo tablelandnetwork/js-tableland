@@ -30,7 +30,7 @@ describe("create method", function () {
 
     const txReceipt = await connection.create("id int primary key, val text");
     const createReceipt = txReceipt.events[0];
-    expect(createReceipt.args.tokenId._hex).toEqual("0x015");
+    expect(createReceipt.args.tableId._hex).toEqual("0x015");
   });
 
   test("Create table throws if dryrun fails", async function () {
