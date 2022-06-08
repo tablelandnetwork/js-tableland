@@ -3,7 +3,7 @@ import { connect } from "../src/main";
 import {
   FetchSelectQuerySuccess,
   FetchInsertQuerySuccess,
-  FetchUpdateQuerySuccess
+  FetchUpdateQuerySuccess,
 } from "../test/fauxFetch";
 
 describe("read and write methods", function () {
@@ -11,7 +11,10 @@ describe("read and write methods", function () {
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
-    connection = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
+    connection = await connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+    });
   });
 
   afterEach(function () {
@@ -23,21 +26,28 @@ describe("read and write methods", function () {
     fetch.mockResponseOnce(FetchSelectQuerySuccess);
 
     const res = await connection.read("SELECT * FROM test_1;");
-    await expect(res).toEqual({columns: [{name: "colname"}], rows: ["val1"]});
+    await expect(res).toEqual({
+      columns: [{ name: "colname" }],
+      rows: ["val1"],
+    });
   });
 
   test("returns RPC result when insert query succeeds", async function () {
     fetch.mockResponseOnce(FetchInsertQuerySuccess);
 
-    const res = await connection.write("INSERT INTO test_1 (colname) values (val2);");
-    await expect(res).toEqual({"hash": "testhashinsertresponse"});
+    const res = await connection.write(
+      "INSERT INTO test_1 (colname) values (val2);"
+    );
+    await expect(res).toEqual({ hash: "testhashinsertresponse" });
   });
 
   test("returns RPC result when update query succeeds", async function () {
     fetch.mockResponseOnce(FetchUpdateQuerySuccess);
 
-    const res = await connection.write("UPDATE test_1 SET colname = val3 where colname = val2;");
-    await expect(res).toEqual({"hash": "testhashinsertresponse"});
+    const res = await connection.write(
+      "UPDATE test_1 SET colname = val3 where colname = val2;"
+    );
+    await expect(res).toEqual({ hash: "testhashinsertresponse" });
   });
 
   test("maps arguments to correct RPC params", async function () {

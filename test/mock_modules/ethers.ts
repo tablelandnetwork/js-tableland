@@ -11,16 +11,16 @@ export const ethers = {
               getNetwork: async function () {
                 return {
                   name: "goerli",
-                  chainId: 5
+                  chainId: 5,
                 };
-              }
+              },
             },
             getAddress: function () {
               return "testaddress";
             },
             signMessage: async function () {
               return "testsignedmessage";
-            }
+            },
           };
         },
       };
