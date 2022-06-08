@@ -1,5 +1,4 @@
-import { ContractReceipt } from "ethers";
-import { Connection } from "../interfaces.js";
+import { Connection, CreateTableReceipt } from "../interfaces.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import { registerTable } from "./eth-calls.js";
 /**
@@ -12,7 +11,7 @@ export async function create(
   this: Connection,
   schema: string,
   prefix: string = ""
-): Promise<ContractReceipt> {
+): Promise<CreateTableReceipt> {
   // TODO: This is realted to issue#22, we might end up doing something like `await this.provider.getNetwork();`
   const providerNetwork = await this.signer.provider?.getNetwork();
   const chainId = providerNetwork?.chainId;
@@ -26,9 +25,9 @@ export async function create(
 
   const txn = await registerTable.call(this, query);
 
-  // TODO: we can potentially listen to Execution Tracker here and wait to return
-  //       until we have the receipt, but I'm sure if that makes sense.
-  // const receipt = await tablelandCalls.receipt.call(this, txn.transactionHash)
-  // console.log(receipt);
-  return txn;
+  const [, event] = txn.events ?? [];
+  const txnHash = txn.transactionHash;
+  const blockNumber = txn.blockNumber;
+  const tableId = (event?.args?.tableId ?? "").toString();
+  return { tableId, prefix, chainId, txnHash, blockNumber };
 }

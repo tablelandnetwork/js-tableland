@@ -61,20 +61,16 @@ export interface ReceiptResult {
   error?: string;
 }
 
-export interface CreateTableReceipt {
-  name: string;
-  structureHash: string;
-  description?: string;
-}
-
 export interface StructureHashReceipt {
   structureHash: string;
 }
 
-// TODO: don't think we need this anymore... double check and remove
-export interface TableRegistrationReceipt {
-  receipt: ContractReceipt;
-  tableId: BigNumber;
+export interface CreateTableReceipt {
+  tableId: number;
+  prefix: string;
+  chainId: number;
+  txnHash: string;
+  blockNumber: number;
 }
 
 export interface RpcReceipt<T = any> {
