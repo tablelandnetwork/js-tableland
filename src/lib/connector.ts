@@ -6,7 +6,7 @@ import { read, write } from "./query.js";
 import { create } from "./create.js";
 import { hash } from "./hash.js";
 import { receipt } from "./tableland-calls.js";
-import { SUPPORTED_NETWORKS } from "./util.js";
+import { SUPPORTED_NETWORKS, contractAddresses } from "./util.js";
 
 declare let globalThis: any;
 
@@ -34,11 +34,11 @@ export async function userCreatesToken(
 }
 
 export async function connect(options: ConnectionOptions): Promise<Connection> {
-  const network = options.network ?? "testnet";
+  const network = options.network ?? "goerli";
   const host = options.host ?? "https://testnet.tableland.network";
-  const contract = options.contract ?? "";
+  const contract = options.contract ?? contractAddresses[network];
 
-  if (network !== "testnet" && !options.host) {
+  if (network !== "goerli" && !options.host) {
     throw Error(
       "Please specify a host to connect to. (Example: https://env.tableland.network)"
     );
