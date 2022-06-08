@@ -31,6 +31,7 @@ export interface RpcParams {
 
 export interface SupportedNetwork {
   key: string;
+  name: string; // Matches naming convention used in https://chainlist.org and ethers network lib
   phrase: string;
   chainId: number;
 }
