@@ -40,7 +40,7 @@ export async function connect(options: ConnectionOptions): Promise<Connection> {
 
   if (network !== "goerli" && !options.host) {
     throw Error(
-      "Please specify a host to connect to. (Example: https://env.tableland.network)"
+      "Please specify a host connection (e.g. https://testnetv2.tableland.network)"
     );
   }
 
