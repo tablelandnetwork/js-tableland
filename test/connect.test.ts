@@ -3,12 +3,12 @@ import { Signer } from "ethers";
 import flushPromises from "flush-promises";
 // eslint-disable-next-line camelcase
 import { TablelandTables__factory } from "@tableland/eth";
-import { connect } from "../src/main";
-import { contractAddresses } from "../src/lib/util";
-import { ConnectionOptions } from "../src/interfaces";
+import { connect, NetworkName, SUPPORTED_CHAINS } from "../src/main";
+import { ConnectOptions } from "../src/lib/connector.js";
 import {
   FetchCreateDryRunSuccess,
   FetchCreateTableOnTablelandSuccess,
+  FetchHashTableSuccess,
 } from "./fauxFetch";
 
 describe("connect function", function () {
@@ -23,12 +23,18 @@ describe("connect function", function () {
   });
 
   test("exposes signer with correct address", async function () {
+    fetch.mockResponseOnce(FetchHashTableSuccess);
     const connection = await connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
     });
 
-    expect(await connection.signer.getAddress()).toMatch("testaddress");
+    // Just do this to lazily get the signer
+    const createStatement =
+      "CREATE TABLE hello (id int primary key, val text);";
+    await connection.hash(createStatement);
+
+    expect(await connection.signer?.getAddress()).toMatch("testaddress");
   });
 
   test("exposes public methods and properties", async function () {
@@ -37,11 +43,10 @@ describe("connect function", function () {
       host: "https://testnet.tableland.network",
     });
 
-    expect(connection.network).toBe("testnet");
-    expect(connection.host).toBe("https://testnet.tableland.network");
-    expect(connection.token instanceof Object).toBe(true);
-    expect(typeof connection.token.token).toBe("string");
-    expect(connection.signer instanceof Object).toBe(true);
+    expect(connection.options.network).toBe("testnet");
+    expect(connection.options.host).toBe("https://testnet.tableland.network");
+    expect(connection.token).toBe(undefined);
+    expect(connection.signer).toBe(undefined);
     expect(typeof connection.list).toBe("function");
     expect(typeof connection.read).toBe("function");
     expect(typeof connection.write).toBe("function");
@@ -51,7 +56,7 @@ describe("connect function", function () {
   test("allows specifying connection network", async function () {
     const factorySpy = jest.spyOn(TablelandTables__factory, "connect");
     const connection = await connect({
-      network: "goerli",
+      network: "testnet",
       host: "https://testnetv2.tableland.network",
     });
 
@@ -61,7 +66,9 @@ describe("connect function", function () {
     await connection.create("id int primary key, val text", "hello");
 
     expect(factorySpy).toHaveBeenCalled();
-    expect(contractAddresses.goerli).toBe(factorySpy.mock.calls[0][0]);
+    expect(SUPPORTED_CHAINS["ethereum-goerli"].contract).toBe(
+      factorySpy.mock.calls[0][0]
+    );
   });
 
   test("allows specifying connection token", async function () {
@@ -82,14 +89,14 @@ describe("connect function", function () {
       token: connection1.token,
     });
 
-    expect(connection1.token.token === connection2.token.token).toBe(true);
+    expect(connection1.token?.token === connection2.token?.token).toBe(true);
   });
 
   test("throws error if provider network is not supported", async function () {
     await expect(async function () {
-      await connect({
+      return connect({
         network: "testnet",
-        host: "https://testnet.tableland.network",
+        host: "https://testnetv2.tableland.network",
         signer: {
           provider: {
             getNetwork: async function () {
@@ -104,18 +111,16 @@ describe("connect function", function () {
           },
         } as unknown as Signer, // convince type checks into letting us mock the signer
       });
-    } as ConnectionOptions).rejects.toThrow(
-      "Only Ethereum Goerli, Optimism Kovan, Polygon Testnet, and Local Hardhat networks are currently supported. Switch your wallet connection and reconnect."
+    } as ConnectOptions).rejects.toThrow(
+      "proivder chain mismatch. Switch your wallet connection and reconnect"
     );
   });
 
   test("throws error if connection network is not supported and no host is provided", async function () {
     await expect(async function () {
-      await connect({
-        network: "furrykitties",
+      return connect({
+        network: "furrykitties" as NetworkName,
       });
-    } as ConnectionOptions).rejects.toThrow(
-      "Please specify a host to connect to. (Example: https://env.tableland.network)"
-    );
+    } as ConnectOptions).rejects.toThrow("unsupported network specified");
   });
 });

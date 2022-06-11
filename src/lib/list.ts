@@ -1,15 +1,13 @@
-import { TableMetadata, Connection } from "../interfaces.js";
+import { TableMetadata, Connection } from "./connection.js";
+import { getSigner, camelCaseKeys } from "./util.js";
 
 export async function list(this: Connection): Promise<TableMetadata[]> {
-  const address = await this.signer.getAddress();
+  const signer = this.signer ?? (await getSigner());
+  const address = await signer.getAddress();
 
-  // TODO: this check is potentially too restrictive, see issue #22
-  const providerNetwork = await this.signer.provider?.getNetwork();
-  const chainId = providerNetwork?.chainId ?? "5";
-
-  const resp: TableMetadata[] = await fetch(
-    `${this.host}/chain/${chainId}/tables/controller/${address}`
+  const res = await fetch(
+    `${this.options.host}/chain/${this.options.chainId}/tables/controller/${address}`
   ).then((r) => r.json());
 
-  return resp;
+  return camelCaseKeys(res);
 }

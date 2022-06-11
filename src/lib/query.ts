@@ -4,12 +4,14 @@
  * @returns If read query, result-set. If write query, nothing.
  */
 
-import {
-  ReadQueryResult,
-  WriteQueryResult,
-  Connection,
-} from "../interfaces.js";
+import { ReadQueryResult, WriteQueryResult, Connection } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
+
+export function resultsToObjects({ rows, columns }: ReadQueryResult) {
+  return rows.map((row: any[]) =>
+    Object.fromEntries(row.map((k, i) => [columns[i].name, k]))
+  );
+}
 
 export async function read(
   this: Connection,

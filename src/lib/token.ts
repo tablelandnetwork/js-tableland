@@ -6,12 +6,19 @@ import { btoa } from "./util";
 const { stringify } = JSON;
 
 /**
+ * Token is signed SIWE token.
+ */
+export interface Token {
+  token: string;
+}
+
+/**
  * Create a JWS.
  * @param signer The signer. Any object that satisfies the Signer interface. Used to sign the message for the token
  * @param params Options that are passed directly to SiweMessage.
  * @returns A Promise that resolves to the full JWS string.
  */
-export async function createToken(
+async function createToken(
   signer: Signer,
   params: Partial<SiweMessage>
 ): Promise<{ token: string }> {
@@ -39,4 +46,20 @@ export async function createToken(
   );
 
   return { token: token };
+}
+
+export async function userCreatesToken(
+  signer: Signer,
+  chainId: number
+): Promise<Token> {
+  const now = Date.now();
+  const exp = new Date(now + 10 * 60 * 60 * 1000).toISOString(); // Default to ~10 hours
+
+  return await createToken(signer, {
+    chainId: chainId,
+    expirationTime: exp,
+    uri: globalThis.document?.location.origin,
+    version: "1",
+    statement: "Official Tableland SDK",
+  });
 }

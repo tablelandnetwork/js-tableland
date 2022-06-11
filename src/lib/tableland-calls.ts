@@ -1,24 +1,41 @@
-/* eslint-disable node/no-missing-import */
-import camelCase from "camelcase";
 import {
-  StructureHashReceipt,
-  RpcParams,
+  StructureHashResult,
   ReadQueryResult,
   WriteQueryResult,
   ReceiptResult,
-  KeyVal,
   Connection,
-} from "../interfaces.js";
+} from "./connection.js";
 import { list } from "./list.js";
+import { userCreatesToken } from "./token.js";
+import { getSigner, camelCaseKeys } from "./util.js";
 
-async function SendCall(this: Connection, rpcBody: Object) {
-  const res = await fetch(`${this.host}/rpc`, {
+export interface RpcParams {
+  controller?: string;
+  /* eslint-disable-next-line camelcase */
+  create_statement?: string;
+  statement?: string;
+  /* eslint-disable-next-line camelcase */
+  txn_hash?: string;
+}
+
+export interface RpcReceipt<T = any> {
+  jsonrpc: string;
+  id: number;
+  result: T;
+}
+
+async function SendCall(this: Connection, rpcBody: Object, token?: string) {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  const body = JSON.stringify(rpcBody);
+  const res = await fetch(`${this.options.host}/rpc`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${this.token.token}`,
-    },
-    body: JSON.stringify(rpcBody),
+    headers,
+    body,
   });
 
   return parseResponse(res);
@@ -36,44 +53,32 @@ async function parseResponse(res: any): Promise<any> {
   return json;
 }
 
-// Take an Object with any symantic for key naming and return a new Object with keys that are lowerCamelCase
-// Example: `camelCaseKeys({structure_hash: "123"})` returns `{structureHash: "123"}`
-function camelCaseKeys(obj: any): any {
-  return Object.fromEntries(
-    Object.entries(obj).map((entry: KeyVal) => {
-      const key = entry[0];
-      const val = entry[1];
-      return [camelCase(key), val];
-    })
-  );
-}
-
 async function GeneralizedRPC(
   this: Connection,
   method: string,
   params: RpcParams = {}
 ) {
-  const signer = this.signer;
-  const address = await signer.getAddress();
-
-  const param: RpcParams = { controller: address, ...params };
-
   return {
     jsonrpc: "2.0",
     method: `tableland_${method}`,
     id: 1,
-    params: [param],
+    params: [params],
   };
 }
 
 async function hash(
   this: Connection,
   query: string
-): Promise<StructureHashReceipt> {
+): Promise<StructureHashResult> {
   const message = await GeneralizedRPC.call(this, "validateCreateTable", {
     create_statement: query,
   });
-  const json = await SendCall.call(this, message);
+  if (!this.token) {
+    this.signer = this.signer ?? (await getSigner());
+    const token = await userCreatesToken(this.signer, this.options.chainId);
+    this.token = token;
+  }
+  const json = await SendCall.call(this, message, this.token.token);
 
   return camelCaseKeys(json.result);
 }
@@ -97,7 +102,12 @@ async function write(
   const message = await GeneralizedRPC.call(this, "relayWriteQuery", {
     statement: query,
   });
-  const json = await SendCall.call(this, message);
+  if (!this.token) {
+    this.signer = this.signer ?? (await getSigner());
+    const token = await userCreatesToken(this.signer, this.options.chainId);
+    this.token = token;
+  }
+  const json = await SendCall.call(this, message, this.token.token);
 
   return camelCaseKeys(json.result.tx);
 }
@@ -109,10 +119,16 @@ async function receipt(
   const message = await GeneralizedRPC.call(this, "getReceipt", {
     txn_hash: txnHash,
   });
-  const json = await SendCall.call(this, message);
+  if (!this.token) {
+    this.signer = this.signer ?? (await getSigner());
+    const token = await userCreatesToken(this.signer, this.options.chainId);
+    this.token = token;
+  }
+  const json = await SendCall.call(this, message, this.token.token);
 
-  if (json.result.receipt) return camelCaseKeys(json.result.receipt);
-  // if the transaction hasn't been digested return undefined
+  if (json.result.receipt) {
+    return camelCaseKeys(json.result.receipt);
+  }
   return undefined;
 }
 

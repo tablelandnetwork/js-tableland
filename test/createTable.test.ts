@@ -14,7 +14,7 @@ describe("create method", function () {
     fetch.resetMocks();
     // const signer = ethers.providers.Web3Provider().getSigner();
     connection = await connect({
-      network: "goerli",
+      network: "testnet",
       host: "https://testnetv2.tableland.network",
     });
   });
@@ -29,7 +29,6 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
     const txReceipt = await connection.create("id int primary key, val text");
-    console.log(txReceipt);
     expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
