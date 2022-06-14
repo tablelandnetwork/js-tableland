@@ -70,4 +70,5 @@ export interface Connection {
   write: (query: string) => Promise<WriteQueryResult>;
   hash: (query: string) => Promise<StructureHashResult>;
   receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
+  siwe: () => Promise<Token>;
 }

@@ -6,8 +6,7 @@ import {
   Connection,
 } from "./connection.js";
 import { list } from "./list.js";
-import { userCreatesToken } from "./token.js";
-import { getSigner, camelCaseKeys } from "./util.js";
+import { camelCaseKeys } from "./util.js";
 
 export interface RpcParams {
   controller?: string;
@@ -74,11 +73,9 @@ async function hash(
     create_statement: query,
   });
   if (!this.token) {
-    this.signer = this.signer ?? (await getSigner());
-    const token = await userCreatesToken(this.signer, this.options.chainId);
-    this.token = token;
+    await this.siwe();
   }
-  const json = await SendCall.call(this, message, this.token.token);
+  const json = await SendCall.call(this, message, this.token?.token);
 
   return camelCaseKeys(json.result);
 }
@@ -103,11 +100,9 @@ async function write(
     statement: query,
   });
   if (!this.token) {
-    this.signer = this.signer ?? (await getSigner());
-    const token = await userCreatesToken(this.signer, this.options.chainId);
-    this.token = token;
+    await this.siwe();
   }
-  const json = await SendCall.call(this, message, this.token.token);
+  const json = await SendCall.call(this, message, this.token?.token);
 
   return camelCaseKeys(json.result.tx);
 }
@@ -120,11 +115,9 @@ async function receipt(
     txn_hash: txnHash,
   });
   if (!this.token) {
-    this.signer = this.signer ?? (await getSigner());
-    const token = await userCreatesToken(this.signer, this.options.chainId);
-    this.token = token;
+    await this.siwe();
   }
-  const json = await SendCall.call(this, message, this.token.token);
+  const json = await SendCall.call(this, message, this.token?.token);
 
   if (json.result.receipt) {
     return camelCaseKeys(json.result.receipt);

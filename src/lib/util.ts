@@ -39,7 +39,7 @@ export interface SupportedChain {
 }
 
 export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
-  // "testnet"
+  // Testnet
   "ethereum-goerli": {
     name: "goerli",
     phrase: "Ethereum Goerli",
@@ -58,13 +58,14 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     chainId: 80001,
     contract: "0x70364D26743851d4FE43eCb065811402D06bf4AD",
   },
-  // staging:
+  // staging
   "optimism-kovan-staging": {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
     contract: "0x322F01e81c38B4211529f334864fA630F6aeA408",
   },
+  // Testing
   custom: {
     name: "localhost",
     phrase: "Custom Chain",

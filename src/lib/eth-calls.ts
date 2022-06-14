@@ -8,12 +8,15 @@ async function registerTable(
   this: Connection,
   query: string
 ): Promise<ContractReceipt> {
-  const signer = this.signer ?? (await getSigner());
-  const address = await signer.getAddress();
+  this.signer = this.signer ?? (await getSigner());
+  const address = await this.signer.getAddress();
 
   const contractAddress = this.options.contract;
 
-  const contract = TablelandTables__factory.connect(contractAddress, signer);
+  const contract = TablelandTables__factory.connect(
+    contractAddress,
+    this.signer
+  );
   const tx = await contract.createTable(address, query);
 
   return await tx.wait();
