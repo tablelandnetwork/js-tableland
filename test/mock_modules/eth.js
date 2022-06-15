@@ -2,12 +2,13 @@ module.exports = {
   TablelandTables__factory: {
     connect: function () {
       return {
-        safeMint: function () {
+        createTable: function () {
           return {
             wait: async function () {
               return {
                 events: [
-                  { args: { tokenId: { _hex: "0x015", type: "BigNumber" } } },
+                  {},
+                  { args: { tableId: { _hex: "0x015", type: "BigNumber" } } },
                 ],
               };
             },

@@ -1,116 +1,115 @@
-import { Signer, utils, ethers } from "ethers";
-import {
-  ConnectionOptions,
-  Connection,
-  Token,
-  SupportedNetwork,
-} from "../interfaces.js";
+import { Signer } from "ethers";
 import { list } from "./list.js";
-import { createToken } from "./token.js";
-import { query } from "./query.js";
+import { Token } from "./token.js";
+import { read, write } from "./query.js";
 import { create } from "./create.js";
 import { hash } from "./hash.js";
+import { siwe } from "./siwe.js";
+import { receipt } from "./tableland-calls.js";
+import { SUPPORTED_CHAINS, NetworkName, ChainName } from "./util.js";
+import { Connection } from "./connection.js";
 
-declare let globalThis: any;
-
-const SUPPORTED_NETWORKS: SupportedNetwork[] = [
-  {
-    key: "rinkeby",
-    phrase: "Ethereum Rinkeby",
-  },
-];
-
-export async function getSigner(): Promise<Signer> {
-  await globalThis.ethereum.request({ method: "eth_requestAccounts" });
-  const provider = new ethers.providers.Web3Provider(globalThis.ethereum);
-  const signer = provider.getSigner();
-  return signer;
+/**
+ * Options to control client connection with Tableland, EVM, and Gateway.
+ */
+export interface ConnectOptions {
+  // Override any required signature by using a pre-signed SIWE token.
+  token?: Token;
+  // Signer interface for signing tokens and transactions.
+  signer?: Signer;
+  // Remote gateway host for RPC API calls.
+  host?: string;
+  // String enum indicating Tableland network. Defaults to "testnet".
+  network?: NetworkName;
+  // String enum indicating target EVM chain. Defaults to "goerli",
+  // or `signer.provider.getNetwork` if available.
+  chain?: ChainName;
+  chainId?: number;
+  // Contract address to use for Tableland Tables registry. If provided,
+  // overrides defaults derived from network + chain combination.
+  contract?: string;
 }
 
-export async function userCreatesToken(signer: Signer): Promise<Token> {
-  const sign = {
-    signMessage: async (message: Uint8Array): Promise<Uint8Array> => {
-      const sig = await signer.signMessage(message);
-      return utils.arrayify(sig);
-    },
-  };
-  const iat = ~~(Date.now() / 1000);
-  const exp = iat + 60 * 60 * 10; // Default to ~10 hours
-
-  // WARN: This is a non-standard JWT
-  // Borrows ideas from: https://github.com/ethereum/EIPs/issues/1341
-  const iss = await signer.getAddress();
-  const network = await signer.provider?.getNetwork();
-  const chain = network?.chainId ?? "unknown";
-  let net = network?.name;
-  if (net?.startsWith("matic")) net = "poly";
-  else net = "eth";
-  const kid = `${net}:${chain}:${iss}`;
-
-  return await createToken(
-    sign,
-    { kid: kid, alg: "ETH" },
-    { iss: iss, exp: exp }
-  );
-}
-
-export async function connect(options: ConnectionOptions): Promise<Connection> {
+/**
+ * Create client connection with Tableland, EVM, and Gateway.
+ * @param options Options to control client connection.
+ * @returns Promise that resolves to a Connection object.
+ */
+export async function connect(options: ConnectOptions): Promise<Connection> {
   const network = options.network ?? "testnet";
-  const host = options.host ?? "https://testnet.tableland.network";
+  let chain = options.chain ?? "ethereum-goerli";
+  if (network === "custom" && !options.host) {
+    throw new Error('`host` must be provided if using "custom" network');
+  }
+  if (!["testnet", "staging", "custom"].includes(network)) {
+    throw new Error("unsupported network specified");
+  }
+  const host =
+    options.host ??
+    `https://${
+      network === "testnet" ? "testnetv2" : "staging"
+    }.tableland.network`;
 
-  if (network !== "testnet" && !options.host) {
-    throw Error(
-      "Please specify a host to connect to. (Example: https://env.tableland.network)"
-    );
+  const signer = options.signer;
+  if (signer && signer.provider) {
+    // Set params with provider network info if not explicitly given in options
+    if (!options.chain && !options.chainId) {
+      const { name } = await signer.provider.getNetwork();
+      const found = Object.entries(SUPPORTED_CHAINS).find(
+        ([, chainEntry]) => chainEntry.name === name
+      );
+      if (found) {
+        chain = found[0] as ChainName;
+      } else {
+        throw new Error(
+          "proivder chain mismatch. Switch your wallet connection and reconnect"
+        );
+      }
+    }
   }
 
-  const signer = options.signer ?? (await getSigner());
-  const providerNetwork = await signer.provider?.getNetwork();
-
-  if (
-    !providerNetwork?.name ||
-    !SUPPORTED_NETWORKS.find((net) => net.key === providerNetwork.name)
-  ) {
-    const plural = SUPPORTED_NETWORKS.length > 1;
-    const phrase = plural
-      ? SUPPORTED_NETWORKS.map((net: any, i: number) => {
-          const last = i === SUPPORTED_NETWORKS.length - 1;
-          return last ? `and ${net.phrase}` : net.phrase;
-        })
-      : SUPPORTED_NETWORKS[0].phrase;
-
+  const info = SUPPORTED_CHAINS[chain];
+  if (!info && !options.chainId) {
     throw new Error(
-      `Only ${phrase} network${
-        plural ? "s are" : " is"
-      } currently supported. Switch your wallet connection and reconnect.`
+      "unsupported chain information. See `SUPPORTED_CHAINS` for options"
     );
   }
 
-  const token = options.token ?? (await userCreatesToken(signer));
+  const chainId = options.chainId ?? info.chainId;
+  // We can override the contract address here for any supported network
+  const contract = options.contract ?? info.contract;
+  // If a token was provided, we cache it
+  const token = options.token;
   const connectionObject: Connection = {
-    get token() {
-      return token;
-    },
-    get network() {
-      return network;
-    },
-    get host() {
-      return host;
-    },
-    get signer() {
-      return signer;
+    token,
+    signer,
+    options: {
+      network,
+      host,
+      chain,
+      chainId,
+      contract,
     },
     get list() {
       return list;
     },
-    get query() {
-      return query;
+    get read() {
+      return read;
+    },
+    get write() {
+      return write;
     },
     get create() {
       return create;
     },
     get hash() {
       return hash;
+    },
+    get receipt() {
+      return receipt;
+    },
+    get siwe() {
+      return siwe;
     },
   };
 

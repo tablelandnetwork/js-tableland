@@ -31,7 +31,8 @@ export const FetchCreateTableOnTablelandSuccess = async () => {
       id: 1,
       result: {
         name: "hello_115",
-        structure_hash: "ef7be01282ea97380e4d3bbcba6774cbc7242c46ee51b7e611f1efdfa3623e53"
+        structure_hash:
+          "ef7be01282ea97380e4d3bbcba6774cbc7242c46ee51b7e611f1efdfa3623e53",
       },
     }),
   };
@@ -43,8 +44,8 @@ export const FetchCreateDryRunError = async () => {
     id: 1,
     error: {
       code: -32000,
-      message: "TEST ERROR: invalid sql near 123"
-    }
+      message: "TEST ERROR: invalid sql near 123",
+    },
   });
 };
 
@@ -52,7 +53,7 @@ export const FetchSelectQuerySuccess = async () => {
   return JSON.stringify({
     jsonrpc: "2.0",
     id: 1,
-    result: {data: {columns: [{name: 'colname'}], rows: ['val1']}}
+    result: { data: { columns: [{ name: "colname" }], rows: ["val1"] } },
   });
 };
 
@@ -61,8 +62,8 @@ export const FetchInsertQuerySuccess = async () => {
     jsonrpc: "2.0",
     id: 1,
     result: {
-      data: null
-    }
+      tx: { hash: "testhashinsertresponse" },
+    },
   });
 };
 
@@ -71,8 +72,8 @@ export const FetchUpdateQuerySuccess = async () => {
     jsonrpc: "2.0",
     id: 1,
     result: {
-      data: null
-    }
+      tx: { hash: "testhashinsertresponse" },
+    },
   });
 };
 
@@ -82,8 +83,8 @@ export const FetchRunQueryError = async () => {
     id: 1,
     error: {
       code: -32000,
-      message: "TEST ERROR: tableland validator mock error."
-    }
+      message: "TEST ERROR: tableland validator mock error.",
+    },
   });
 };
 
@@ -93,7 +94,8 @@ export const FetchHashTableSuccess = async () => {
       jsonrpc: "2.0",
       id: 1,
       result: {
-        structure_hash: "ef7be01282ea97380e4d3bbcba6774cbc7242c46ee51b7e611f1efdfa3623e53"
+        structure_hash:
+          "ef7be01282ea97380e4d3bbcba6774cbc7242c46ee51b7e611f1efdfa3623e53",
       },
     }),
   };
@@ -105,7 +107,7 @@ export const FetchHashTableError = async () => {
     id: 1,
     error: {
       code: -32000,
-      message: "TEST ERROR: invalid sql near 123"
-    }
+      message: "TEST ERROR: invalid sql near 123",
+    },
   });
 };

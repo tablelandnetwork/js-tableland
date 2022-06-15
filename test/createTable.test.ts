@@ -1,7 +1,7 @@
 import fetch from "jest-fetch-mock";
+// import { ethers } from "./mock_modules/ethers";
 import { connect } from "../src/main";
 import {
-  FetchAuthorizedListSuccess,
   FetchCreateDryRunError,
   FetchCreateDryRunSuccess,
   FetchCreateTableOnTablelandSuccess,
@@ -12,9 +12,10 @@ describe("create method", function () {
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
+    // const signer = ethers.providers.Web3Provider().getSigner();
     connection = await connect({
       network: "testnet",
-      host: "https://testnet.tableland.network",
+      host: "https://testnetv2.tableland.network",
     });
   });
 
@@ -24,46 +25,19 @@ describe("create method", function () {
   });
 
   test("Create table works", async function () {
-    fetch.mockResponseOnce(FetchAuthorizedListSuccess);
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
-    const createStatement = "CREATE TABLE hello (id int primary key, val text);";
-    const createReceipt = await connection.create(createStatement);
-    await expect(createReceipt.name).toEqual("hello_115");
-    await expect(createReceipt.structureHash).toEqual("ef7be01282ea97380e4d3bbcba6774cbc7242c46ee51b7e611f1efdfa3623e53");
-
-    const payload = JSON.parse(fetch.mock.calls[2][1]?.body as string);
-
-    await expect(payload.params[0]?.statement).toEqual(createStatement);
-    await expect(payload.params[0]?.id).toEqual("1143");
-    await expect(payload.params[0]?.controller).toEqual("testaddress");
+    const txReceipt = await connection.create("id int primary key, val text");
+    expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
   test("Create table throws if dryrun fails", async function () {
-    fetch.mockResponseOnce(FetchAuthorizedListSuccess);
     fetch.mockResponseOnce(FetchCreateDryRunError);
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
     await expect(async function () {
-      await connection.create(
-        "CREATE TABLE 123hello (id int primary key, val text);"
-      )
+      await connection.create("id int primary key, val text", "123test");
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
-
-  });
-
-  test("Create table sends a description with the statement, if provided", async function () {
-    fetch.mockResponseOnce(FetchAuthorizedListSuccess);
-    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
-    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
-
-    const createStatement = "CREATE TABLE hello (id int primary key, val text);";
-    const description = "desciption of the table being created.  It can be any string.";
-    await connection.create(createStatement, {description: description});
-
-    const payload = JSON.parse(fetch.mock.calls[2][1]?.body as string);
-
-    await expect(payload.params[0].description).toEqual(description)
   });
 });

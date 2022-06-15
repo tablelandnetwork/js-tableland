@@ -41,7 +41,7 @@
     "jest.config.js": "cjs"
   },
   "scripts": {
-    "prepublish": "npm run build:all",
+    "prepublishOnly": "npm run build:all",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "test": "jest --verbose",
     "clean": "rm -rf dist build package",
@@ -79,6 +79,7 @@
     "jest-fetch-mock": "^3.0.3",
     "jest-ts-webcompat-resolver": "^1.0.0",
     "prettier": "^2.5.0",
+    "siwe": "^1.1.6",
     "ts-jest": "^27.1.3",
     "ts-node": "^9.1.1",
     "typedoc": "^0.22.0",
@@ -89,7 +90,7 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@stablelib/base64": "^1.0.1",
-    "@tableland/eth": "0.0.2",
+    "@tableland/eth": "^1.0.0",
     "add-js-extension": "^1.0.4",
     "ethers": "^5.5.2"
   },

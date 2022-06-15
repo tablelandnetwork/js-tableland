@@ -1,32 +1,47 @@
-/* eslint-disable node/no-missing-import */
-
-import camelCase from "camelcase";
 import {
-  TableMetadata,
-  StructureHashReceipt,
-  RpcParams,
-  RpcRequestParam,
+  StructureHashResult,
   ReadQueryResult,
-  KeyVal,
-  CreateTableOptions,
-  CreateTableReceipt,
+  WriteQueryResult,
+  ReceiptResult,
   Connection,
-} from "../interfaces.js";
+} from "./connection.js";
 import { list } from "./list.js";
+import { camelCaseKeys } from "./util.js";
 
-async function SendCall(this: Connection, rpcBody: Object) {
-  return await fetch(`${this.host}/rpc`, {
+export interface RpcParams {
+  controller?: string;
+  /* eslint-disable-next-line camelcase */
+  create_statement?: string;
+  statement?: string;
+  /* eslint-disable-next-line camelcase */
+  txn_hash?: string;
+}
+
+export interface RpcReceipt<T = any> {
+  jsonrpc: string;
+  id: number;
+  result: T;
+}
+
+async function SendCall(this: Connection, rpcBody: Object, token?: string) {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  const body = JSON.stringify(rpcBody);
+  const res = await fetch(`${this.options.host}/rpc`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${this.token.token}`,
-    },
-    body: JSON.stringify(rpcBody),
+    headers,
+    body,
   });
+
+  return parseResponse(res);
 }
 
 // parse the rpc response and throw if any of the different types of errors occur
-async function sendResponse(res: any) {
+async function parseResponse(res: any): Promise<any> {
   if (!res.ok) throw new Error(res.statusText);
 
   const json = await res.json();
@@ -34,27 +49,7 @@ async function sendResponse(res: any) {
   if (json.error) throw new Error(json.error.message);
   if (!json.result) throw new Error("Malformed RPC response");
 
-  // response to reads is in `result.data` key, note: data === null for writes
-  if (json.result.data) return camelCaseKeys(json.result.data);
-  // response to create or hash is in `result`
-  if (json.result.name || json.result.structure_hash) {
-    return camelCaseKeys(json.result);
-  }
-
-  // return undefined for writes
-  return undefined;
-}
-
-// Take an Object with any symantic for key naming and return a new Object with keys that are lowerCamelCase
-// Example: `camelCaseKeys({structure_hash: "123"})` returns `{structureHash: "123"}`
-function camelCaseKeys(obj: any) {
-  return Object.fromEntries(
-    Object.entries(obj).map((entry: KeyVal) => {
-      const key = entry[0];
-      const val = entry[1];
-      return [camelCase(key), val];
-    })
-  );
+  return json;
 }
 
 async function GeneralizedRPC(
@@ -62,79 +57,72 @@ async function GeneralizedRPC(
   method: string,
   params: RpcParams = {}
 ) {
-  const signer = this.signer;
-  const address = await signer.getAddress();
-
-  const param: RpcRequestParam = {
-    controller: address,
-    create_statement: params.createStatement,
-    description: params.description,
-    dryrun: params.dryrun,
-    id: params.tableId,
-    statement: params.statement,
-  };
-
   return {
     jsonrpc: "2.0",
     method: `tableland_${method}`,
     id: 1,
-    params: [param],
+    params: [params],
   };
-}
-
-export async function checkAuthorizedList(this: Connection): Promise<boolean> {
-  const authorized: boolean = await SendCall.call(
-    this,
-    await GeneralizedRPC.call(this, "authorize")
-  ).then((r) => {
-    return r.status === 200;
-  });
-  return authorized;
-}
-
-export async function create(
-  this: Connection,
-  query: string,
-  tableId: string,
-  options: CreateTableOptions
-): Promise<CreateTableReceipt> {
-  const message = await GeneralizedRPC.call(this, "createTable", {
-    ...options,
-    tableId: tableId,
-    statement: query,
-  });
-
-  const response = await SendCall.call(this, message);
-  const json = await sendResponse(response);
-
-  return json as CreateTableReceipt;
 }
 
 async function hash(
   this: Connection,
   query: string
-): Promise<StructureHashReceipt> {
-  const message = await GeneralizedRPC.call(this, "calculateTableHash", {
-    createStatement: query,
+): Promise<StructureHashResult> {
+  const message = await GeneralizedRPC.call(this, "validateCreateTable", {
+    create_statement: query,
   });
+  if (!this.token) {
+    await this.siwe();
+  }
+  const json = await SendCall.call(this, message, this.token?.token);
 
-  const response = await SendCall.call(this, message);
-  const json = await sendResponse(response);
-
-  return json as StructureHashReceipt;
+  return camelCaseKeys(json.result);
 }
 
-async function query(
-  this: Connection,
-  query: string
-): Promise<ReadQueryResult | null> {
-  const message = await GeneralizedRPC.call(this, "runSQL", {
+async function read(this: Connection, query: string): Promise<ReadQueryResult> {
+  const message = await GeneralizedRPC.call(this, "runReadQuery", {
     statement: query,
   });
-  const response = await SendCall.call(this, message);
-  const json = await sendResponse(response);
+  const json = await SendCall.call(this, message);
 
-  return json as ReadQueryResult;
+  return camelCaseKeys(json.result.data);
 }
 
-export { query, list, hash, TableMetadata };
+// Note: This method returns right away, once the write request has been sent to a validator for
+//       writing to the Tableland smart contract. However, the write is not confirmed until a validator
+//       has picked up the write event from the smart contract, and digested the event locally.
+async function write(
+  this: Connection,
+  query: string
+): Promise<WriteQueryResult> {
+  const message = await GeneralizedRPC.call(this, "relayWriteQuery", {
+    statement: query,
+  });
+  if (!this.token) {
+    await this.siwe();
+  }
+  const json = await SendCall.call(this, message, this.token?.token);
+
+  return camelCaseKeys(json.result.tx);
+}
+
+async function receipt(
+  this: Connection,
+  txnHash: string
+): Promise<ReceiptResult | undefined> {
+  const message = await GeneralizedRPC.call(this, "getReceipt", {
+    txn_hash: txnHash,
+  });
+  if (!this.token) {
+    await this.siwe();
+  }
+  const json = await SendCall.call(this, message, this.token?.token);
+
+  if (json.result.receipt) {
+    return camelCaseKeys(json.result.receipt);
+  }
+  return undefined;
+}
+
+export { hash, list, receipt, read, write };

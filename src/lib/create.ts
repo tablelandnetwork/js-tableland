@@ -1,40 +1,34 @@
-import {
-  CreateTableOptions,
-  CreateTableReceipt,
-  Connection,
-} from "../interfaces.js";
+import { Connection, CreateTableReceipt } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import { registerTable } from "./eth-calls.js";
+// import { userCreatesToken } from "./token.js";
 import { BigNumber } from "ethers";
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register
- * a new Table on Tableland
- * @param {string} query SQL create statement. Must include 'id' as primary key.
- * @param {CreateTableOptions} options List of options
- * @returns {string} The token ID of the table created
+ * a new Table on Tableland. This method returns after the tableId has been minted, but not
+ * nessessarily before the Tableland network has picked up the CREATE TABLE event. Use
+ * the `receipt` method on the returned `txnHash` to check the status of the table.
+ * @param {string} schema SQL table schema.
+ * @returns {string} A Promise that resolves to a pending table creation receipt.
  */
 export async function create(
   this: Connection,
-  query: string,
-  options: CreateTableOptions = {}
+  schema: string,
+  prefix: string = ""
 ): Promise<CreateTableReceipt> {
-  const authorized = await tablelandCalls.checkAuthorizedList.call(this);
-  if (!authorized) throw new Error("You are not authorized to create a table");
-  // Validation
-
+  const { chainId } = this.options;
+  const query = `CREATE TABLE ${prefix}_${chainId} (${schema});`;
   // This "dryrun" is done to validate that the query statement is considered valid.
   // We check this before minting the token, so the caller won't succeed at minting a token
   // then fail to create the table on the Tableland network
-  await tablelandCalls.create.call(this, query, "1", {
-    dryrun: true,
-    ...options,
-  });
+  await tablelandCalls.hash.call(this, query);
 
-  let id = options.id;
-  if (!id) {
-    const { tableId } = await registerTable.call(this);
-    id = BigNumber.from(tableId).toString();
-  }
+  const txn = await registerTable.call(this, query);
 
-  return await tablelandCalls.create.call(this, query, id, options);
+  const [, event] = txn.events ?? [];
+  const txnHash = txn.transactionHash;
+  const blockNumber = txn.blockNumber;
+  const tableId: BigNumber | undefined = event?.args?.tableId;
+  const name = `${prefix}_${chainId}_${tableId}`;
+  return { tableId, prefix, chainId, txnHash, blockNumber, name };
 }

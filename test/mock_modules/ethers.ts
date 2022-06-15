@@ -9,15 +9,18 @@ export const ethers = {
           return {
             provider: {
               getNetwork: async function () {
-                return { name: "rinkeby" };
-              }
+                return {
+                  name: "goerli",
+                  chainId: 5,
+                };
+              },
             },
             getAddress: function () {
               return "testaddress";
             },
             signMessage: async function () {
               return "testsignedmessage";
-            }
+            },
           };
         },
       };

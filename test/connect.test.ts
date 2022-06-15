@@ -1,8 +1,15 @@
 import fetch from "jest-fetch-mock";
 import { Signer } from "ethers";
-import flushPromises from 'flush-promises';
-import { connect } from "../src/main";
-import { ConnectionOptions } from "../src/interfaces";
+import flushPromises from "flush-promises";
+// eslint-disable-next-line camelcase
+import { TablelandTables__factory } from "@tableland/eth";
+import { connect, NetworkName, SUPPORTED_CHAINS } from "../src/main";
+import { ConnectOptions } from "../src/lib/connector.js";
+import {
+  FetchCreateDryRunSuccess,
+  FetchCreateTableOnTablelandSuccess,
+  FetchHashTableSuccess,
+} from "./fauxFetch";
 
 describe("connect function", function () {
   beforeAll(async function () {
@@ -16,26 +23,59 @@ describe("connect function", function () {
   });
 
   test("exposes signer with correct address", async function () {
-    const connection = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
+    fetch.mockResponseOnce(FetchHashTableSuccess);
+    const connection = await connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+    });
 
-    await expect(connection.signer.getAddress()).toMatch("testaddress");
+    // Just do this to lazily get the signer
+    const createStatement =
+      "CREATE TABLE hello (id int primary key, val text);";
+    await connection.hash(createStatement);
+
+    expect(await connection.signer?.getAddress()).toMatch("testaddress");
   });
 
-  test("exposes public methods and properties",  async function () {
-    const connection = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
+  test("exposes public methods and properties", async function () {
+    const connection = await connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+    });
 
-    await expect(connection.network).toBe("testnet");
-    await expect(connection.host).toBe("https://testnet.tableland.network");
-    await expect(connection.token instanceof Object).toBe(true);
-    await expect(typeof connection.token.token).toBe("string");
-    await expect(connection.signer instanceof Object).toBe(true);
-    await expect(typeof connection.list).toBe("function");
-    await expect(typeof connection.query).toBe("function");
-    await expect(typeof connection.create).toBe("function");
+    expect(connection.options.network).toBe("testnet");
+    expect(connection.options.host).toBe("https://testnet.tableland.network");
+    expect(connection.token).toBe(undefined);
+    expect(connection.signer).toBe(undefined);
+    expect(typeof connection.list).toBe("function");
+    expect(typeof connection.read).toBe("function");
+    expect(typeof connection.write).toBe("function");
+    expect(typeof connection.create).toBe("function");
+  });
+
+  test("allows specifying connection network", async function () {
+    const factorySpy = jest.spyOn(TablelandTables__factory, "connect");
+    const connection = await connect({
+      network: "testnet",
+      host: "https://testnetv2.tableland.network",
+    });
+
+    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
+    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
+
+    await connection.create("id int primary key, val text", "hello");
+
+    expect(factorySpy).toHaveBeenCalled();
+    expect(SUPPORTED_CHAINS["ethereum-goerli"].contract).toBe(
+      factorySpy.mock.calls[0][0]
+    );
   });
 
   test("allows specifying connection token", async function () {
-    const connection1 = await connect({ network: "testnet", host: "https://testnet.tableland.network" });
+    const connection1 = await connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+    });
 
     // We wait for over 1 second so that if the two connections are generating different tokens
     // then the expirations will be different. This will ensure the assertion will only succeed
@@ -46,17 +86,17 @@ describe("connect function", function () {
     const connection2 = await connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
-      token: connection1.token
+      token: connection1.token,
     });
 
-    await expect(connection1.token.token === connection2.token.token).toBe(true);
+    expect(connection1.token?.token === connection2.token?.token).toBe(true);
   });
 
   test("throws error if provider network is not supported", async function () {
     await expect(async function () {
-      await connect({
+      return connect({
         network: "testnet",
-        host: "https://testnet.tableland.network",
+        host: "https://testnetv2.tableland.network",
         signer: {
           provider: {
             getNetwork: async function () {
@@ -68,21 +108,19 @@ describe("connect function", function () {
           },
           signMessage: async function () {
             return "testsignedmessage";
-          }
-        } as unknown as Signer // convince type checks into letting us mock the signer
+          },
+        } as unknown as Signer, // convince type checks into letting us mock the signer
       });
-    } as ConnectionOptions).rejects.toThrow(
-      "Only Ethereum Rinkeby network is currently supported. Switch your wallet connection and reconnect."
+    } as ConnectOptions).rejects.toThrow(
+      "proivder chain mismatch. Switch your wallet connection and reconnect"
     );
   });
 
   test("throws error if connection network is not supported and no host is provided", async function () {
     await expect(async function () {
-      await connect({
-        network: "furrykitties"
+      return connect({
+        network: "furrykitties" as NetworkName,
       });
-    } as ConnectionOptions).rejects.toThrow(
-      "Please specify a host to connect to. (Example: https://env.tableland.network)"
-    );
+    } as ConnectOptions).rejects.toThrow("unsupported network specified");
   });
 });
