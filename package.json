@@ -64,6 +64,9 @@
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "babel-core": "^7.0.0-bridge.0",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
+    "add-js-extension": "^1.0.4",
     "babel-jest": "^27.4.6",
     "camelcase": "^6.3.0",
     "esbuild": "^0.14.18",
@@ -87,11 +90,8 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-typescript": "^7.16.7",
     "@stablelib/base64": "^1.0.1",
     "@tableland/eth": "^1.0.0",
-    "add-js-extension": "^1.0.4",
     "ethers": "^5.5.2"
   },
   "contributors": [
