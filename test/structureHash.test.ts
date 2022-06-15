@@ -34,7 +34,6 @@ describe("has method", function () {
 
     // test that fetch is called how validator expects
     await expect(payload.params[0]?.create_statement).toEqual(createStatement);
-    await expect(payload.params[0]?.controller).toEqual("testaddress");
     await expect(payload.params[0]).not.toHaveProperty("id");
   });
 
