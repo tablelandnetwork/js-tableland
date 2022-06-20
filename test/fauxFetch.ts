@@ -1,8 +1,14 @@
-import { myTableResponseBody } from "../test/constants";
+import { myTableResponseBody, noTableResponseBody } from "../test/constants";
 
 export const FetchMyTables = async () => {
   return {
     body: JSON.stringify(myTableResponseBody),
+  };
+};
+
+export const FetchNoTables = async () => {
+  return {
+    body: JSON.stringify(noTableResponseBody),
   };
 };
 

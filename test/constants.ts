@@ -8,3 +8,5 @@ export const myTableResponseBody = [
     created_at: "2022-02-11T02:12:19.80809Z",
   },
 ];
+
+export const noTableResponseBody = [];

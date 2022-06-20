@@ -1,5 +1,5 @@
 import { TableMetadata, Connection } from "./connection.js";
-import { getSigner, camelCaseKeys } from "./util.js";
+import { getSigner } from "./util.js";
 
 export async function list(this: Connection): Promise<TableMetadata[]> {
   this.signer = this.signer ?? (await getSigner());
@@ -9,5 +9,5 @@ export async function list(this: Connection): Promise<TableMetadata[]> {
     `${this.options.host}/chain/${this.options.chainId}/tables/controller/${address}`
   ).then((r) => r.json());
 
-  return camelCaseKeys(res);
+  return res;
 }
