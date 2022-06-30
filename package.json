@@ -90,7 +90,7 @@
     "siwe": "^1.1.6",
     "camelcase": "^6.3.0",
     "@stablelib/base64": "^1.0.1",
-    "@tableland/eth": "^1.0.0",
+    "@tableland/evm": "^1.0.0",
     "ethers": "^5.5.2"
   },
   "contributors": [

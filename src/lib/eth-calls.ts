@@ -1,6 +1,6 @@
 import { ContractReceipt } from "ethers";
 /* eslint-disable-next-line camelcase */
-import { TablelandTables__factory } from "@tableland/eth";
+import { TablelandTables__factory } from "@tableland/evm";
 import { Connection } from "./connection.js";
 import { getSigner } from "./util.js";
 
