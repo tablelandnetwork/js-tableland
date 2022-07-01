@@ -11,7 +11,7 @@ module.exports = {
   },
   setupFiles: ["./test/setupTest.ts"],
   moduleNameMapper: {
-    "^@tableland/eth$": "<rootDir>/test/mock_modules/eth",
+    "^@tableland/evm$": "<rootDir>/test/mock_modules/evm",
     "^ethers$": "<rootDir>/test/mock_modules/ethers.ts",
   },
   resolver: "jest-ts-webcompat-resolver",
