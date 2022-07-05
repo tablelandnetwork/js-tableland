@@ -1,5 +1,6 @@
 import { Signer, ethers } from "ethers";
 import camelCase from "camelcase";
+import proxies from "@tableland/evm/proxies.js";
 
 declare let globalThis: any;
 
@@ -44,26 +45,26 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     name: "goerli",
     phrase: "Ethereum Goerli",
     chainId: 5,
-    contract: "0xa4b0729f02C6dB01ADe92d247b7425953d1DbA25",
+    contract: proxies["ethereum-goerli"],
   },
   "optimism-kovan": {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
-    contract: "0xf9C3530C03D335a00163382366a72cc1Ebbd39fF",
+    contract: proxies["optimism-kovan"],
   },
   "polygon-mumbai": {
     name: "maticmum",
     phrase: "Polygon Testnet",
     chainId: 80001,
-    contract: "0x70364D26743851d4FE43eCb065811402D06bf4AD",
+    contract: proxies["polygon-mumbai"],
   },
   // staging
   "optimism-kovan-staging": {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
-    contract: "0x322F01e81c38B4211529f334864fA630F6aeA408",
+    contract: proxies["optimism-kovan-staging"],
   },
   // Testing
   custom: {
