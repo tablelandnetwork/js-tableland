@@ -1,5 +1,6 @@
 import { Signer, ethers } from "ethers";
 import camelCase from "camelcase";
+import proxies from "@tableland/evm/proxies.js";
 
 declare let globalThis: any;
 
@@ -36,6 +37,7 @@ export interface SupportedChain {
   phrase: string;
   chainId: number;
   contract: string;
+  host: string;
 }
 
 export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
@@ -44,34 +46,39 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     name: "goerli",
     phrase: "Ethereum Goerli",
     chainId: 5,
-    contract: "0xa4b0729f02C6dB01ADe92d247b7425953d1DbA25",
+    contract: proxies["ethereum-goerli"],
+    host: "https://testnet.tableland.network",
   },
   "optimism-kovan": {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
-    contract: "0xf9C3530C03D335a00163382366a72cc1Ebbd39fF",
+    contract: proxies["optimism-kovan"],
+    host: "https://testnet.tableland.network",
   },
   "polygon-mumbai": {
     name: "maticmum",
     phrase: "Polygon Testnet",
     chainId: 80001,
-    contract: "0x70364D26743851d4FE43eCb065811402D06bf4AD",
+    contract: proxies["polygon-mumbai"],
+    host: "https://testnet.tableland.network",
   },
   // staging
   "optimism-kovan-staging": {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
-    contract: "0x322F01e81c38B4211529f334864fA630F6aeA408",
+    contract: proxies["optimism-kovan-staging"],
+    host: "https://staging.tableland.network",
   },
   // Testing
   custom: {
     name: "localhost",
     phrase: "Custom Chain",
     chainId: 31337, // Default to using hardhat chainId
-    // If building locally you can put your contract address here or use the contract connection option
-    contract: "",
+    // If building locally you can put your contract address and host here or use the contract connection option
+    contract: "", // e.g. "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    host: "", // e.g. "http://localhost:8080"
   },
 };
 
