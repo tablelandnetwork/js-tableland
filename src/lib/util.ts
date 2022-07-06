@@ -47,21 +47,21 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Ethereum Goerli",
     chainId: 5,
     contract: proxies["ethereum-goerli"],
-    host: "https://testnet.tableland.network"
+    host: "https://testnet.tableland.network",
   },
   "optimism-kovan": {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
     contract: proxies["optimism-kovan"],
-    host: "https://testnet.tableland.network"
+    host: "https://testnet.tableland.network",
   },
   "polygon-mumbai": {
     name: "maticmum",
     phrase: "Polygon Testnet",
     chainId: 80001,
     contract: proxies["polygon-mumbai"],
-    host: "https://testnet.tableland.network"
+    host: "https://testnet.tableland.network",
   },
   // staging
   "optimism-kovan-staging": {
@@ -69,16 +69,16 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Optimism Kovan",
     chainId: 69,
     contract: proxies["optimism-kovan-staging"],
-    host: "https://staging.tableland.network"
+    host: "https://staging.tableland.network",
   },
   // Testing
   custom: {
     name: "localhost",
     phrase: "Custom Chain",
     chainId: 31337, // Default to using hardhat chainId
-    // If building locally you can put your contract address here or use the contract connection option
-    contract: "",
-    host: ""
+    // If building locally you can put your contract address and host here or use the contract connection option
+    contract: "", // e.g. "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    host: "", // e.g. "http://localhost:8080"
   },
 };
 
