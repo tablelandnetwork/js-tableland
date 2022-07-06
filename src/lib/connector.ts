@@ -44,11 +44,6 @@ export async function connect(options: ConnectOptions): Promise<Connection> {
   if (!["testnet", "staging", "custom"].includes(network)) {
     throw new Error("unsupported network specified");
   }
-  const host =
-    options.host ??
-    `https://${
-      network === "testnet" ? "testnetv2" : "staging"
-    }.tableland.network`;
 
   const signer = options.signer;
   if (signer && signer.provider) {
@@ -75,6 +70,7 @@ export async function connect(options: ConnectOptions): Promise<Connection> {
     );
   }
 
+  const host = options.host ?? info.host;
   const chainId = options.chainId ?? info.chainId;
   // We can override the contract address here for any supported network
   const contract = options.contract ?? info.contract;

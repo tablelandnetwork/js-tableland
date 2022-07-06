@@ -37,6 +37,7 @@ export interface SupportedChain {
   phrase: string;
   chainId: number;
   contract: string;
+  host: string;
 }
 
 export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
@@ -46,18 +47,21 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Ethereum Goerli",
     chainId: 5,
     contract: proxies["ethereum-goerli"],
+    host: "https://testnet.tableland.network"
   },
   "optimism-kovan": {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
     contract: proxies["optimism-kovan"],
+    host: "https://testnet.tableland.network"
   },
   "polygon-mumbai": {
     name: "maticmum",
     phrase: "Polygon Testnet",
     chainId: 80001,
     contract: proxies["polygon-mumbai"],
+    host: "https://testnet.tableland.network"
   },
   // staging
   "optimism-kovan-staging": {
@@ -65,6 +69,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Optimism Kovan",
     chainId: 69,
     contract: proxies["optimism-kovan-staging"],
+    host: "https://staging.tableland.network"
   },
   // Testing
   custom: {
@@ -73,6 +78,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     chainId: 31337, // Default to using hardhat chainId
     // If building locally you can put your contract address here or use the contract connection option
     contract: "",
+    host: ""
   },
 };
 
