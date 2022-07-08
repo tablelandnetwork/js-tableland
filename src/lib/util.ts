@@ -1,6 +1,6 @@
 import { Signer, ethers } from "ethers";
 import camelCase from "camelcase";
-import proxies from "@tableland/evm/proxies.js";
+import { proxies } from "@tableland/evm/proxies.js";
 
 declare let globalThis: any;
 
