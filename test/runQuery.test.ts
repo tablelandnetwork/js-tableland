@@ -65,7 +65,7 @@ describe("read and write methods", function () {
     const txReceipt = await connection.write(
       "INSERT INTO test_1 (colname) values (val2);"
     );
-console.log(txReceipt);
+
     await expect(
       txReceipt.hash
     ).toEqual("0x016");

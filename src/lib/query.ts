@@ -29,7 +29,7 @@ export async function write(
     return await tablelandCalls.write.call(this, query);
   }
 
-  // TODO: need to ask the Validator if this query is valid, and ideally it also returns the tableId
+  // ask the Validator if this query is valid, and get the tableId for use in SC call
   const { tableId } = await tablelandCalls.validateWriteQuery.call(this, query);
 
   const txn = await runSql.call(this, tableId, query);
