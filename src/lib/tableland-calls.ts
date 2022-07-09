@@ -1,5 +1,6 @@
 import {
   StructureHashResult,
+  ValidateWriteResult,
   ReadQueryResult,
   WriteQueryResult,
   ReceiptResult,
@@ -80,6 +81,21 @@ async function hash(
   return camelCaseKeys(json.result);
 }
 
+async function validateWriteQuery(
+  this: Connection,
+  query: string
+): Promise<ValidateWriteResult> {
+  const message = await GeneralizedRPC.call(this, "validateWriteQuery", {
+    statement: query,
+  });
+  if (!this.token) {
+    await this.siwe();
+  }
+  const json = await SendCall.call(this, message, this.token?.token);
+
+  return camelCaseKeys(json.result);
+}
+
 async function read(this: Connection, query: string): Promise<ReadQueryResult> {
   const message = await GeneralizedRPC.call(this, "runReadQuery", {
     statement: query,
@@ -125,4 +141,4 @@ async function receipt(
   return undefined;
 }
 
-export { hash, list, receipt, read, write };
+export { hash, list, receipt, read, validateWriteQuery, write };

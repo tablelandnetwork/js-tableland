@@ -28,6 +28,8 @@ export interface ConnectOptions {
   // Contract address to use for Tableland Tables registry. If provided,
   // overrides defaults derived from network + chain combination.
   contract?: string;
+  // Boolean that indicates if tableland writes should be relayed via Validator
+  rpcRelay?: boolean;
 }
 
 /**
@@ -74,12 +76,16 @@ export async function connect(options: ConnectOptions): Promise<Connection> {
   const chainId = options.chainId ?? info.chainId;
   // We can override the contract address here for any supported network
   const contract = options.contract ?? info.contract;
+  // Enable specifying rpcRelay, otherwise use the SUPPORTED_CHAINS value
+  const rpcRelay =
+    typeof options.rpcRelay === "boolean" ? options.rpcRelay : info.rpcRelay;
   // If a token was provided, we cache it
   const token = options.token;
   const connectionObject: Connection = {
     token,
     signer,
     options: {
+      rpcRelay,
       network,
       host,
       chain,
