@@ -22,4 +22,23 @@ async function registerTable(
   return await tx.wait();
 }
 
-export { registerTable };
+async function runSql(
+  this: Connection,
+  tableId: number,
+  query: string
+): Promise<ContractReceipt> {
+  this.signer = this.signer ?? (await getSigner());
+  const address = await this.signer.getAddress();
+
+  const contractAddress = this.options.contract;
+
+  const contract = TablelandTables__factory.connect(
+    contractAddress,
+    this.signer
+  );
+  const tx = await contract.runSQL(address, tableId, query);
+
+  return await tx.wait();
+}
+
+export { registerTable, runSql };

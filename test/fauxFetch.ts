@@ -55,11 +55,35 @@ export const FetchCreateDryRunError = async () => {
   });
 };
 
+export const FetchValidateWriteQuery = async () => {
+  return {
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      result: {
+        tableId: 1,
+      },
+    }),
+  };
+};
+
+export const FetchDirectRunSQLSuccess = async () => {
+  return {
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      result: {
+        success: true,
+      },
+    }),
+  };
+};
+
 export const FetchSelectQuerySuccess = async () => {
   return JSON.stringify({
     jsonrpc: "2.0",
     id: 1,
-    result: { data: { columns: [{ name: "colname" }], rows: ["val1"] } },
+    result: { data: { columns: [{ name: "colname" }], rows: [["val1"]] } },
   });
 };
 
@@ -115,5 +139,28 @@ export const FetchHashTableError = async () => {
       code: -32000,
       message: "TEST ERROR: invalid sql near 123",
     },
+  });
+};
+
+export const FetchReceiptExists = async () => {
+  return JSON.stringify({
+    jsonrpc: "2.0",
+    id: 1,
+    result: {
+      receipt: {
+        chainId: 5,
+        txnHash: "0xc3e7d1e81b59556f414a5f5c23760eb61b4bfaa18150d924d7d3b334941dbecd",
+        blockNumber: 1000,
+        tableId: '2',
+      }
+    }
+  });
+};
+
+export const FetchReceiptNone = async () => {
+  return JSON.stringify({
+    jsonrpc: "2.0",
+    id: 1,
+    result: {}
   });
 };

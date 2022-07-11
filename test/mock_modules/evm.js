@@ -14,6 +14,15 @@ module.exports = {
             },
           };
         },
+        runSQL: function () {
+          return {
+            wait: async function () {
+              return {
+                transactionHash: "0x016"
+              };
+            }
+          }
+        }
       };
     },
   },

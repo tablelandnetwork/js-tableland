@@ -32,6 +32,10 @@ export interface StructureHashResult {
   structureHash: string;
 }
 
+export interface ValidateWriteResult {
+  tableId: number;
+}
+
 export interface CreateTableReceipt {
   tableId?: BigNumber;
   name?: string;
@@ -50,6 +54,7 @@ export interface Connection {
     chain?: ChainName;
     contract: string;
     chainId: number;
+    rpcRelay?: boolean;
   };
   list: () => Promise<TableMetadata[]>;
   create: (

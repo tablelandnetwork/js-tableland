@@ -39,6 +39,7 @@ export interface SupportedChain {
   chainId: number;
   contract: string;
   host: string;
+  rpcRelay: boolean;
 }
 
 export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
@@ -49,6 +50,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     chainId: 5,
     contract: proxies["ethereum-goerli"],
     host: "https://testnet.tableland.network",
+    rpcRelay: true,
   },
   "optimism-kovan": {
     name: "optimism-kovan",
@@ -56,6 +58,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     chainId: 69,
     contract: proxies["optimism-kovan"],
     host: "https://testnet.tableland.network",
+    rpcRelay: true,
   },
   "polygon-mumbai": {
     name: "maticmum",
@@ -63,6 +66,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     chainId: 80001,
     contract: proxies["polygon-mumbai"],
     host: "https://testnet.tableland.network",
+    rpcRelay: true,
   },
   // staging
   "optimism-kovan-staging": {
@@ -71,6 +75,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     chainId: 69,
     contract: proxies["optimism-kovan-staging"],
     host: "https://staging.tableland.network",
+    rpcRelay: true,
   },
   "local-tableland": {
     name: "localhost",
@@ -78,6 +83,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     chainId: 31337,
     contract: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
     host: "http://localhost:8080",
+    rpcRelay: true,
   },
   // Testing
   custom: {
@@ -87,6 +93,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     // If building locally you can put your contract address and host here or use the contract connection option
     contract: "",
     host: "",
+    rpcRelay: true,
   },
 };
 

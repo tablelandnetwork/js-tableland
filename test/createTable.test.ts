@@ -29,7 +29,7 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
 
     const txReceipt = await connection.create("id int primary key, val text");
-    expect(txReceipt.tableId._hex).toEqual("0x015");
+    await expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
   test("Create table throws if dryrun fails", async function () {
