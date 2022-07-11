@@ -1,6 +1,6 @@
 {
   "name": "@tableland/sdk",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.",
   "repository": "https://github.com/tablelandnetwork/js-tableland",
   "license": "MIT",
