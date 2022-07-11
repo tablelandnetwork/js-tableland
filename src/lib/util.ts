@@ -83,6 +83,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     chainId: 31337,
     contract: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
     host: "http://localhost:8080",
+    rpcRelay: true,
   },
   // Testing
   custom: {
