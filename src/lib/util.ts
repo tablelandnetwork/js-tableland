@@ -29,6 +29,7 @@ export type ChainName =
   | "optimism-kovan"
   | "polygon-mumbai"
   | "optimism-kovan-staging"
+  | "local-tableland"
   | "custom";
 
 export interface SupportedChain {
@@ -71,14 +72,21 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     contract: proxies["optimism-kovan-staging"],
     host: "https://staging.tableland.network",
   },
+  "local-tableland": {
+    name: "localhost",
+    phrase: "Local Tableland",
+    chainId: 31337,
+    contract: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    host: "http://localhost:8080",
+  },
   // Testing
   custom: {
     name: "localhost",
     phrase: "Custom Chain",
     chainId: 31337, // Default to using hardhat chainId
     // If building locally you can put your contract address and host here or use the contract connection option
-    contract: "", // e.g. "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-    host: "", // e.g. "http://localhost:8080"
+    contract: "",
+    host: "",
   },
 };
 
