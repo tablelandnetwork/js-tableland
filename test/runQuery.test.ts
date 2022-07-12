@@ -72,6 +72,16 @@ describe("read and write methods", function () {
     expect(tableId).toEqual(1);
   });
 
+  test("write options enable not waiting to return until after materialization", async function () {
+    fetch.mockResponseOnce(FetchUpdateQuerySuccess);
+
+    const res = await connection.write(
+      "UPDATE test_1 SET colname = val3 where colname = val2;",
+      { skipConfirm: true }
+    );
+    await expect(res).toEqual({ hash: "testhashinsertresponse" });
+  });
+
   test("returns transaction receipt when contract is called directly", async function () {
     fetch.mockResponseOnce(FetchValidateWriteQuery);
     fetch.mockResponseOnce(FetchReceiptExists);

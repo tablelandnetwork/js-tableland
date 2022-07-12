@@ -1,7 +1,7 @@
 import { Signer, ethers } from "ethers";
 import camelCase from "camelcase";
 import { proxies } from "@tableland/evm/proxies.js";
-import { Connection, ReceiptResult } from "./connection.js";
+import { Connection, ReceiptResult, MethodOptions } from "./connection.js";
 
 declare let globalThis: any;
 
@@ -155,4 +155,20 @@ export async function onMaterialize(
   }
 
   return table;
+}
+
+// TODO: this could be removed if we bump major version
+export function getPrefix(options?: MethodOptions | string): string {
+  if (typeof options === "undefined") return "";
+  if (typeof options === "string") return options;
+  return options.prefix || "";
+}
+
+// TODO: this could be removed if we bump major version
+export function shouldSkipConfirm(
+  options?: MethodOptions | string | undefined
+): boolean {
+  if (typeof options === "undefined") return false;
+  if (typeof options === "string") return false;
+  return !!options.skipConfirm;
 }

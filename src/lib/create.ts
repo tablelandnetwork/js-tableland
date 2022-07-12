@@ -1,7 +1,8 @@
-import { Connection, CreateTableReceipt } from "./connection.js";
+import { BigNumber } from "ethers";
+import { Connection, CreateTableReceipt, MethodOptions } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import { registerTable } from "./eth-calls.js";
-import { BigNumber } from "ethers";
+import { getPrefix, shouldSkipConfirm } from "./util.js";
 
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register
@@ -15,13 +16,19 @@ import { BigNumber } from "ethers";
 export async function create(
   this: Connection,
   schema: string,
-  prefix: string = ""
+  // TODO: changing how this function is called would require a major version bump
+  //       making it polymophic lets us keep it in the current major verision.
+  //       when bump major remember to change this arg to only be `MethodOptions`
+  options?: MethodOptions | string
 ): Promise<CreateTableReceipt> {
   // We check the wallet and tableland chains match here again in
   // case the user switched networks after creating a siwe token
   await this.checkNetwork();
 
   const { chainId } = this.options;
+  const prefix = getPrefix(options);
+  const skipConfirm = shouldSkipConfirm(options);
+
   const query = `CREATE TABLE ${prefix}_${chainId} (${schema});`;
   // This "dryrun" is done to validate that the query statement is considered valid.
   // We check this before minting the token, so the caller won't succeed at minting a token
@@ -36,7 +43,7 @@ export async function create(
   const tableId: BigNumber | undefined = event?.args?.tableId;
   const name = `${prefix}_${chainId}_${tableId}`;
 
-  await this.onMaterialize(txnHash);
+  if (!skipConfirm) await this.onMaterialize(txnHash);
 
   return { tableId, prefix, chainId, txnHash, blockNumber, name };
 }
