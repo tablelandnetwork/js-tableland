@@ -73,7 +73,12 @@ export interface Connection {
   ) => Promise<CreateTableReceipt>;
   read: (query: string) => Promise<ReadQueryResult>;
   write: (query: string) => Promise<WriteQueryResult>;
-  hash: (query: string) => Promise<StructureHashResult>;
+  hash: (schema: string, prefix?: string) => Promise<StructureHashResult>;
   receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
+  setController: (
+    controller: string,
+    name: string
+  ) => Promise<WriteQueryResult>;
   siwe: () => Promise<Token>;
+  validate: (query: string) => Promise<ValidateWriteResult>;
 }

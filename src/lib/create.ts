@@ -9,6 +9,7 @@ import { BigNumber } from "ethers";
  * nessessarily before the Tableland network has picked up the CREATE TABLE event. Use
  * the `receipt` method on the returned `txnHash` to check the status of the table.
  * @param {string} schema SQL table schema.
+ * @param {string} prefix The table name prefix.
  * @returns {string} A Promise that resolves to a pending table creation receipt.
  */
 export async function create(

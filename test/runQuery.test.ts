@@ -1,21 +1,23 @@
 import fetch from "jest-fetch-mock";
-import { connect, resultsToObjects } from "../src/main";
+import { connect, resultsToObjects, Connection } from "../src/main";
 import {
   FetchDirectRunSQLSuccess,
   FetchSelectQuerySuccess,
   FetchInsertQuerySuccess,
   FetchUpdateQuerySuccess,
-  FetchValidateWriteQuery
+  FetchValidateWriteQuery,
+  FetchSetControllerSuccess,
 } from "../test/fauxFetch";
 
 describe("read and write methods", function () {
-  let connection: any;
+  let connection: Connection;
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
     connection = await connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
+      chainId: 74613,
     });
   });
 
@@ -28,7 +30,7 @@ describe("read and write methods", function () {
     fetch.mockResponseOnce(FetchSelectQuerySuccess);
 
     const res = await connection.read("SELECT * FROM test_1;");
-    await expect(res).toEqual({
+    expect(res).toEqual({
       columns: [{ name: "colname" }],
       rows: [["val1"]],
     });
@@ -40,7 +42,7 @@ describe("read and write methods", function () {
     const res = await connection.write(
       "INSERT INTO test_1 (colname) values (val2);"
     );
-    await expect(res).toEqual({ hash: "testhashinsertresponse" });
+    expect(res).toEqual({ hash: "testhashinsertresponse" });
   });
 
   test("returns RPC result when update query succeeds", async function () {
@@ -49,7 +51,23 @@ describe("read and write methods", function () {
     const res = await connection.write(
       "UPDATE test_1 SET colname = val3 where colname = val2;"
     );
-    await expect(res).toEqual({ hash: "testhashinsertresponse" });
+    expect(res).toEqual({ hash: "testhashinsertresponse" });
+  });
+
+  test("validates write query outside of actual transaction", async function () {
+    fetch.mockResponseOnce(FetchValidateWriteQuery);
+
+    const connection = await connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+      chainId: 74613,
+    });
+
+    const { tableId } = await connection.validate(
+      "INSERT INTO test_74613_1 (colname) values (val2);"
+    );
+
+    expect(tableId).toEqual(1);
   });
 
   test("returns transaction receipt when contract is called directly", async function () {
@@ -59,16 +77,14 @@ describe("read and write methods", function () {
     const connection = await connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
-      rpcRelay: false
+      rpcRelay: false,
     });
 
     const txReceipt = await connection.write(
       "INSERT INTO test_1 (colname) values (val2);"
     );
 
-    await expect(
-      txReceipt.hash
-    ).toEqual("0x016");
+    expect(txReceipt.hash).toEqual("0x016");
   });
 
   test("maps arguments to correct RPC params", async function () {
@@ -78,23 +94,39 @@ describe("read and write methods", function () {
     await connection.read(queryStaement);
     const payload = JSON.parse(fetch.mock.calls[0][1]?.body as string);
 
-    await expect(payload.params[0]?.statement).toEqual(queryStaement);
-    await expect(payload.params[0]).not.toHaveProperty("id");
-    await expect(payload.params[0]).not.toHaveProperty("create_statement");
+    expect(payload.params[0]?.statement).toEqual(queryStaement);
+    expect(payload.params[0]).not.toHaveProperty("id");
+    expect(payload.params[0]).not.toHaveProperty("create_statement");
+  });
+
+  test("returns RPC result when setting controller succeeds", async function () {
+    fetch.mockResponseOnce(FetchSetControllerSuccess);
+
+    const res = await connection.setController(
+      "0xControllerContract",
+      "prefix_74613_1"
+    );
+    expect(res).toEqual({ hash: "testhashsetcontrollerresponse" });
   });
 
   test("exports a function to map results to array of objects", async function () {
-    await expect(resultsToObjects({
-      columns: [{ name: "col1" }, { name: "col2" }],
-      rows: [["val11", "val12"], ["val21", "val22"]],
-    })).toEqual([
+    expect(
+      resultsToObjects({
+        columns: [{ name: "col1" }, { name: "col2" }],
+        rows: [
+          ["val11", "val12"],
+          ["val21", "val22"],
+        ],
+      })
+    ).toEqual([
       {
         col1: "val11",
-        col2: "val12"
-      }, {
+        col2: "val12",
+      },
+      {
         col1: "val21",
-        col2: "val22"
-      }
+        col2: "val22",
+      },
     ]);
   });
 });
