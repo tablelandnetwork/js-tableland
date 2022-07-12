@@ -5,7 +5,11 @@ import { read, write } from "./query.js";
 import { create } from "./create.js";
 import { hash } from "./hash.js";
 import { siwe } from "./siwe.js";
-import { receipt } from "./tableland-calls.js";
+import {
+  receipt,
+  setController,
+  validateWriteQuery,
+} from "./tableland-calls.js";
 import { SUPPORTED_CHAINS, NetworkName, ChainName } from "./util.js";
 import { checkNetwork } from "./check-network.js";
 import { Connection } from "./connection.js";
@@ -100,6 +104,12 @@ export function connect(options: ConnectOptions): Connection {
     },
     get checkNetwork() {
       return checkNetwork;
+    },
+    get setController() {
+      return setController;
+    },
+    get validate() {
+      return validateWriteQuery;
     },
   };
 
