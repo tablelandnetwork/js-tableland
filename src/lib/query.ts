@@ -25,7 +25,10 @@ export async function write(
   query: string
 ): Promise<WriteQueryResult> {
   if (this.options.rpcRelay) {
-    return await tablelandCalls.write.call(this, query);
+    const response = await tablelandCalls.write.call(this, query);
+    await this.onMaterialize(response.hash);
+
+    return response;
   }
 
   // ask the Validator if this query is valid, and get the tableId for use in SC call
