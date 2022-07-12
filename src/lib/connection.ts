@@ -49,6 +49,12 @@ export interface MethodOptions {
   prefix?: string;
   skipConfirm?: boolean;
   rpcRelay?: boolean;
+  timeout?: number;
+}
+
+export interface MaterializeOptions {
+  timeout?: number;
+  rate?: number;
 }
 
 export interface Connection {
@@ -82,5 +88,8 @@ export interface Connection {
   hash: (query: string) => Promise<StructureHashResult>;
   receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
   siwe: () => Promise<Token>;
-  onMaterialize: (txnHash: string) => Promise<ReceiptResult>;
+  onMaterialize: (
+    txnHash: string,
+    options?: MaterializeOptions
+  ) => Promise<ReceiptResult>;
 }

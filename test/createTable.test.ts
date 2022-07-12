@@ -57,4 +57,15 @@ describe("create method", function () {
     const txReceipt = await connection.create("id int primary key, val text", { skipConfirm: true });
     await expect(txReceipt.tableId._hex).toEqual("0x015");
   });
+
+  test("Create table options enable setting timeout for materialization", async function () {
+    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
+    fetch.mockResponseOnce(FetchReceiptNone);
+    fetch.mockResponseOnce(FetchReceiptNone);
+    fetch.mockResponseOnce(FetchReceiptNone);
+
+    await expect(async function () {
+      await connection.create("id int primary key, val text", { timeout: 2000 /* 2 seconds */ })
+    }).rejects.toThrow(/timeout exceeded: could not get transaction receipt:/);
+  }, 5000 /* 5 seconds */);
 });

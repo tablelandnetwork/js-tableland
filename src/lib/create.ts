@@ -2,7 +2,7 @@ import { BigNumber } from "ethers";
 import { Connection, CreateTableReceipt, MethodOptions } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import { registerTable } from "./eth-calls.js";
-import { getPrefix, shouldSkipConfirm } from "./util.js";
+import { getPrefix, getTimeout, shouldSkipConfirm } from "./util.js";
 
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register
@@ -23,8 +23,10 @@ export async function create(
   const { chainId } = this.options;
   const prefix = getPrefix(options);
   const skipConfirm = shouldSkipConfirm(options);
+  const timeout = getTimeout(options, 120000);
 
   const query = `CREATE TABLE ${prefix}_${chainId} (${schema});`;
+
   // This "dryrun" is done to validate that the query statement is considered valid.
   // We check this before minting the token, so the caller won't succeed at minting a token
   // then fail to create the table on the Tableland network
@@ -38,7 +40,9 @@ export async function create(
   const tableId: BigNumber | undefined = event?.args?.tableId;
   const name = `${prefix}_${chainId}_${tableId}`;
 
-  if (!skipConfirm) await this.onMaterialize(txnHash);
+  if (!skipConfirm) {
+    await this.onMaterialize(txnHash, { timeout: timeout });
+  }
 
   return { tableId, prefix, chainId, txnHash, blockNumber, name };
 }

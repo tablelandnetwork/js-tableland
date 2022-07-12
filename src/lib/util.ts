@@ -1,7 +1,12 @@
 import { Signer, ethers } from "ethers";
 import camelCase from "camelcase";
 import { proxies } from "@tableland/evm/proxies.js";
-import { Connection, ReceiptResult, MethodOptions } from "./connection.js";
+import {
+  Connection,
+  ReceiptResult,
+  MethodOptions,
+  MaterializeOptions,
+} from "./connection.js";
 
 declare let globalThis: any;
 
@@ -41,11 +46,6 @@ export interface SupportedChain {
   contract: string;
   host: string;
   rpcRelay: boolean;
-}
-
-interface MaterializeOptions {
-  timeout?: number;
-  rate?: number;
 }
 
 export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
@@ -124,7 +124,9 @@ export async function onMaterialize(
   options?: MaterializeOptions
 ): Promise<ReceiptResult> {
   // default timeout 2 minutes
+  // TODO: move default to a single spot
   const timeout = options?.timeout ?? 120 * 1000;
+
   // determines how often to check for materialization before timeout
   const rate = options?.rate ?? 1500;
   const start = Date.now();
@@ -171,4 +173,15 @@ export function shouldSkipConfirm(
   if (typeof options === "undefined") return false;
   if (typeof options === "string") return false;
   return !!options.skipConfirm;
+}
+
+export function getTimeout(
+  options: MethodOptions | string | undefined,
+  deflt: number
+): number {
+  if (typeof options === "undefined") return deflt;
+  if (typeof options === "string") return deflt;
+  if (typeof options.timeout !== "number") return deflt;
+
+  return options.timeout;
 }
