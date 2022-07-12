@@ -1,7 +1,7 @@
 import fetch from "jest-fetch-mock";
 import { connect, resultsToObjects, Connection } from "../src/main";
 import {
-  FetchDirectRunSQLSuccess,
+  FetchReceiptExists,
   FetchSelectQuerySuccess,
   FetchInsertQuerySuccess,
   FetchUpdateQuerySuccess,
@@ -72,7 +72,7 @@ describe("read and write methods", function () {
 
   test("returns transaction receipt when contract is called directly", async function () {
     fetch.mockResponseOnce(FetchValidateWriteQuery);
-    fetch.mockResponseOnce(FetchDirectRunSQLSuccess);
+    fetch.mockResponseOnce(FetchReceiptExists);
 
     const connection = connect({
       network: "testnet",

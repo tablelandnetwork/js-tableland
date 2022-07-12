@@ -8,8 +8,9 @@ module.exports = {
               return {
                 events: [
                   {},
-                  { args: { tableId: { _hex: "0x015", type: "BigNumber" } } },
+                  { args: { tableId: { _hex: "0x015", type: "BigNumber" }}},
                 ],
+                transactionHash: "0x017"
               };
             },
           };

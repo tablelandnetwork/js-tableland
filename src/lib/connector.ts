@@ -6,7 +6,7 @@ import { create } from "./create.js";
 import { hash } from "./hash.js";
 import { siwe } from "./siwe.js";
 import { receipt, validateWriteQuery } from "./tableland-calls.js";
-import { SUPPORTED_CHAINS, NetworkName, ChainName } from "./util.js";
+import { SUPPORTED_CHAINS, NetworkName, ChainName, onMaterialize } from "./util.js";
 import { checkNetwork } from "./check-network.js";
 import { setController } from "./set-controller.js";
 import { Connection } from "./connection.js";
@@ -108,6 +108,9 @@ export function connect(options: ConnectOptions): Connection {
     get validate() {
       return validateWriteQuery;
     },
+    get onMaterialize() {
+      return onMaterialize;
+    }
   };
 
   return connectionObject;

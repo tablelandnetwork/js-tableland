@@ -1,8 +1,8 @@
 import { Connection, CreateTableReceipt } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import { registerTable } from "./eth-calls.js";
-// import { userCreatesToken } from "./token.js";
 import { BigNumber } from "ethers";
+
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register
  * a new Table on Tableland. This method returns after the tableId has been minted, but not
@@ -35,5 +35,8 @@ export async function create(
   const blockNumber = txn.blockNumber;
   const tableId: BigNumber | undefined = event?.args?.tableId;
   const name = `${prefix}_${chainId}_${tableId}`;
+
+  await this.onMaterialize(txnHash);
+
   return { tableId, prefix, chainId, txnHash, blockNumber, name };
 }

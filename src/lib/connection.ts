@@ -82,4 +82,5 @@ export interface Connection {
   siwe: () => Promise<Token>;
   checkNetwork: () => Promise<void>;
   validate: (query: string) => Promise<ValidateWriteResult>;
+  onMaterialize: (txnHash: string) => Promise<ReceiptResult>;
 }

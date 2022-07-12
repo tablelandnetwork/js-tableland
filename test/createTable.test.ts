@@ -4,7 +4,8 @@ import { connect } from "../src/main";
 import {
   FetchCreateDryRunError,
   FetchCreateDryRunSuccess,
-  FetchCreateTableOnTablelandSuccess,
+  FetchReceiptExists,
+  FetchReceiptNone,
 } from "./fauxFetch";
 
 describe("create method", function () {
@@ -26,7 +27,7 @@ describe("create method", function () {
 
   test("Create table works", async function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
-    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
+    fetch.mockResponseOnce(FetchReceiptExists);
 
     const txReceipt = await connection.create("id int primary key, val text");
     await expect(txReceipt.tableId._hex).toEqual("0x015");
@@ -34,10 +35,19 @@ describe("create method", function () {
 
   test("Create table throws if dryrun fails", async function () {
     fetch.mockResponseOnce(FetchCreateDryRunError);
-    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
+    fetch.mockResponseOnce(FetchReceiptExists);
 
     await expect(async function () {
       await connection.create("id int primary key, val text", "123test");
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
+  });
+
+  test("Create table waits to return until after materialization", async function () {
+    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
+    fetch.mockResponseOnce(FetchReceiptNone);
+    fetch.mockResponseOnce(FetchReceiptExists);
+
+    const txReceipt = await connection.create("id int primary key, val text");
+    await expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 });
