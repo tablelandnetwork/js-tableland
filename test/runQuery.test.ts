@@ -36,6 +36,7 @@ describe("read and write methods", function () {
 
   test("returns RPC result when insert query succeeds", async function () {
     fetch.mockResponseOnce(FetchInsertQuerySuccess);
+    fetch.mockResponseOnce(FetchReceiptExists);
 
     const res = await connection.write(
       "INSERT INTO test_1 (colname) values (val2);"
@@ -45,6 +46,7 @@ describe("read and write methods", function () {
 
   test("returns RPC result when update query succeeds", async function () {
     fetch.mockResponseOnce(FetchUpdateQuerySuccess);
+    fetch.mockResponseOnce(FetchReceiptExists);
 
     const res = await connection.write(
       "UPDATE test_1 SET colname = val3 where colname = val2;"
