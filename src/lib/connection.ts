@@ -45,6 +45,12 @@ export interface CreateTableReceipt {
   blockNumber: number;
 }
 
+export interface MethodOptions {
+  prefix?: string;
+  skipConfirm?: boolean;
+  rpcRelay?: boolean;
+}
+
 export interface Connection {
   token?: Token;
   signer?: Signer;

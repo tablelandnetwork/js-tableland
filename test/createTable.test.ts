@@ -50,4 +50,11 @@ describe("create method", function () {
     const txReceipt = await connection.create("id int primary key, val text");
     await expect(txReceipt.tableId._hex).toEqual("0x015");
   });
+
+  test("Create table options enable not waiting to return until after materialization", async function () {
+    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
+
+    const txReceipt = await connection.create("id int primary key, val text", { skipConfirm: true });
+    await expect(txReceipt.tableId._hex).toEqual("0x015");
+  });
 });
