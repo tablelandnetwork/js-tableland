@@ -7,7 +7,7 @@ describe("has method", function () {
   beforeAll(async function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
-    connection = await connect({
+    connection = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
     });

@@ -7,6 +7,7 @@ import { hash } from "./hash.js";
 import { siwe } from "./siwe.js";
 import { receipt } from "./tableland-calls.js";
 import { SUPPORTED_CHAINS, NetworkName, ChainName } from "./util.js";
+import { checkNetwork } from "./checkNetwork.js";
 import { Connection } from "./connection.js";
 
 /**
@@ -37,7 +38,7 @@ export interface ConnectOptions {
  * @param options Options to control client connection.
  * @returns Promise that resolves to a Connection object.
  */
-export async function connect(options: ConnectOptions): Promise<Connection> {
+export function connect(options: ConnectOptions): Connection {
   const network = options.network ?? "testnet";
   let chain = options.chain ?? "ethereum-goerli";
   if (network === "custom" && !options.host) {
@@ -48,22 +49,6 @@ export async function connect(options: ConnectOptions): Promise<Connection> {
   }
 
   const signer = options.signer;
-  if (signer && signer.provider) {
-    // Set params with provider network info if not explicitly given in options
-    if (!options.chain && !options.chainId) {
-      const { name } = await signer.provider.getNetwork();
-      const found = Object.entries(SUPPORTED_CHAINS).find(
-        ([, chainEntry]) => chainEntry.name === name
-      );
-      if (found) {
-        chain = found[0] as ChainName;
-      } else {
-        throw new Error(
-          "proivder chain mismatch. Switch your wallet connection and reconnect"
-        );
-      }
-    }
-  }
 
   const info = SUPPORTED_CHAINS[chain];
   if (!info && !options.chainId) {
@@ -112,6 +97,9 @@ export async function connect(options: ConnectOptions): Promise<Connection> {
     },
     get siwe() {
       return siwe;
+    },
+    get checkNetwork() {
+      return checkNetwork;
     },
   };
 

@@ -13,7 +13,7 @@ describe("create method", function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
     // const signer = ethers.providers.Web3Provider().getSigner();
-    connection = await connect({
+    connection = connect({
       network: "testnet",
       host: "https://testnetv2.tableland.network",
     });
