@@ -7,8 +7,8 @@ import { connect, NetworkName, SUPPORTED_CHAINS } from "../src/main";
 import { ConnectOptions } from "../src/lib/connector.js";
 import {
   FetchCreateDryRunSuccess,
-  FetchCreateTableOnTablelandSuccess,
   FetchHashTableSuccess,
+  FetchReceiptExists,
 } from "./fauxFetch";
 
 describe("connect function", function () {
@@ -61,7 +61,7 @@ describe("connect function", function () {
     });
 
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
-    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
+    fetch.mockResponseOnce(FetchReceiptExists);
 
     await connection.create("id int primary key, val text", "hello");
 

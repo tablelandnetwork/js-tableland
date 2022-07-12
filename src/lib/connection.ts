@@ -76,4 +76,5 @@ export interface Connection {
   hash: (query: string) => Promise<StructureHashResult>;
   receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
   siwe: () => Promise<Token>;
+  onMaterialize: (txnHash: string) => Promise<ReceiptResult>;
 }

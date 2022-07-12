@@ -1,6 +1,7 @@
 import { Signer, ethers } from "ethers";
 import camelCase from "camelcase";
 import { proxies } from "@tableland/evm/proxies.js";
+import { Connection, ReceiptResult } from "./connection.js";
 
 declare let globalThis: any;
 
@@ -40,6 +41,11 @@ export interface SupportedChain {
   contract: string;
   host: string;
   rpcRelay: boolean;
+}
+
+interface MaterializeOptions {
+  timeout?: number;
+  rate?: number;
 }
 
 export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
@@ -107,4 +113,46 @@ export function camelCaseKeys(obj: any): any {
       return [camelCase(key), val];
     })
   );
+}
+
+// Helper function to enable waiting until a transaction has been materialized by the Validator.
+// Uses dirty polling with exponential backoff up to a maximum timeout.
+// Potential optimization could be had if the Validator supported Websockets or long-poling for receipts
+export async function onMaterialize(
+  this: Connection,
+  txnHash: string,
+  options?: MaterializeOptions
+): Promise<ReceiptResult> {
+  // default timeout 2 minutes
+  const timeout = options?.timeout ?? 120 * 1000;
+  // determines how often to check for materialization before timeout
+  const rate = options?.rate ?? 1500;
+  const start = Date.now();
+
+  // next tick then try immediately
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  let table = await this.receipt(txnHash);
+
+  let tries = 0;
+  while (!table && start + timeout > Date.now()) {
+    // increase the time between each call, but never go past the specified timeout
+    const waitForMs = rate * Math.pow(2, tries);
+    const nextTry =
+      start + timeout < Date.now() + waitForMs
+        ? start + timeout - Date.now()
+        : waitForMs;
+
+    await new Promise((resolve) => setTimeout(resolve, nextTry));
+    table = await this.receipt(txnHash);
+    tries++;
+  }
+
+  // Throw and let the caller decide what to do if the timeout is exceeded
+  if (!table) {
+    throw new Error(
+      `timeout exceeded: could not get transaction receipt: ${txnHash}`
+    );
+  }
+
+  return table;
 }

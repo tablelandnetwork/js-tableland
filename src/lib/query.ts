@@ -3,7 +3,6 @@
  * @param query A SQL query to run
  * @returns If read query, result-set. If write query, nothing.
  */
-
 import { ReadQueryResult, WriteQueryResult, Connection } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import { runSql } from "./eth-calls.js";
@@ -33,6 +32,7 @@ export async function write(
   const { tableId } = await tablelandCalls.validateWriteQuery.call(this, query);
 
   const txn = await runSql.call(this, tableId, query);
+  await this.onMaterialize(txn.transactionHash);
 
   return { hash: txn.transactionHash };
 }
