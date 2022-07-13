@@ -81,10 +81,13 @@ export interface Connection {
     /** an optional prefix to the tablename that will be assigned to this table.
      *  If supplied, it must conform to the rules of SQL table names
      **/
-    prefix?: string
+    prefix?: MethodOptions | string | undefined
   ) => Promise<CreateTableReceipt>;
   read: (query: string) => Promise<ReadQueryResult>;
-  write: (query: string) => Promise<WriteQueryResult>;
+  write: (
+    query: string,
+    options?: MethodOptions | undefined
+  ) => Promise<WriteQueryResult>;
   hash: (schema: string, prefix?: string) => Promise<StructureHashResult>;
   receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
   setController: (
@@ -98,5 +101,4 @@ export interface Connection {
     txnHash: string,
     options?: ConfirmOptions
   ) => Promise<ReceiptResult>;
-
 }

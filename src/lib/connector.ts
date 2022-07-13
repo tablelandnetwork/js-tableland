@@ -6,7 +6,6 @@ import { create } from "./create.js";
 import { hash } from "./hash.js";
 import { siwe } from "./siwe.js";
 import { receipt, validateWriteQuery } from "./tableland-calls.js";
-import { SUPPORTED_CHAINS, NetworkName, ChainName, onMaterialize } from "./util.js";
 import { checkNetwork } from "./check-network.js";
 import { setController } from "./set-controller.js";
 import { SUPPORTED_CHAINS, NetworkName, ChainName, onConfirm } from "./util.js";
