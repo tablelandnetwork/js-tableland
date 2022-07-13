@@ -29,6 +29,10 @@ export async function write(
     return await tablelandCalls.write.call(this, query);
   }
 
+  // We check the wallet and tableland chains match here again in
+  // case the user switched networks after creating a siwe token
+  await this.checkNetwork();
+
   // ask the Validator if this query is valid, and get the tableId for use in SC call
   const { tableId } = await tablelandCalls.validateWriteQuery.call(this, query);
 

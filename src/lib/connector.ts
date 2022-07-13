@@ -7,7 +7,7 @@ import { hash } from "./hash.js";
 import { siwe } from "./siwe.js";
 import { receipt } from "./tableland-calls.js";
 import { SUPPORTED_CHAINS, NetworkName, ChainName } from "./util.js";
-import { checkNetwork } from "./checkNetwork.js";
+import { checkNetwork } from "./check-network.js";
 import { Connection } from "./connection.js";
 
 /**

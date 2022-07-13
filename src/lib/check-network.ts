@@ -1,4 +1,5 @@
 import { Connection } from "./connection.js";
+import { getSigner } from "./util.js";
 
 /**
  * Ensures that a connection signer's network and the connection's tableland network
@@ -8,8 +9,10 @@ import { Connection } from "./connection.js";
  * @returns {string} A Promise that resolves to undefined.
  */
 export async function checkNetwork(this: Connection): Promise<void> {
-  if (!(this.signer && this.signer.provider)) {
-    throw new Error("signer and provider are required");
+  this.signer = this.signer ?? (await getSigner());
+
+  if (!this.signer.provider) {
+    throw new Error("provider is required");
   }
 
   const { chainId } = await this.signer.provider.getNetwork();

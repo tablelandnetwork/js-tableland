@@ -16,6 +16,10 @@ export async function create(
   schema: string,
   prefix: string = ""
 ): Promise<CreateTableReceipt> {
+  // We check the wallet and tableland chains match here again in
+  // case the user switched networks after creating a siwe token
+  await this.checkNetwork();
+
   const { chainId } = this.options;
   const query = `CREATE TABLE ${prefix}_${chainId} (${schema});`;
   // This "dryrun" is done to validate that the query statement is considered valid.
