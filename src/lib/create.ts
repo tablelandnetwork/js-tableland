@@ -6,9 +6,8 @@ import { getPrefix, getTimeout, shouldSkipConfirm } from "./util.js";
 
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register
- * a new Table on Tableland. This method returns after the tableId has been minted, but not
- * nessessarily before the Tableland network has picked up the CREATE TABLE event. Use
- * the `receipt` method on the returned `txnHash` to check the status of the table.
+ * a new Table on Tableland. This method returns after the table has been confirmed in the
+ * Validator unless the `skipConfirm` option is set to true
  * @param {string} schema SQL table schema.
  * @param {string} prefix The table name prefix.
  * @returns {string} A Promise that resolves to a pending table creation receipt.
