@@ -147,23 +147,13 @@ async function receipt(
 async function setController(
   this: Connection,
   controller: string,
-  name: string,
+  tableId: string,
   caller?: string
 ): Promise<WriteQueryResult> {
-  const parts = name.split("_");
-  if (parts.length !== 3) {
-    throw new Error(
-      "invalid table name (name format is `prefix_chainId_tableId`)\n"
-    );
-  }
-  const chainId = parts[1];
-  if (chainId !== this.options.chainId.toString()) {
-    throw new Error("table `chainId` does not match selected chain");
-  }
-  const id = parts[2];
   caller = caller ?? (await this.signer?.getAddress());
+
   const message = await GeneralizedRPC.call(this, "setController", {
-    token_id: id,
+    token_id: tableId,
     controller,
     caller,
   });

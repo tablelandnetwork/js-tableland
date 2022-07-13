@@ -17,7 +17,7 @@ describe("read and write methods", function () {
     connection = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
-      chainId: 74613,
+      chainId: 5,
     });
   });
 
@@ -60,7 +60,7 @@ describe("read and write methods", function () {
     const connection = await connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
-      chainId: 74613,
+      chainId: 5,
     });
 
     const { tableId } = await connection.validate(

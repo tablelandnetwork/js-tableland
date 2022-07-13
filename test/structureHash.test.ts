@@ -10,7 +10,7 @@ describe("has method", function () {
     connection = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
-      chainId: 74613,
+      chainId: 5,
     });
   });
 
@@ -24,7 +24,7 @@ describe("has method", function () {
 
     const schema = "id int primary key, val text";
     const prefix = "hello";
-    const createStatement = `CREATE TABLE ${prefix}_74613 (${schema});`;
+    const createStatement = `CREATE TABLE ${prefix}_5 (${schema});`;
     const hashResponse = await connection.hash(schema, prefix);
 
     const payload = JSON.parse(fetch.mock.calls[0][1]?.body as string);

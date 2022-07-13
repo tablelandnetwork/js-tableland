@@ -41,4 +41,23 @@ async function runSql(
   return await tx.wait();
 }
 
-export { registerTable, runSql };
+async function setController(
+  this: Connection,
+  tableId: number,
+  controller: string
+): Promise<ContractReceipt> {
+  this.signer = this.signer ?? (await getSigner());
+  const caller = await this.signer.getAddress();
+
+  const contractAddress = this.options.contract;
+
+  const contract = TablelandTables__factory.connect(
+    contractAddress,
+    this.signer
+  );
+  const tx = await contract.setController(caller, tableId, controller);
+
+  return await tx.wait();
+}
+
+export { registerTable, runSql, setController };

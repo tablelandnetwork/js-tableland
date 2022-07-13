@@ -5,13 +5,10 @@ import { read, write } from "./query.js";
 import { create } from "./create.js";
 import { hash } from "./hash.js";
 import { siwe } from "./siwe.js";
-import {
-  receipt,
-  setController,
-  validateWriteQuery,
-} from "./tableland-calls.js";
+import { receipt, validateWriteQuery } from "./tableland-calls.js";
 import { SUPPORTED_CHAINS, NetworkName, ChainName } from "./util.js";
 import { checkNetwork } from "./check-network.js";
+import { setController } from "./set-controller.js";
 import { Connection } from "./connection.js";
 
 /**

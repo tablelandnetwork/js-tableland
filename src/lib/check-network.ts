@@ -16,6 +16,7 @@ export async function checkNetwork(this: Connection): Promise<void> {
   }
 
   const { chainId } = await this.signer.provider.getNetwork();
+
   if (!this.options.chainId || chainId !== this.options.chainId) {
     throw new Error(
       "provider chain and tableland network mismatch. Switch your wallet connection and reconnect"
