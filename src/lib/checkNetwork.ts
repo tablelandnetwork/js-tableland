@@ -9,9 +9,7 @@ import { Connection } from "./connection.js";
  */
 export async function checkNetwork(this: Connection): Promise<void> {
   if (!(this.signer && this.signer.provider)) {
-    throw new Error(
-      "signer and provider are required"
-    );
+    throw new Error("signer and provider are required");
   }
 
   const { chainId } = await this.signer.provider.getNetwork();

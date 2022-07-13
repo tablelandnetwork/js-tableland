@@ -40,7 +40,7 @@ export interface ConnectOptions {
  */
 export function connect(options: ConnectOptions): Connection {
   const network = options.network ?? "testnet";
-  let chain = options.chain ?? "ethereum-goerli";
+  const chain = options.chain ?? "ethereum-goerli";
   if (network === "custom" && !options.host) {
     throw new Error('`host` must be provided if using "custom" network');
   }
