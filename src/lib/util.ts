@@ -116,8 +116,9 @@ export function camelCaseKeys(obj: any): any {
 }
 
 // Helper function to enable waiting until a transaction has been materialized by the Validator.
-// Uses dirty polling with exponential backoff up to a maximum timeout.
-// Potential optimization could be had if the Validator supported Websockets or long-poling for receipts
+// Uses simple polling with exponential backoff up to a maximum timeout.
+// Potential optimization could be had if the Validator supports subscribing to transaction
+// receipts via Websockets or long-poling in the future
 export async function onConfirm(
   this: Connection,
   txnHash: string,
