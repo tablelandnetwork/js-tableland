@@ -18,7 +18,7 @@ export async function create(
   schema: string,
   // TODO: changing how this function is called would require a major version bump
   //       making it polymophic lets us keep it in the current major verision.
-  //       when bump major remember to change this arg to only be `MethodOptions`
+  //       when bump major consider changing this arg to only be `MethodOptions`
   options?: MethodOptions | string
 ): Promise<CreateTableReceipt> {
   // We check the wallet and tableland chains match here again in
