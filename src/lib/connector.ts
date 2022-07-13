@@ -6,12 +6,7 @@ import { create } from "./create.js";
 import { hash } from "./hash.js";
 import { siwe } from "./siwe.js";
 import { receipt } from "./tableland-calls.js";
-import {
-  SUPPORTED_CHAINS,
-  NetworkName,
-  ChainName,
-  onMaterialize,
-} from "./util.js";
+import { SUPPORTED_CHAINS, NetworkName, ChainName, onConfirm } from "./util.js";
 import { Connection } from "./connection.js";
 
 /**
@@ -118,8 +113,8 @@ export async function connect(options: ConnectOptions): Promise<Connection> {
     get siwe() {
       return siwe;
     },
-    get onMaterialize() {
-      return onMaterialize;
+    get onConfirm() {
+      return onConfirm;
     },
   };
 

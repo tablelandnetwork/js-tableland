@@ -5,7 +5,7 @@ import {
   Connection,
   ReceiptResult,
   MethodOptions,
-  MaterializeOptions,
+  ConfirmOptions,
 } from "./connection.js";
 
 declare let globalThis: any;
@@ -118,10 +118,10 @@ export function camelCaseKeys(obj: any): any {
 // Helper function to enable waiting until a transaction has been materialized by the Validator.
 // Uses dirty polling with exponential backoff up to a maximum timeout.
 // Potential optimization could be had if the Validator supported Websockets or long-poling for receipts
-export async function onMaterialize(
+export async function onConfirm(
   this: Connection,
   txnHash: string,
-  options?: MaterializeOptions
+  options?: ConfirmOptions
 ): Promise<ReceiptResult> {
   // default timeout 2 minutes
   // TODO: move default to a single spot

@@ -34,7 +34,7 @@ export async function write(
   const skipConfirm = shouldSkipConfirm(options);
   if (this.options.rpcRelay || options?.rpcRelay) {
     const response = await tablelandCalls.write.call(this, query);
-    if (!skipConfirm) await this.onMaterialize(response.hash);
+    if (!skipConfirm) await this.onConfirm(response.hash);
 
     return response;
   }
@@ -43,7 +43,7 @@ export async function write(
   const { tableId } = await tablelandCalls.validateWriteQuery.call(this, query);
 
   const txn = await runSql.call(this, tableId, query);
-  if (!skipConfirm) await this.onMaterialize(txn.transactionHash);
+  if (!skipConfirm) await this.onConfirm(txn.transactionHash);
 
   return { hash: txn.transactionHash };
 }
