@@ -52,7 +52,7 @@ export interface MethodOptions {
   timeout?: number;
 }
 
-export interface MaterializeOptions {
+export interface ConfirmOptions {
   timeout?: number;
   rate?: number;
 }
@@ -94,9 +94,9 @@ export interface Connection {
   siwe: () => Promise<Token>;
   checkNetwork: () => Promise<void>;
   validate: (query: string) => Promise<ValidateWriteResult>;
-  onMaterialize: (
+  onConfirm: (
     txnHash: string,
-    options?: MaterializeOptions
+    options?: ConfirmOptions
   ) => Promise<ReceiptResult>;
 
 }

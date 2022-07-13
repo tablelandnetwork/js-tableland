@@ -46,7 +46,7 @@ export async function create(
   const name = `${prefix}_${chainId}_${tableId}`;
 
   if (!skipConfirm) {
-    await this.onMaterialize(txnHash, { timeout: timeout });
+    await this.onConfirm(txnHash, { timeout: timeout });
   }
 
   return { tableId, prefix, chainId, txnHash, blockNumber, name };
