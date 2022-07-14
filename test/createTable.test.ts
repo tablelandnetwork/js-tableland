@@ -51,7 +51,7 @@ describe("create method", function () {
     await expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
-  test("Create table options enable not waiting to return until after materialization", async function () {
+  test("Create table options enable not waiting to return until after confirmation", async function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
 
     const txReceipt = await connection.create("id int primary key, val text", { skipConfirm: true });
