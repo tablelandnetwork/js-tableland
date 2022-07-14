@@ -78,10 +78,10 @@ export interface Connection {
       PRIMARY KEY (id)`
      */
     schema: string,
-    /** an optional prefix to the tablename that will be assigned to this table.
-     *  If supplied, it must conform to the rules of SQL table names
+    /**
+     *  an optional options argument to specify conditions of create.
      **/
-    prefix?: MethodOptions | string
+    options?: MethodOptions
   ) => Promise<CreateTableReceipt>;
   read: (query: string) => Promise<ReadQueryResult>;
   write: (

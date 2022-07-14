@@ -25,7 +25,7 @@ export async function create(
   const { chainId } = this.options;
   const prefix = getPrefix(options);
   const skipConfirm = shouldSkipConfirm(options);
-  const timeout = getTimeout(options, 120000);
+  const timeout = getTimeout(options);
 
   const query = `CREATE TABLE ${prefix}_${chainId} (${schema});`;
 

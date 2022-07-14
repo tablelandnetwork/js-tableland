@@ -125,8 +125,7 @@ export async function waitConfirm(
   options?: ConfirmOptions
 ): Promise<ReceiptResult> {
   // default timeout 2 minutes
-  // TODO: move default to a single spot
-  const timeout = options?.timeout ?? 120 * 1000;
+  const timeout = getTimeout(options);
 
   // determines how often to check for materialization before timeout
   const rate = options?.rate ?? 1500;
@@ -172,12 +171,12 @@ export function shouldSkipConfirm(
   return !!options.skipConfirm;
 }
 
+export const defaultTimeout = 120 * 1000; // 2 mintues
 export function getTimeout(
-  options: MethodOptions,
-  deflt: number
+  options?: MethodOptions
 ): number {
-  if (typeof options === "undefined") return deflt;
-  if (typeof options.timeout !== "number") return deflt;
+  if (typeof options === "undefined") return defaultTimeout;
+  if (typeof options.timeout !== "number") return defaultTimeout;
 
   return options.timeout;
 }

@@ -38,7 +38,7 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchReceiptExists);
 
     await expect(async function () {
-      await connection.create("id int primary key, val text", "123test");
+      await connection.create("id int primary key, val text", { prefix: "123test" });
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
   });
 
