@@ -10,8 +10,9 @@ import {
   MethodOptions,
 } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
-import { runSql } from "./eth-calls.js";
+import * as ethCalls from "./eth-calls.js";
 import { shouldSkipConfirm } from "./util.js";
+import { checkNetwork } from "./check-network.js";
 
 export function resultsToObjects({ rows, columns }: ReadQueryResult) {
   return rows.map((row: any[]) =>
@@ -34,20 +35,20 @@ export async function write(
   const skipConfirm = shouldSkipConfirm(options);
   if (this.options.rpcRelay || options?.rpcRelay) {
     const response = await tablelandCalls.write.call(this, query);
-    if (!skipConfirm) await this.onConfirm(response.hash);
+    if (!skipConfirm) await this.waitConfirm(response.hash);
 
     return response;
   }
 
   // We check the wallet and tableland chains match here again in
   // case the user switched networks after creating a siwe token
-  await this.checkNetwork();
+  await checkNetwork.call(this);
 
   // ask the Validator if this query is valid, and get the tableId for use in SC call
   const { tableId } = await tablelandCalls.validateWriteQuery.call(this, query);
 
-  const txn = await runSql.call(this, tableId, query);
-  if (!skipConfirm) await this.onConfirm(txn.transactionHash);
+  const txn = await ethCalls.runSql.call(this, tableId, query);
+  if (!skipConfirm) await this.waitConfirm(txn.transactionHash);
 
   return { hash: txn.transactionHash };
 }

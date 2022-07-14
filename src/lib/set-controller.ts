@@ -1,6 +1,7 @@
 import { Connection, WriteQueryResult } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import * as ethCalls from "./eth-calls.js";
+import { checkNetwork } from "./check-network.js";
 
 /**
  * Set the Controller contract on a table
@@ -18,7 +19,7 @@ export async function setController(
 
   // We check the wallet and tableland chains match here again in
   // case the user switched networks after creating a siwe token
-  await this.checkNetwork();
+  await checkNetwork.call(this);
 
   const tableIdInt = parseInt(tableId, 10);
   if (isNaN(tableIdInt)) throw new Error("invalid tableId was provided");

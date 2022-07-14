@@ -72,7 +72,7 @@ describe("read and write methods", function () {
     expect(tableId).toEqual(1);
   });
 
-  test("write options enable not waiting to return until after materialization", async function () {
+  test("write options enable not waiting to return until after confirmation", async function () {
     fetch.mockResponseOnce(FetchUpdateQuerySuccess);
 
     const res = await connection.write(

@@ -119,7 +119,7 @@ export function camelCaseKeys(obj: any): any {
 // Uses simple polling with exponential backoff up to a maximum timeout.
 // Potential optimization could be had if the Validator supports subscribing to transaction
 // receipts via Websockets or long-poling in the future
-export async function onConfirm(
+export async function waitConfirm(
   this: Connection,
   txnHash: string,
   options?: ConfirmOptions
@@ -160,28 +160,23 @@ export async function onConfirm(
   return table;
 }
 
-// TODO: this could be removed if we bump major version
-export function getPrefix(options?: MethodOptions | string): string {
+export function getPrefix(options?: MethodOptions): string {
   if (typeof options === "undefined") return "";
-  if (typeof options === "string") return options;
   return options.prefix || "";
 }
 
-// TODO: this could be removed if we bump major version
 export function shouldSkipConfirm(
-  options?: MethodOptions | string | undefined
+  options?: MethodOptions
 ): boolean {
   if (typeof options === "undefined") return false;
-  if (typeof options === "string") return false;
   return !!options.skipConfirm;
 }
 
 export function getTimeout(
-  options: MethodOptions | string | undefined,
+  options: MethodOptions,
   deflt: number
 ): number {
   if (typeof options === "undefined") return deflt;
-  if (typeof options === "string") return deflt;
   if (typeof options.timeout !== "number") return deflt;
 
   return options.timeout;

@@ -6,9 +6,13 @@ import { create } from "./create.js";
 import { hash } from "./hash.js";
 import { siwe } from "./siwe.js";
 import { receipt, validateWriteQuery } from "./tableland-calls.js";
-import { checkNetwork } from "./check-network.js";
 import { setController } from "./set-controller.js";
-import { SUPPORTED_CHAINS, NetworkName, ChainName, onConfirm } from "./util.js";
+import {
+  SUPPORTED_CHAINS,
+  NetworkName,
+  ChainName,
+  waitConfirm,
+} from "./util.js";
 import { Connection } from "./connection.js";
 
 /**
@@ -99,17 +103,14 @@ export function connect(options: ConnectOptions): Connection {
     get siwe() {
       return siwe;
     },
-    get checkNetwork() {
-      return checkNetwork;
-    },
     get setController() {
       return setController;
     },
     get validate() {
       return validateWriteQuery;
     },
-    get onConfirm() {
-      return onConfirm;
+    get waitConfirm() {
+      return waitConfirm;
     },
   };
 

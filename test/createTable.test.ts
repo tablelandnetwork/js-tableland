@@ -42,7 +42,7 @@ describe("create method", function () {
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
   });
 
-  test("Create table waits to return until after materialization", async function () {
+  test("Create table waits to return until after confirmation", async function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchReceiptNone);
     fetch.mockResponseOnce(FetchReceiptExists);
@@ -58,7 +58,7 @@ describe("create method", function () {
     await expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
-  test("Create table options enable setting timeout for materialization", async function () {
+  test("Create table options enable setting timeout for confirmation", async function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchReceiptNone);
     fetch.mockResponseOnce(FetchReceiptNone);

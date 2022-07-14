@@ -1,8 +1,9 @@
 import { BigNumber } from "ethers";
 import { Connection, CreateTableReceipt, MethodOptions } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
-import { registerTable } from "./eth-calls.js";
+import * as ethCalls from "./eth-calls.js";
 import { getPrefix, getTimeout, shouldSkipConfirm } from "./util.js";
+import { checkNetwork } from "./check-network.js";
 
 /**
  * Registers an NFT with the Tableland Ethereum smart contract, then uses that to register
@@ -15,14 +16,11 @@ import { getPrefix, getTimeout, shouldSkipConfirm } from "./util.js";
 export async function create(
   this: Connection,
   schema: string,
-  // TODO: changing how this function is called would require a major version bump
-  //       making it polymophic lets us keep it in the current major verision.
-  //       when bump major consider changing this arg to only be `MethodOptions`
-  options?: MethodOptions | string | undefined
+  options?: MethodOptions
 ): Promise<CreateTableReceipt> {
   // We check the wallet and tableland chains match here again in
   // case the user switched networks after creating a siwe token
-  await this.checkNetwork();
+  await checkNetwork.call(this);
 
   const { chainId } = this.options;
   const prefix = getPrefix(options);
@@ -36,7 +34,7 @@ export async function create(
   // then fail to create the table on the Tableland network
   await tablelandCalls.hash.call(this, query);
 
-  const txn = await registerTable.call(this, query);
+  const txn = await ethCalls.registerTable.call(this, query);
 
   const [, event] = txn.events ?? [];
   const txnHash = txn.transactionHash;
@@ -45,7 +43,7 @@ export async function create(
   const name = `${prefix}_${chainId}_${tableId}`;
 
   if (!skipConfirm) {
-    await this.onConfirm(txnHash, { timeout: timeout });
+    await this.waitConfirm(txnHash, { timeout: timeout });
   }
 
   return { tableId, prefix, chainId, txnHash, blockNumber, name };

@@ -81,7 +81,7 @@ export interface Connection {
     /** an optional prefix to the tablename that will be assigned to this table.
      *  If supplied, it must conform to the rules of SQL table names
      **/
-    prefix?: MethodOptions | string | undefined
+    prefix?: MethodOptions | string
   ) => Promise<CreateTableReceipt>;
   read: (query: string) => Promise<ReadQueryResult>;
   write: (
@@ -95,9 +95,8 @@ export interface Connection {
     name: string
   ) => Promise<WriteQueryResult>;
   siwe: () => Promise<Token>;
-  checkNetwork: () => Promise<void>;
   validate: (query: string) => Promise<ValidateWriteResult>;
-  onConfirm: (
+  waitConfirm: (
     txnHash: string,
     options?: ConfirmOptions
   ) => Promise<ReceiptResult>;

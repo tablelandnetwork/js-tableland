@@ -1,12 +1,11 @@
 import { Connection } from "./connection.js";
 import { Token, userCreatesToken } from "./token.js";
-import { getSigner } from "./util.js";
+import { checkNetwork } from "./check-network.js";
 
 export async function siwe(this: Connection): Promise<Token> {
-  await this.checkNetwork();
+  // calling this ensures that we have a signer
+  await checkNetwork.call(this);
 
-  // Typescript wants this check here even though it's also done in `checkNetwork`
-  this.signer = this.signer ?? (await getSigner());
-  this.token = await userCreatesToken(this.signer, this.options.chainId);
+  this.token = await userCreatesToken(this.signer!, this.options.chainId);
   return this.token;
 }
