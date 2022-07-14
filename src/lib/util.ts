@@ -164,17 +164,13 @@ export function getPrefix(options?: MethodOptions): string {
   return options.prefix || "";
 }
 
-export function shouldSkipConfirm(
-  options?: MethodOptions
-): boolean {
+export function shouldSkipConfirm(options?: MethodOptions): boolean {
   if (typeof options === "undefined") return false;
   return !!options.skipConfirm;
 }
 
 export const defaultTimeout = 120 * 1000; // 2 mintues
-export function getTimeout(
-  options?: MethodOptions
-): number {
+export function getTimeout(options?: MethodOptions): number {
   if (typeof options === "undefined") return defaultTimeout;
   if (typeof options.timeout !== "number") return defaultTimeout;
 
