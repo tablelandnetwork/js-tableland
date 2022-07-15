@@ -193,4 +193,21 @@ async function setController(
   return camelCaseKeys(json.result.tx);
 }
 
+// TODO: not sure we would need this, but if we do need to build it out in g-tableland
+/*async function getController(
+  this: Connection,
+  tableId: string
+): Promise<string> {
+  const message = await GeneralizedRPC.call(this, "getController", {
+    token_id: tableId,
+  });
+  if (!this.token) {
+    await this.siwe();
+  }
+
+  const json = await SendCall.call(this, message, this.token?.token);
+
+  return json.result.controller;
+}*/
+
 export { hash, list, receipt, read, validateWriteQuery, write, setController };

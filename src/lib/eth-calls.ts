@@ -60,4 +60,19 @@ async function setController(
   return await tx.wait();
 }
 
-export { registerTable, runSql, setController };
+async function getController(
+  this: Connection,
+  tableId: number
+): Promise<string> {
+  this.signer = this.signer ?? (await getSigner());
+
+  const contractAddress = this.options.contract;
+
+  const contract = TablelandTables__factory.connect(
+    contractAddress,
+    this.signer
+  );
+  return await contract.getController(tableId);
+}
+
+export { registerTable, runSql, setController, getController };
