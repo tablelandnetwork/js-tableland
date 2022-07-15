@@ -9,16 +9,33 @@ import {
 import { list } from "./list.js";
 import { camelCaseKeys } from "./util.js";
 
-export interface RpcParams {
-  controller?: string;
+export interface ValidateCreateTableParams {
   /* eslint-disable-next-line camelcase */
-  create_statement?: string;
-  statement?: string;
+  create_statement: string;
+}
+
+export interface ValidateWriteQueryParams {
+  statement: string;
+}
+
+export interface RunReadQueryParams {
+  statement: string;
+}
+
+export interface RelayWriteQueryParams {
+  statement: string;
+}
+
+export interface GetReceiptParams {
   /* eslint-disable-next-line camelcase */
-  txn_hash?: string;
-  caller?: string;
+  txn_hash: string;
+}
+
+export interface SetControllerParams {
+  controller: string;
+  caller: string;
   /* eslint-disable-next-line camelcase */
-  token_id?: string;
+  token_id: string;
 }
 
 export interface RpcReceipt<T = any> {
@@ -59,7 +76,13 @@ async function parseResponse(res: any): Promise<any> {
 async function GeneralizedRPC(
   this: Connection,
   method: string,
-  params: RpcParams = {}
+  params:
+    | ValidateCreateTableParams
+    | ValidateWriteQueryParams
+    | RunReadQueryParams
+    | RelayWriteQueryParams
+    | GetReceiptParams
+    | SetControllerParams
 ) {
   return {
     jsonrpc: "2.0",
@@ -151,6 +174,10 @@ async function setController(
   caller?: string
 ): Promise<WriteQueryResult> {
   caller = caller ?? (await this.signer?.getAddress());
+
+  if (typeof caller === "undefined") {
+    throw new Error("must have a signer to set controller");
+  }
 
   const message = await GeneralizedRPC.call(this, "setController", {
     token_id: tableId,
