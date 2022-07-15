@@ -45,6 +45,18 @@ export interface CreateTableReceipt {
   blockNumber: number;
 }
 
+export interface MethodOptions {
+  prefix?: string;
+  skipConfirm?: boolean;
+  rpcRelay?: boolean;
+  timeout?: number;
+}
+
+export interface ConfirmOptions {
+  timeout?: number;
+  rate?: number;
+}
+
 export interface Connection {
   token?: Token;
   signer?: Signer;
@@ -66,14 +78,26 @@ export interface Connection {
       PRIMARY KEY (id)`
      */
     schema: string,
-    /** an optional prefix to the tablename that will be assigned to this table.
-     *  If supplied, it must conform to the rules of SQL table names
+    /**
+     *  an optional options argument to specify conditions of create.
      **/
-    prefix?: string
+    options?: MethodOptions
   ) => Promise<CreateTableReceipt>;
   read: (query: string) => Promise<ReadQueryResult>;
-  write: (query: string) => Promise<WriteQueryResult>;
-  hash: (query: string) => Promise<StructureHashResult>;
+  write: (
+    query: string,
+    options?: MethodOptions | undefined
+  ) => Promise<WriteQueryResult>;
+  hash: (schema: string, prefix?: string) => Promise<StructureHashResult>;
   receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
+  setController: (
+    controller: string,
+    name: string
+  ) => Promise<WriteQueryResult>;
   siwe: () => Promise<Token>;
+  validate: (query: string) => Promise<ValidateWriteResult>;
+  waitConfirm: (
+    txnHash: string,
+    options?: ConfirmOptions
+  ) => Promise<ReceiptResult>;
 }

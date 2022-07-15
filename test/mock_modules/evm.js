@@ -10,6 +10,7 @@ module.exports = {
                   {},
                   { args: { tableId: { _hex: "0x015", type: "BigNumber" } } },
                 ],
+                transactionHash: "0x017"
               };
             },
           };

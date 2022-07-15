@@ -3,10 +3,16 @@
  * @param query A SQL query to run
  * @returns If read query, result-set. If write query, nothing.
  */
-
-import { ReadQueryResult, WriteQueryResult, Connection } from "./connection.js";
+import {
+  ReadQueryResult,
+  WriteQueryResult,
+  Connection,
+  MethodOptions,
+} from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
-import { runSql } from "./eth-calls.js";
+import * as ethCalls from "./eth-calls.js";
+import { shouldSkipConfirm } from "./util.js";
+import { checkNetwork } from "./check-network.js";
 
 export function resultsToObjects({ rows, columns }: ReadQueryResult) {
   return rows.map((row: any[]) =>
@@ -23,16 +29,26 @@ export async function read(
 
 export async function write(
   this: Connection,
-  query: string
+  query: string,
+  options?: MethodOptions
 ): Promise<WriteQueryResult> {
-  if (this.options.rpcRelay) {
-    return await tablelandCalls.write.call(this, query);
+  const skipConfirm = shouldSkipConfirm(options);
+  if (this.options.rpcRelay || options?.rpcRelay) {
+    const response = await tablelandCalls.write.call(this, query);
+    if (!skipConfirm) await this.waitConfirm(response.hash);
+
+    return response;
   }
+
+  // We check the wallet and tableland chains match here again in
+  // case the user switched networks after creating a siwe token
+  await checkNetwork.call(this);
 
   // ask the Validator if this query is valid, and get the tableId for use in SC call
   const { tableId } = await tablelandCalls.validateWriteQuery.call(this, query);
 
-  const txn = await runSql.call(this, tableId, query);
+  const txn = await ethCalls.runSql.call(this, tableId, query);
+  if (!skipConfirm) await this.waitConfirm(txn.transactionHash);
 
   return { hash: txn.transactionHash };
 }

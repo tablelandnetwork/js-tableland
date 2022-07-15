@@ -7,8 +7,8 @@ import { connect, NetworkName, SUPPORTED_CHAINS } from "../src/main";
 import { ConnectOptions } from "../src/lib/connector.js";
 import {
   FetchCreateDryRunSuccess,
-  FetchCreateTableOnTablelandSuccess,
   FetchHashTableSuccess,
+  FetchReceiptExists,
 } from "./fauxFetch";
 
 describe("connect function", function () {
@@ -24,7 +24,7 @@ describe("connect function", function () {
 
   test("exposes signer with correct address", async function () {
     fetch.mockResponseOnce(FetchHashTableSuccess);
-    const connection = await connect({
+    const connection = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
     });
@@ -38,7 +38,7 @@ describe("connect function", function () {
   });
 
   test("exposes public methods and properties", async function () {
-    const connection = await connect({
+    const connection = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
     });
@@ -55,15 +55,15 @@ describe("connect function", function () {
 
   test("allows specifying connection network", async function () {
     const factorySpy = jest.spyOn(TablelandTables__factory, "connect");
-    const connection = await connect({
+    const connection = connect({
       network: "testnet",
       host: "https://testnetv2.tableland.network",
     });
 
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
-    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
+    fetch.mockResponseOnce(FetchReceiptExists);
 
-    await connection.create("id int primary key, val text", "hello");
+    await connection.create("id int primary key, val text", { prefix: "hello" });
 
     expect(factorySpy).toHaveBeenCalled();
     expect(SUPPORTED_CHAINS["ethereum-goerli"].contract).toBe(
@@ -72,7 +72,7 @@ describe("connect function", function () {
   });
 
   test("allows specifying connection token", async function () {
-    const connection1 = await connect({
+    const connection1 = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
     });
@@ -83,7 +83,7 @@ describe("connect function", function () {
     await new Promise((resolve) => setTimeout(() => resolve(null), 1001));
     await flushPromises();
 
-    const connection2 = await connect({
+    const connection2 = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
       token: connection1.token,
@@ -94,7 +94,7 @@ describe("connect function", function () {
 
   test("throws error if provider network is not supported", async function () {
     await expect(async function () {
-      return connect({
+      const connection = connect({
         network: "testnet",
         host: "https://testnetv2.tableland.network",
         signer: {
@@ -111,8 +111,10 @@ describe("connect function", function () {
           },
         } as unknown as Signer, // convince type checks into letting us mock the signer
       });
-    } as ConnectOptions).rejects.toThrow(
-      "proivder chain mismatch. Switch your wallet connection and reconnect"
+
+      await connection.siwe();
+    }).rejects.toThrow(
+      "provider chain and tableland network mismatch. Switch your wallet connection and reconnect"
     );
   });
 

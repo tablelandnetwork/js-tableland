@@ -1,11 +1,11 @@
 import { Connection } from "./connection.js";
 import { Token, userCreatesToken } from "./token.js";
-import { getSigner } from "./util.js";
+import { checkNetwork } from "./check-network.js";
 
 export async function siwe(this: Connection): Promise<Token> {
-  this.signer = this.signer ?? (await getSigner());
-  const chainId = this.options.chainId;
+  // calling this ensures that we have a signer
+  await checkNetwork.call(this);
 
-  this.token = await userCreatesToken(this.signer, chainId);
+  this.token = await userCreatesToken(this.signer!, this.options.chainId);
   return this.token;
 }

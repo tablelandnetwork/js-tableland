@@ -1,6 +1,12 @@
 import { Signer, ethers } from "ethers";
 import camelCase from "camelcase";
 import { proxies } from "@tableland/evm/proxies.js";
+import {
+  Connection,
+  ReceiptResult,
+  MethodOptions,
+  ConfirmOptions,
+} from "./connection.js";
 
 declare let globalThis: any;
 
@@ -107,4 +113,66 @@ export function camelCaseKeys(obj: any): any {
       return [camelCase(key), val];
     })
   );
+}
+
+// Helper function to enable waiting until a transaction has been materialized by the Validator.
+// Uses simple polling with exponential backoff up to a maximum timeout.
+// Potential optimization could be had if the Validator supports subscribing to transaction
+// receipts via Websockets or long-poling in the future
+export async function waitConfirm(
+  this: Connection,
+  txnHash: string,
+  options?: ConfirmOptions
+): Promise<ReceiptResult> {
+  // default timeout 2 minutes
+  const timeout = getTimeout(options);
+
+  // determines how often to check for materialization before timeout
+  const rate = options?.rate ?? 1500;
+  const start = Date.now();
+
+  // next tick then try immediately
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  let table = await this.receipt(txnHash);
+
+  let tries = 0;
+  while (!table && start + timeout > Date.now()) {
+    // increase the time between each call, but never go past the specified timeout
+    const waitForMs = rate * Math.pow(2, tries);
+    const nextTry =
+      start + timeout < Date.now() + waitForMs
+        ? start + timeout - Date.now()
+        : waitForMs;
+
+    await new Promise((resolve) => setTimeout(resolve, nextTry));
+    table = await this.receipt(txnHash);
+    tries++;
+  }
+
+  // Throw and let the caller decide what to do if the timeout is exceeded
+  if (!table) {
+    throw new Error(
+      `timeout exceeded: could not get transaction receipt: ${txnHash}`
+    );
+  }
+
+  return table;
+}
+
+export function getPrefix(options?: MethodOptions): string {
+  if (typeof options === "undefined") return "";
+  return options.prefix || "";
+}
+
+export function shouldSkipConfirm(options?: MethodOptions): boolean {
+  if (typeof options === "undefined") return false;
+  return !!options.skipConfirm;
+}
+
+export const defaultTimeout = 120 * 1000; // 2 mintues
+export function getTimeout(options?: MethodOptions): number {
+  if (typeof options === "undefined") return defaultTimeout;
+  if (typeof options.timeout !== "number") return defaultTimeout;
+
+  return options.timeout;
 }

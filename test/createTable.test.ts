@@ -4,7 +4,8 @@ import { connect } from "../src/main";
 import {
   FetchCreateDryRunError,
   FetchCreateDryRunSuccess,
-  FetchCreateTableOnTablelandSuccess,
+  FetchReceiptExists,
+  FetchReceiptNone,
 } from "./fauxFetch";
 
 describe("create method", function () {
@@ -13,7 +14,7 @@ describe("create method", function () {
     // reset in case another test file hasn't cleaned up
     fetch.resetMocks();
     // const signer = ethers.providers.Web3Provider().getSigner();
-    connection = await connect({
+    connection = connect({
       network: "testnet",
       host: "https://testnetv2.tableland.network",
     });
@@ -26,7 +27,7 @@ describe("create method", function () {
 
   test("Create table works", async function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
-    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
+    fetch.mockResponseOnce(FetchReceiptExists);
 
     const txReceipt = await connection.create("id int primary key, val text");
     await expect(txReceipt.tableId._hex).toEqual("0x015");
@@ -34,10 +35,37 @@ describe("create method", function () {
 
   test("Create table throws if dryrun fails", async function () {
     fetch.mockResponseOnce(FetchCreateDryRunError);
-    fetch.mockResponseOnce(FetchCreateTableOnTablelandSuccess);
+    fetch.mockResponseOnce(FetchReceiptExists);
 
     await expect(async function () {
-      await connection.create("id int primary key, val text", "123test");
+      await connection.create("id int primary key, val text", { prefix: "123test" });
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
   });
+
+  test("Create table waits to return until after confirmation", async function () {
+    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
+    fetch.mockResponseOnce(FetchReceiptNone);
+    fetch.mockResponseOnce(FetchReceiptExists);
+
+    const txReceipt = await connection.create("id int primary key, val text");
+    await expect(txReceipt.tableId._hex).toEqual("0x015");
+  });
+
+  test("Create table options enable not waiting to return until after confirmation", async function () {
+    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
+
+    const txReceipt = await connection.create("id int primary key, val text", { skipConfirm: true });
+    await expect(txReceipt.tableId._hex).toEqual("0x015");
+  });
+
+  test("Create table options enable setting timeout for confirmation", async function () {
+    fetch.mockResponseOnce(FetchCreateDryRunSuccess);
+    fetch.mockResponseOnce(FetchReceiptNone);
+    fetch.mockResponseOnce(FetchReceiptNone);
+    fetch.mockResponseOnce(FetchReceiptNone);
+
+    await expect(async function () {
+      await connection.create("id int primary key, val text", { timeout: 2000 /* 2 seconds */ })
+    }).rejects.toThrow(/timeout exceeded: could not get transaction receipt:/);
+  }, 5000 /* 5 seconds */);
 });
