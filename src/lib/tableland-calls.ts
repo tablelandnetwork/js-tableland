@@ -169,8 +169,8 @@ async function receipt(
 
 async function setController(
   this: Connection,
-  controller: string,
   tableId: string,
+  controller: string,
   caller?: string
 ): Promise<WriteQueryResult> {
   caller = caller ?? (await this.signer?.getAddress());
@@ -187,6 +187,7 @@ async function setController(
   if (!this.token) {
     await this.siwe();
   }
+
   const json = await SendCall.call(this, message, this.token?.token);
 
   return camelCaseKeys(json.result.tx);

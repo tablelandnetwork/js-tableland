@@ -9,9 +9,12 @@ import { checkNetwork } from "./check-network.js";
  */
 export async function setController(
   this: Connection,
-  tableId: string,
-  controller: string
+  controller: string,
+  name: string
 ): Promise<WriteQueryResult> {
+  const tableId = name.trim().split("_").pop();
+  if (typeof tableId !== "string") throw new Error("malformed tablename");
+
   if (this.options.rpcRelay) {
     // Note that since tablelandCalls all use the token, the networks are matched during token creation
     return await tablelandCalls.setController.call(this, tableId, controller);
