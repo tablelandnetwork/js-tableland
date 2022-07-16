@@ -38,6 +38,10 @@ export interface SetControllerParams {
   token_id: string;
 }
 
+export interface LockControllerParams {
+    token_id: string;
+}
+
 export interface RpcReceipt<T = any> {
   jsonrpc: string;
   id: number;
@@ -83,6 +87,7 @@ async function GeneralizedRPC(
     | RelayWriteQueryParams
     | GetReceiptParams
     | SetControllerParams
+    | LockControllerParams
 ) {
   return {
     jsonrpc: "2.0",
@@ -210,4 +215,20 @@ async function setController(
   return json.result.controller;
 }*/
 
-export { hash, list, receipt, read, validateWriteQuery, write, setController };
+async function lockController(
+  this: Connection,
+  tableId: string,
+): Promise<WriteQueryResult> {
+  const message = await GeneralizedRPC.call(this, "lockController", {
+    token_id: tableId,
+  });
+  if (!this.token) {
+    await this.siwe();
+  }
+
+  const json = await SendCall.call(this, message, this.token?.token);
+
+  return camelCaseKeys(json.result.tx);
+}
+
+export { hash, list, receipt, read, validateWriteQuery, write, setController, lockController };
