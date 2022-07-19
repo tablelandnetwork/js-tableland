@@ -39,7 +39,8 @@ export interface SetControllerParams {
 }
 
 export interface LockControllerParams {
-    token_id: string;
+  /* eslint-disable-next-line camelcase */
+  token_id: string;
 }
 
 export interface RpcReceipt<T = any> {
@@ -198,26 +199,9 @@ async function setController(
   return camelCaseKeys(json.result.tx);
 }
 
-// TODO: not sure we would need this, but if we do need to build it out in g-tableland
-/*async function getController(
-  this: Connection,
-  tableId: string
-): Promise<string> {
-  const message = await GeneralizedRPC.call(this, "getController", {
-    token_id: tableId,
-  });
-  if (!this.token) {
-    await this.siwe();
-  }
-
-  const json = await SendCall.call(this, message, this.token?.token);
-
-  return json.result.controller;
-}*/
-
 async function lockController(
   this: Connection,
-  tableId: string,
+  tableId: string
 ): Promise<WriteQueryResult> {
   const message = await GeneralizedRPC.call(this, "lockController", {
     token_id: tableId,
@@ -231,4 +215,13 @@ async function lockController(
   return camelCaseKeys(json.result.tx);
 }
 
-export { hash, list, receipt, read, validateWriteQuery, write, setController, lockController };
+export {
+  hash,
+  list,
+  receipt,
+  read,
+  validateWriteQuery,
+  write,
+  setController,
+  lockController,
+};
