@@ -7,6 +7,8 @@ import { hash } from "./hash.js";
 import { siwe } from "./siwe.js";
 import { receipt, validateWriteQuery } from "./tableland-calls.js";
 import { setController } from "./set-controller.js";
+import { getController } from "./get-controller.js";
+import { lockController } from "./lock-controller.js";
 import {
   SUPPORTED_CHAINS,
   NetworkName,
@@ -105,6 +107,12 @@ export function connect(options: ConnectOptions): Connection {
     },
     get setController() {
       return setController;
+    },
+    get getController() {
+      return getController;
+    },
+    get lockController() {
+      return lockController;
     },
     get validate() {
       return validateWriteQuery;

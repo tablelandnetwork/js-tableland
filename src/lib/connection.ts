@@ -94,6 +94,8 @@ export interface Connection {
     controller: string,
     name: string
   ) => Promise<WriteQueryResult>;
+  getController: (tableName: string) => Promise<string>;
+  lockController: (tableName: string) => Promise<WriteQueryResult>;
   siwe: () => Promise<Token>;
   validate: (query: string) => Promise<ValidateWriteResult>;
   waitConfirm: (
