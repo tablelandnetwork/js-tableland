@@ -1,4 +1,9 @@
-import { StructureHashResult, Connection } from "./connection.js";
+import { getPrefix } from "./util.js";
+import {
+  StructureHashResult,
+  Connection,
+  MethodOptions,
+} from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 /**
  * Takes a Create Table SQL statement and returns the structure hash that would be generated
@@ -9,9 +14,12 @@ import * as tablelandCalls from "./tableland-calls.js";
 export async function hash(
   this: Connection,
   schema: string,
-  prefix: string = ""
+  options?: MethodOptions
 ): Promise<StructureHashResult> {
   const { chainId } = this.options;
+  const prefix = getPrefix(options);
+
   const query = `CREATE TABLE ${prefix}_${chainId} (${schema});`;
+
   return await tablelandCalls.hash.call(this, query);
 }
