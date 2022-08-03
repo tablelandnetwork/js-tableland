@@ -10,6 +10,12 @@ export interface TableMetadata {
 }
 
 export type Columns = Array<{ name: string }>;
+export type SchemaColumns = Array<{
+  name: string;
+  type?: string;
+  constraints?: string[];
+}>;
+
 export type Rows = Array<string | number | boolean>;
 
 export interface ReadQueryResult<R extends Rows = Array<any>> {
@@ -43,6 +49,18 @@ export interface CreateTableReceipt {
   chainId: number;
   txnHash: string;
   blockNumber: number;
+}
+
+export interface SchemaQueryResult {
+  columns: SchemaColumns;
+  /* eslint-disable-next-line camelcase */
+  table_constraints: string[];
+}
+
+export interface StructureQueryResult {
+  controller: string;
+  name: string;
+  structure: string;
 }
 
 export interface MethodOptions {
@@ -88,7 +106,10 @@ export interface Connection {
     query: string,
     options?: MethodOptions | undefined
   ) => Promise<WriteQueryResult>;
-  hash: (schema: string, prefix?: string) => Promise<StructureHashResult>;
+  hash: (
+    schema: string,
+    options?: MethodOptions
+  ) => Promise<StructureHashResult>;
   receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
   setController: (
     controller: string,
@@ -102,4 +123,6 @@ export interface Connection {
     txnHash: string,
     options?: ConfirmOptions
   ) => Promise<ReceiptResult>;
+  schema: (tableName: string) => Promise<SchemaQueryResult>;
+  structure: (tableName: string) => Promise<StructureQueryResult[]>;
 }
