@@ -9,11 +9,13 @@ export interface TableMetadata {
   structure: string;
 }
 
-export type Columns = Array<{
+export type Columns = Array<{ name: string }>;
+export type SchemaColumns = Array<{
   name: string;
   type?: string;
   constraints?: string[];
 }>;
+
 export type Rows = Array<string | number | boolean>;
 
 export interface ReadQueryResult<R extends Rows = Array<any>> {
@@ -50,7 +52,7 @@ export interface CreateTableReceipt {
 }
 
 export interface SchemaQueryResult {
-  columns: Columns;
+  columns: SchemaColumns;
   /* eslint-disable-next-line camelcase */
   table_constraints: string[];
 }
