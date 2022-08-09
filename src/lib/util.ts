@@ -169,6 +169,18 @@ export function shouldSkipConfirm(options?: MethodOptions): boolean {
   return !!options.skipConfirm;
 }
 
+export function shouldRelay(
+  connection: Connection,
+  methodOptions?: MethodOptions
+): boolean {
+  if (typeof methodOptions === "undefined") return connection.options.rpcRelay;
+  if (typeof methodOptions.rpcRelay === "boolean") {
+    return methodOptions.rpcRelay;
+  }
+
+  return connection.options.rpcRelay;
+}
+
 export const defaultTimeout = 120 * 1000; // 2 mintues
 export function getTimeout(options?: MethodOptions): number {
   if (typeof options === "undefined") return defaultTimeout;

@@ -7,11 +7,11 @@ import {
   ReadQueryResult,
   WriteQueryResult,
   Connection,
-  MethodOptions,
+  WriteOptions,
 } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import * as ethCalls from "./eth-calls.js";
-import { shouldSkipConfirm } from "./util.js";
+import { shouldSkipConfirm, shouldRelay } from "./util.js";
 import { checkNetwork } from "./check-network.js";
 
 export function resultsToObjects({ rows, columns }: ReadQueryResult) {
@@ -30,10 +30,11 @@ export async function read(
 export async function write(
   this: Connection,
   query: string,
-  options?: MethodOptions
+  options?: WriteOptions
 ): Promise<WriteQueryResult> {
   const skipConfirm = shouldSkipConfirm(options);
-  if (this.options.rpcRelay || options?.rpcRelay) {
+  const doRelay = shouldRelay(this, options);
+  if (doRelay) {
     const response = await tablelandCalls.write.call(this, query);
     if (!skipConfirm) await this.waitConfirm(response.hash);
 
