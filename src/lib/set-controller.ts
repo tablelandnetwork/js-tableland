@@ -1,7 +1,12 @@
-import { Connection, WriteQueryResult } from "./connection.js";
+import {
+  Connection,
+  WriteQueryResult,
+  SetControllerOptions,
+} from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import * as ethCalls from "./eth-calls.js";
 import { checkNetwork } from "./check-network.js";
+import { shouldRelay } from "./util.js";
 
 /**
  * Set the Controller contract on a table
@@ -10,12 +15,14 @@ import { checkNetwork } from "./check-network.js";
 export async function setController(
   this: Connection,
   controller: string,
-  name: string
+  name: string,
+  options?: SetControllerOptions
 ): Promise<WriteQueryResult> {
   const tableId = name.trim().split("_").pop();
   if (typeof tableId !== "string") throw new Error("malformed tablename");
 
-  if (this.options.rpcRelay) {
+  const doRelay = shouldRelay(this, options);
+  if (doRelay) {
     // Note that since tablelandCalls all use the token, the networks are matched during token creation
     return await tablelandCalls.setController.call(this, tableId, controller);
   }

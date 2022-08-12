@@ -4,8 +4,11 @@ import { proxies } from "@tableland/evm/proxies.js";
 import {
   Connection,
   ReceiptResult,
-  MethodOptions,
   ConfirmOptions,
+  PrefixOptions,
+  RelayOptions,
+  SkipConfirmOptions,
+  TimeoutOptions,
 } from "./connection.js";
 
 declare let globalThis: any;
@@ -159,18 +162,30 @@ export async function waitConfirm(
   return table;
 }
 
-export function getPrefix(options?: MethodOptions): string {
+export function getPrefix(options?: PrefixOptions): string {
   if (typeof options === "undefined") return "";
   return options.prefix || "";
 }
 
-export function shouldSkipConfirm(options?: MethodOptions): boolean {
+export function shouldSkipConfirm(options?: SkipConfirmOptions): boolean {
   if (typeof options === "undefined") return false;
   return !!options.skipConfirm;
 }
 
+export function shouldRelay(
+  connection: Connection,
+  options?: RelayOptions
+): boolean {
+  if (typeof options === "undefined") return connection.options.rpcRelay;
+  if (typeof options.rpcRelay === "boolean") {
+    return options.rpcRelay;
+  }
+
+  return connection.options.rpcRelay;
+}
+
 export const defaultTimeout = 120 * 1000; // 2 mintues
-export function getTimeout(options?: MethodOptions): number {
+export function getTimeout(options?: TimeoutOptions): number {
   if (typeof options === "undefined") return defaultTimeout;
   if (typeof options.timeout !== "number") return defaultTimeout;
 

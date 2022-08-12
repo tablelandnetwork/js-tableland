@@ -63,17 +63,34 @@ export interface StructureQueryResult {
   structure: string;
 }
 
-export interface MethodOptions {
+export interface CreateOptions {
   prefix?: string;
   skipConfirm?: boolean;
-  rpcRelay?: boolean;
   timeout?: number;
+}
+
+export interface WriteOptions {
+  skipConfirm?: boolean;
+  rpcRelay?: boolean;
+}
+
+export interface SetControllerOptions {
+  rpcRelay?: boolean;
+}
+
+export interface HashOptions {
+  prefix?: string;
 }
 
 export interface ConfirmOptions {
   timeout?: number;
   rate?: number;
 }
+
+export type PrefixOptions = HashOptions | CreateOptions;
+export type RelayOptions = WriteOptions | SetControllerOptions;
+export type SkipConfirmOptions = WriteOptions | CreateOptions;
+export type TimeoutOptions = ConfirmOptions | CreateOptions;
 
 export interface Connection {
   token?: Token;
@@ -84,7 +101,7 @@ export interface Connection {
     chain?: ChainName;
     contract: string;
     chainId: number;
-    rpcRelay?: boolean;
+    rpcRelay: boolean;
   };
   list: () => Promise<TableMetadata[]>;
   create: (
@@ -99,21 +116,16 @@ export interface Connection {
     /**
      *  an optional options argument to specify conditions of create.
      **/
-    options?: MethodOptions
+    options?: CreateOptions
   ) => Promise<CreateTableReceipt>;
   read: (query: string) => Promise<ReadQueryResult>;
-  write: (
-    query: string,
-    options?: MethodOptions | undefined
-  ) => Promise<WriteQueryResult>;
-  hash: (
-    schema: string,
-    options?: MethodOptions
-  ) => Promise<StructureHashResult>;
+  write: (query: string, options?: WriteOptions) => Promise<WriteQueryResult>;
+  hash: (schema: string, options?: HashOptions) => Promise<StructureHashResult>;
   receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;
   setController: (
     controller: string,
-    name: string
+    name: string,
+    options?: SetControllerOptions
   ) => Promise<WriteQueryResult>;
   getController: (tableName: string) => Promise<string>;
   lockController: (tableName: string) => Promise<WriteQueryResult>;
