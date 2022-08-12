@@ -63,13 +63,6 @@ export interface StructureQueryResult {
   structure: string;
 }
 
-export interface MethodOptions {
-  prefix?: string;
-  skipConfirm?: boolean;
-  rpcRelay?: boolean;
-  timeout?: number;
-}
-
 export interface CreateOptions {
   prefix?: string;
   skipConfirm?: boolean;
@@ -93,6 +86,11 @@ export interface ConfirmOptions {
   timeout?: number;
   rate?: number;
 }
+
+export type PrefixOptions = HashOptions | CreateOptions;
+export type RelayOptions = WriteOptions | SetControllerOptions;
+export type SkipConfirmOptions = WriteOptions | CreateOptions;
+export type TimeoutOptions = ConfirmOptions | CreateOptions;
 
 export interface Connection {
   token?: Token;

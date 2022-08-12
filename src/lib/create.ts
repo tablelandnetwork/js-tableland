@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { Connection, CreateTableReceipt, MethodOptions } from "./connection.js";
+import { Connection, CreateTableReceipt, CreateOptions } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
 import * as ethCalls from "./eth-calls.js";
 import { getPrefix, getTimeout, shouldSkipConfirm } from "./util.js";
@@ -16,7 +16,7 @@ import { checkNetwork } from "./check-network.js";
 export async function create(
   this: Connection,
   schema: string,
-  options?: MethodOptions
+  options?: CreateOptions
 ): Promise<CreateTableReceipt> {
   // We check the wallet and tableland chains match here again in
   // case the user switched networks after creating a siwe token
