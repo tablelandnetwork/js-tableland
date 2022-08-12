@@ -1,6 +1,6 @@
 import { Signer, ethers } from "ethers";
 import camelCase from "camelcase";
-import { proxies } from "@tableland/evm/proxies.js";
+import * as evm from "@tableland/evm/proxies.js";
 import {
   Connection,
   ReceiptResult,
@@ -34,10 +34,16 @@ export const btoa = globalThis.btoa ?? polyfills.btoa;
 export type NetworkName = "testnet" | "staging" | "custom";
 
 export type ChainName =
+  | "ethereum"
+  | "optimism"
+  | "polygon"
   | "ethereum-goerli"
   | "optimism-kovan"
+  | "optimism-goerli"
+  | "arbitrum-goerli"
   | "polygon-mumbai"
   | "optimism-kovan-staging"
+  | "optimism-goerli-staging"
   | "local-tableland"
   | "custom";
 
@@ -57,32 +63,80 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     name: "goerli",
     phrase: "Ethereum Goerli",
     chainId: 5,
-    contract: proxies["ethereum-goerli"],
+    contract: evm.proxies["ethereum-goerli"],
     host: "https://testnet.tableland.network",
     rpcRelay: true,
+  },
+  ethereum: {
+    name: "ethereum",
+    phrase: "Ethereum Mainnet",
+    chainId: 1,
+    contract: evm.proxies.ethereum,
+    host: "https://testnet.tableland.network",
+    rpcRelay: false,
   },
   "optimism-kovan": {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
-    contract: proxies["optimism-kovan"],
+    contract: evm.proxies["optimism-kovan"],
+    host: "https://testnet.tableland.network",
+    rpcRelay: true,
+  },
+  "optimism-goerli": {
+    name: "optimism-goerli",
+    phrase: "Optimism Goerli",
+    chainId: 420,
+    contract: evm.proxies["optimism-goerli"],
+    host: "https://testnet.tableland.network",
+    rpcRelay: true,
+  },
+  optimism: {
+    name: "optimism",
+    phrase: "Optimism Mainnet",
+    chainId: 10,
+    contract: evm.proxies.optimism,
+    host: "https://testnet.tableland.network",
+    rpcRelay: false,
+  },
+  "arbitrum-goerli": {
+    name: "arbitrum-goerli",
+    phrase: "Arbitrum Goerli",
+    chainId: 421613,
+    contract: evm.proxies["arbitrum-goerli"],
     host: "https://testnet.tableland.network",
     rpcRelay: true,
   },
   "polygon-mumbai": {
     name: "maticmum",
-    phrase: "Polygon Testnet",
+    phrase: "Polygon Mumbai",
     chainId: 80001,
-    contract: proxies["polygon-mumbai"],
+    contract: evm.proxies["polygon-mumbai"],
     host: "https://testnet.tableland.network",
     rpcRelay: true,
+  },
+  polygon: {
+    name: "matic",
+    phrase: "Polygon Mainnet",
+    chainId: 137,
+    contract: evm.proxies.polygon,
+    host: "https://testnet.tableland.network",
+    rpcRelay: false,
   },
   // staging
   "optimism-kovan-staging": {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
-    contract: proxies["optimism-kovan-staging"],
+    contract: evm.proxies["optimism-kovan-staging"],
+    host: "https://staging.tableland.network",
+    rpcRelay: true,
+  },
+  "optimism-goerli-staging": {
+    name: "optimism-goerli",
+    phrase: "Optimism Goerli",
+    chainId: 420,
+    contract: evm.proxies["optimism-goerli-staging"],
     host: "https://staging.tableland.network",
     rpcRelay: true,
   },
