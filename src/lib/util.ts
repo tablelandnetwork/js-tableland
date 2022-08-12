@@ -1,6 +1,6 @@
 import { Signer, ethers } from "ethers";
 import camelCase from "camelcase";
-import { proxies } from "@tableland/evm/proxies.js";
+import * as evm from "@tableland/evm/proxies.js";
 import {
   Connection,
   ReceiptResult,
@@ -57,7 +57,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     name: "goerli",
     phrase: "Ethereum Goerli",
     chainId: 5,
-    contract: proxies["ethereum-goerli"],
+    contract: evm.proxies["ethereum-goerli"],
     host: "https://testnet.tableland.network",
     rpcRelay: true,
   },
@@ -65,7 +65,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
-    contract: proxies["optimism-kovan"],
+    contract: evm.proxies["optimism-kovan"],
     host: "https://testnet.tableland.network",
     rpcRelay: true,
   },
@@ -73,7 +73,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     name: "maticmum",
     phrase: "Polygon Testnet",
     chainId: 80001,
-    contract: proxies["polygon-mumbai"],
+    contract: evm.proxies["polygon-mumbai"],
     host: "https://testnet.tableland.network",
     rpcRelay: true,
   },
@@ -82,7 +82,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     name: "optimism-kovan",
     phrase: "Optimism Kovan",
     chainId: 69,
-    contract: proxies["optimism-kovan-staging"],
+    contract: evm.proxies["optimism-kovan-staging"],
     host: "https://staging.tableland.network",
     rpcRelay: true,
   },
