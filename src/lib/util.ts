@@ -109,7 +109,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
   },
   "polygon-mumbai": {
     name: "maticmum",
-    phrase: "Polygon Testnet",
+    phrase: "Polygon Mumbai",
     chainId: 80001,
     contract: evm.proxies["polygon-mumbai"],
     host: "https://testnet.tableland.network",
@@ -134,8 +134,8 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
   },
   "optimism-goerli-staging": {
     name: "optimism-goerli",
-    phrase: "Optimism Kovan",
-    chainId: 69,
+    phrase: "Optimism Goerli",
+    chainId: 420,
     contract: evm.proxies["optimism-goerli-staging"],
     host: "https://staging.tableland.network",
     rpcRelay: true,
