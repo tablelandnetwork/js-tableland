@@ -19,21 +19,9 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "outDir": "./dist/esm/",
-    "types": [
-      "node",
-      "jest"
-    ],
-    "lib": [
-      "ES6",
-      "DOM"
-    ]
+    "types": ["node", "jest"],
+    "lib": ["ES6", "DOM"]
   },
-  "include": [
-    "src/**/*.ts",
-    "test/setupTest.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.test.ts"
-  ]
+  "include": ["src/**/*.ts", "test/setupTest.ts"],
+  "exclude": ["node_modules", "**/*.test.ts"]
 }

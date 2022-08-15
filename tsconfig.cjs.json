@@ -4,7 +4,5 @@
     "outDir": "./dist/cjs/",
     "module": "commonjs"
   },
-  "exclude": [
-    "test/**/**"
-  ]
+  "exclude": ["test/**/**"]
 }
