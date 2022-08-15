@@ -22,4 +22,5 @@ jobs:
       - run: npm run build:esm
       - run: npm test
       - run: npm run lint
+      - run: npm run prettier
       - run: npm run build:all
