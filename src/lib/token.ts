@@ -41,11 +41,11 @@ async function createToken(
   const token = btoa(
     stringify({
       message: messageText,
-      signature: signature,
+      signature,
     })
   );
 
-  return { token: token };
+  return { token };
 }
 
 export async function userCreatesToken(
@@ -56,7 +56,7 @@ export async function userCreatesToken(
   const exp = new Date(now + 10 * 60 * 60 * 1000).toISOString(); // Default to ~10 hours
 
   return await createToken(signer, {
-    chainId: chainId,
+    chainId,
     expirationTime: exp,
     uri: globalThis.document?.location.origin,
     version: "1",

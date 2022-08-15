@@ -150,7 +150,7 @@ export const FetchHashTableError = async () => {
         code: -32000,
         message: "TEST ERROR: invalid sql near 123",
       },
-    })
+    }),
   };
 };
 
@@ -162,12 +162,13 @@ export const FetchReceiptExists = async () => {
       result: {
         receipt: {
           chainId: 5,
-          txnHash: "0xc3e7d1e81b59556f414a5f5c23760eb61b4bfaa18150d924d7d3b334941dbecd",
+          txnHash:
+            "0xc3e7d1e81b59556f414a5f5c23760eb61b4bfaa18150d924d7d3b334941dbecd",
           blockNumber: 1000,
-          tableId: '2',
-        }
-      }
-    })
+          tableId: "2",
+        },
+      },
+    }),
   };
 };
 

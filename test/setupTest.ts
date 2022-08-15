@@ -2,14 +2,8 @@ import fetch from "jest-fetch-mock";
 
 fetch.enableMocks();
 
-// jest.mock("./lib/single", () => {
-//   return {
-//     getHost: async () => "",
-//     getSigner: async () => ({getAddress:async ()=>""})
-//   }
-// });
-
 declare global {
+  // eslint-disable-next-line no-var, no-unused-vars
   var ethereum: any;
 }
 

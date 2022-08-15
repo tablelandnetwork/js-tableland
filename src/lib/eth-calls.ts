@@ -1,6 +1,5 @@
 import { ContractReceipt } from "ethers";
-/* eslint-disable-next-line camelcase */
-import { TablelandTables__factory } from "@tableland/evm";
+import { TablelandTables__factory as TablelandTablesFactory } from "@tableland/evm";
 import { Connection } from "./connection.js";
 import { getSigner } from "./util.js";
 
@@ -13,10 +12,7 @@ async function registerTable(
 
   const contractAddress = this.options.contract;
 
-  const contract = TablelandTables__factory.connect(
-    contractAddress,
-    this.signer
-  );
+  const contract = TablelandTablesFactory.connect(contractAddress, this.signer);
   const tx = await contract.createTable(address, query);
 
   return await tx.wait();
@@ -32,10 +28,7 @@ async function runSql(
 
   const contractAddress = this.options.contract;
 
-  const contract = TablelandTables__factory.connect(
-    contractAddress,
-    this.signer
-  );
+  const contract = TablelandTablesFactory.connect(contractAddress, this.signer);
   const tx = await contract.runSQL(address, tableId, query);
 
   return await tx.wait();
@@ -51,10 +44,7 @@ async function setController(
 
   const contractAddress = this.options.contract;
 
-  const contract = TablelandTables__factory.connect(
-    contractAddress,
-    this.signer
-  );
+  const contract = TablelandTablesFactory.connect(contractAddress, this.signer);
   const tx = await contract.setController(caller, tableId, controller);
 
   return await tx.wait();
@@ -68,10 +58,7 @@ async function getController(
 
   const contractAddress = this.options.contract;
 
-  const contract = TablelandTables__factory.connect(
-    contractAddress,
-    this.signer
-  );
+  const contract = TablelandTablesFactory.connect(contractAddress, this.signer);
   return await contract.getController(tableId);
 }
 
@@ -84,10 +71,7 @@ async function lockController(
 
   const contractAddress = this.options.contract;
 
-  const contract = TablelandTables__factory.connect(
-    contractAddress,
-    this.signer
-  );
+  const contract = TablelandTablesFactory.connect(contractAddress, this.signer);
   const tx = await contract.lockController(caller, tableId);
 
   return await tx.wait();

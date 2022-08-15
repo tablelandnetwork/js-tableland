@@ -43,7 +43,7 @@ export async function create(
   const name = `${prefix}_${chainId}_${tableId}`;
 
   if (!skipConfirm) {
-    await this.waitConfirm(txnHash, { timeout: timeout });
+    await this.waitConfirm(txnHash, { timeout });
   }
 
   return { tableId, prefix, chainId, txnHash, blockNumber, name };
