@@ -71,7 +71,7 @@
     "add-js-extension": "^1.0.4",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^27.4.6",
-    "esbuild": "^0.14.18",
+    "esbuild": "^0.15.3",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
