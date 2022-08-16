@@ -1,5 +1,5 @@
-import { ContractReceipt } from "ethers";
 import { TablelandTables__factory as TablelandTablesFactory } from "@tableland/evm";
+import { Overrides, ContractReceipt, Signer } from "ethers";
 import { Connection } from "./connection.js";
 import { getSigner } from "./util.js";
 
@@ -13,7 +13,8 @@ async function registerTable(
   const contractAddress = this.options.contract;
 
   const contract = TablelandTablesFactory.connect(contractAddress, this.signer);
-  const tx = await contract.createTable(address, query);
+  const opts = await getOverrides(this.signer);
+  const tx = await contract.createTable(address, query, opts);
 
   return await tx.wait();
 }
@@ -29,7 +30,8 @@ async function runSql(
   const contractAddress = this.options.contract;
 
   const contract = TablelandTablesFactory.connect(contractAddress, this.signer);
-  const tx = await contract.runSQL(address, tableId, query);
+  const opts = await getOverrides(this.signer);
+  const tx = await contract.runSQL(address, tableId, query, opts);
 
   return await tx.wait();
 }
@@ -45,7 +47,8 @@ async function setController(
   const contractAddress = this.options.contract;
 
   const contract = TablelandTablesFactory.connect(contractAddress, this.signer);
-  const tx = await contract.setController(caller, tableId, controller);
+  const opts = await getOverrides(this.signer);
+  const tx = await contract.setController(caller, tableId, controller, opts);
 
   return await tx.wait();
 }
@@ -72,9 +75,24 @@ async function lockController(
   const contractAddress = this.options.contract;
 
   const contract = TablelandTablesFactory.connect(contractAddress, this.signer);
-  const tx = await contract.lockController(caller, tableId);
+  const opts = await getOverrides(this.signer);
+  const tx = await contract.lockController(caller, tableId, opts);
 
   return await tx.wait();
+}
+
+async function getOverrides(signer: Signer): Promise<Overrides> {
+  // Hack: Revert to gasPrice to avoid always underpriced eip-1559 transactions on Polygon
+  const opts: Overrides = {};
+  const network = await signer.provider?.getNetwork();
+  if (network?.chainId === 137) {
+    const feeData = await signer.getFeeData();
+    if (feeData.gasPrice) {
+      opts.gasPrice =
+        Math.floor(feeData.gasPrice.toNumber() * 1.1) || undefined;
+    }
+  }
+  return opts;
 }
 
 export { registerTable, runSql, setController, getController, lockController };
