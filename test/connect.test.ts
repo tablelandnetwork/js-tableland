@@ -63,7 +63,9 @@ describe("connect function", function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
     fetch.mockResponseOnce(FetchReceiptExists);
 
-    await connection.create("id int primary key, val text", { prefix: "hello" });
+    await connection.create("id int primary key, val text", {
+      prefix: "hello",
+    });
 
     expect(factorySpy).toHaveBeenCalled();
     expect(SUPPORTED_CHAINS["ethereum-goerli"].contract).toBe(

@@ -26,9 +26,10 @@ describe("has method", function () {
     // test that faux response makes it through
     await expect(receipt).toEqual({
       chainId: 5,
-      txnHash: "0xc3e7d1e81b59556f414a5f5c23760eb61b4bfaa18150d924d7d3b334941dbecd",
+      txnHash:
+        "0xc3e7d1e81b59556f414a5f5c23760eb61b4bfaa18150d924d7d3b334941dbecd",
       blockNumber: 1000,
-      tableId: '2'
+      tableId: "2",
     });
   });
 
@@ -40,5 +41,4 @@ describe("has method", function () {
     // test that faux response makes it through
     await expect(receipt).toEqual(undefined);
   });
-
 });

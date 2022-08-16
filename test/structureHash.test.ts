@@ -43,7 +43,9 @@ describe("has method", function () {
     fetch.mockResponseOnce(FetchHashTableError);
 
     await expect(async function () {
-      await connection.hash("(id int primary key, val text);", { prefix: "123hello}" });
+      await connection.hash("(id int primary key, val text);", {
+        prefix: "123hello}",
+      });
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
   });
 });

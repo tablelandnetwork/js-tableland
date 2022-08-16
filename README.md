@@ -16,7 +16,6 @@ A TypeScript/JavaScript library for creating and querying Tables on the Tablelan
 - [Usage](#usage)
 - [API](#api)
 - [Feedback](#feedback)
-- [Maintainers](#maintainers)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -75,12 +74,6 @@ Reach out with feedback and ideas:
 
 - [twitter.com/tableland\_\_](https://twitter.com/tableland__)
 - [Create a new issue](https://github.com/tablelandnetwork/js-tableland/issues)
-
-# Maintainers
-
-- [@awmuncy](https://github.com/awmuncy)
-- [@carsonfarmer](https://github.com/carsonfarmer)
-- [@joewagner](https://github.com/joewagner)
 
 # Contributing
 

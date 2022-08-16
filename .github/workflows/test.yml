@@ -1,0 +1,49 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: test-${{github.ref}}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        nodejs: [14]
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+        with:
+          persist-credentials: false
+
+      - name: Cache 📦
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Setup ⬢
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{ matrix.nodejs }}
+
+      - name: Install 🔧
+        run: npm install
+
+      - name: Build 🛠
+        run: npm run build:all
+
+      - name: Test 🧪
+        run: npm test

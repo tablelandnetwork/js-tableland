@@ -38,7 +38,9 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchReceiptExists);
 
     await expect(async function () {
-      await connection.create("id int primary key, val text", { prefix: "123test" });
+      await connection.create("id int primary key, val text", {
+        prefix: "123test",
+      });
     }).rejects.toThrow("TEST ERROR: invalid sql near 123");
   });
 
@@ -54,7 +56,9 @@ describe("create method", function () {
   test("Create table options enable not waiting to return until after confirmation", async function () {
     fetch.mockResponseOnce(FetchCreateDryRunSuccess);
 
-    const txReceipt = await connection.create("id int primary key, val text", { skipConfirm: true });
+    const txReceipt = await connection.create("id int primary key, val text", {
+      skipConfirm: true,
+    });
     await expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
@@ -65,7 +69,9 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchReceiptNone);
 
     await expect(async function () {
-      await connection.create("id int primary key, val text", { timeout: 2000 /* 2 seconds */ })
+      await connection.create("id int primary key, val text", {
+        timeout: 2000 /* 2 seconds */,
+      });
     }).rejects.toThrow(/timeout exceeded: could not get transaction receipt:/);
   }, 5000 /* 5 seconds */);
 });
