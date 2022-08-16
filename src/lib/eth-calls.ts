@@ -3,7 +3,7 @@ import { Overrides, ContractReceipt, Signer } from "ethers";
 import { Connection } from "./connection.js";
 import { getSigner } from "./util.js";
 
-async function registerTable(
+async function createTable(
   this: Connection,
   query: string
 ): Promise<ContractReceipt> {
@@ -95,4 +95,4 @@ async function getOverrides(signer: Signer): Promise<Overrides> {
   return opts;
 }
 
-export { registerTable, runSql, setController, getController, lockController };
+export { createTable, runSql, setController, getController, lockController };

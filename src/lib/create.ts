@@ -34,7 +34,7 @@ export async function create(
   // then fail to create the table on the Tableland network
   await tablelandCalls.hash.call(this, query);
 
-  const txn = await ethCalls.registerTable.call(this, query);
+  const txn = await ethCalls.createTable.call(this, query);
 
   const [, event] = txn.events ?? [];
   const txnHash = txn.transactionHash;
