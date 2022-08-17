@@ -94,6 +94,24 @@ describe("connect function", function () {
     expect(connection1.token?.token === connection2.token?.token).toBe(true);
   });
 
+  test("allows specifying SIWE URI", async function () {
+    const siweUri = "https://test.xyz";
+    const connection1 = connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+      siweUri,
+    });
+
+    expect(connection1.options.siweUri).toBe(siweUri);
+
+    const connection2 = connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+    });
+
+    expect(connection2.options.siweUri).not.toBe(siweUri);
+  });
+
   test("throws error if provider network is not supported", async function () {
     await expect(async function () {
       const connection = connect({

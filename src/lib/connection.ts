@@ -102,6 +102,7 @@ export interface Connection {
     contract: string;
     chainId: number;
     rpcRelay: boolean;
+    siweUri: string;
   };
   list: () => Promise<TableMetadata[]>;
   create: (
