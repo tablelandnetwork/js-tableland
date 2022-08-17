@@ -34,7 +34,9 @@ describe("connect function", function () {
       "CREATE TABLE hello (id int primary key, val text);";
     await connection.hash(createStatement);
 
-    expect(await connection.signer?.getAddress()).toMatch("testaddress");
+    expect(await connection.signer?.getAddress()).toMatch(
+      "0x0000000000000000000000000000000000001337"
+    );
   });
 
   test("exposes public methods and properties", async function () {
