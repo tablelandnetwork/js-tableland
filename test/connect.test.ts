@@ -68,7 +68,7 @@ describe("connect function", function () {
     });
 
     expect(factorySpy).toHaveBeenCalled();
-    expect(SUPPORTED_CHAINS["ethereum-goerli"].contract).toBe(
+    expect(SUPPORTED_CHAINS["polygon-mumbai"].contract).toBe(
       factorySpy.mock.calls[0][0]
     );
   });

@@ -1,6 +1,7 @@
 import fetch from "jest-fetch-mock";
 import { connect, Connection } from "../src/main";
 import { FetchHashTableSuccess, FetchHashTableError } from "./fauxFetch";
+import { chainId } from "./constants";
 
 describe("has method", function () {
   let connection: Connection;
@@ -10,7 +11,7 @@ describe("has method", function () {
     connection = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
-      chainId: 5,
+      chainId,
     });
   });
 
@@ -24,7 +25,7 @@ describe("has method", function () {
 
     const schema = "id int primary key, val text";
     const prefix = "hello";
-    const createStatement = `CREATE TABLE ${prefix}_5 (${schema});`;
+    const createStatement = `CREATE TABLE ${prefix}_${chainId} (${schema});`;
     const hashResponse = await connection.hash(schema, { prefix });
 
     const payload = JSON.parse(fetch.mock.calls[0][1]?.body as string);

@@ -24,12 +24,12 @@ describe("list method", function () {
     const resp = await connection.list();
     const table = resp[0];
 
-    await expect(table.name).toEqual("test_list_query_table");
-    await expect(table.description).toEqual("");
-    await expect(table.structure).toEqual(
+    expect(table.name).toEqual("test_list_query_table");
+    expect(table.description).toEqual("");
+    expect(table.structure).toEqual(
       "7837fa79ed5151d99da5051b41d7387e7c249a2b0321d440138c81108160cdd9"
     );
-    await expect(table.created_at).toEqual("2022-02-11T02:12:19.80809Z");
+    expect(table.created_at).toEqual("2022-02-11T02:12:19.80809Z");
   });
 
   test("If I have no tables, I get empty Array", async function () {
@@ -37,6 +37,6 @@ describe("list method", function () {
 
     const resp = await connection.list();
 
-    await expect(resp).toEqual([]);
+    expect(resp).toEqual([]);
   });
 });

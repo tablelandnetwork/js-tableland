@@ -1,3 +1,5 @@
+import { chainId } from "../constants";
+
 export const ethers = {
   providers: {
     Web3Provider: function () {
@@ -10,8 +12,8 @@ export const ethers = {
             provider: {
               getNetwork: async function () {
                 return {
-                  name: "goerli",
-                  chainId: 5,
+                  name: "maticmum",
+                  chainId,
                 };
               },
             },

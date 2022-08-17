@@ -7,7 +7,8 @@ import {
   FetchUpdateQuerySuccess,
   FetchValidateWriteQuery,
   FetchSetControllerSuccess,
-} from "../test/fauxFetch";
+} from "./fauxFetch";
+import { chainId } from "./constants";
 
 describe("read and write methods", function () {
   let connection: Connection;
@@ -17,7 +18,7 @@ describe("read and write methods", function () {
     connection = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
-      chainId: 5,
+      chainId,
     });
   });
 
@@ -59,10 +60,10 @@ describe("read and write methods", function () {
   test("validates write query outside of actual transaction", async function () {
     fetch.mockResponseOnce(FetchValidateWriteQuery);
 
-    const connection = await connect({
+    const connection = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
-      chainId: 5,
+      chainId,
     });
 
     const { tableId } = await connection.validate(
@@ -79,7 +80,7 @@ describe("read and write methods", function () {
       "UPDATE test_1 SET colname = val3 where colname = val2;",
       { skipConfirm: true }
     );
-    await expect(res).toEqual({ hash: "testhashinsertresponse" });
+    expect(res).toEqual({ hash: "testhashinsertresponse" });
   });
 
   test("returns transaction receipt when contract is called directly", async function () {

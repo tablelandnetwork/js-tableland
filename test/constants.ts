@@ -10,3 +10,6 @@ export const myTableResponseBody = [
 ];
 
 export const noTableResponseBody = [];
+
+// Polygon Mumbai
+export const chainId = 80001;
