@@ -31,7 +31,7 @@ export interface ConnectOptions {
   host?: string;
   // String enum indicating Tableland network. Defaults to "testnet".
   network?: NetworkName;
-  // String enum indicating target EVM chain. Defaults to "goerli",
+  // String enum indicating target EVM chain. Defaults to "polygon-mumbai",
   // or `signer.provider.getNetwork` if available.
   chain?: ChainName;
   chainId?: number;
@@ -49,7 +49,7 @@ export interface ConnectOptions {
  */
 export function connect(options: ConnectOptions): Connection {
   const network = options.network ?? "testnet";
-  const chain = options.chain ?? "ethereum-goerli";
+  const chain = options.chain ?? "polygon-mumbai";
   if (network === "custom" && !options.host) {
     throw new Error('`host` must be provided if using "custom" network');
   }

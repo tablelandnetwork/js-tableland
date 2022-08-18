@@ -1,4 +1,4 @@
-import { myTableResponseBody, noTableResponseBody } from "../test/constants";
+import { myTableResponseBody, noTableResponseBody, chainId } from "./constants";
 
 export const FetchMyTables = async () => {
   return {
@@ -161,7 +161,7 @@ export const FetchReceiptExists = async () => {
       id: 1,
       result: {
         receipt: {
-          chainId: 5,
+          chainId,
           txnHash:
             "0xc3e7d1e81b59556f414a5f5c23760eb61b4bfaa18150d924d7d3b334941dbecd",
           blockNumber: 1000,

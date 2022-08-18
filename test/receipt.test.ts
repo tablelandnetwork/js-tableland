@@ -1,6 +1,7 @@
 import fetch from "jest-fetch-mock";
 import { connect } from "../src/main";
 import { FetchReceiptExists, FetchReceiptNone } from "./fauxFetch";
+import { chainId } from "./constants";
 
 describe("has method", function () {
   let connection: any;
@@ -24,8 +25,8 @@ describe("has method", function () {
     const receipt = await connection.receipt("0x017");
 
     // test that faux response makes it through
-    await expect(receipt).toEqual({
-      chainId: 5,
+    expect(receipt).toEqual({
+      chainId,
       txnHash:
         "0xc3e7d1e81b59556f414a5f5c23760eb61b4bfaa18150d924d7d3b334941dbecd",
       blockNumber: 1000,
@@ -39,6 +40,6 @@ describe("has method", function () {
     const receipt = await connection.receipt("0x017");
 
     // test that faux response makes it through
-    await expect(receipt).toEqual(undefined);
+    expect(receipt).toEqual(undefined);
   });
 });

@@ -1,5 +1,4 @@
 import fetch from "jest-fetch-mock";
-// import { ethers } from "./mock_modules/ethers";
 import { connect } from "../src/main";
 import {
   FetchCreateDryRunError,
@@ -30,7 +29,7 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchReceiptExists);
 
     const txReceipt = await connection.create("id int primary key, val text");
-    await expect(txReceipt.tableId._hex).toEqual("0x015");
+    expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
   test("Create table throws if dryrun fails", async function () {
@@ -50,7 +49,7 @@ describe("create method", function () {
     fetch.mockResponseOnce(FetchReceiptExists);
 
     const txReceipt = await connection.create("id int primary key, val text");
-    await expect(txReceipt.tableId._hex).toEqual("0x015");
+    expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
   test("Create table options enable not waiting to return until after confirmation", async function () {
@@ -59,7 +58,7 @@ describe("create method", function () {
     const txReceipt = await connection.create("id int primary key, val text", {
       skipConfirm: true,
     });
-    await expect(txReceipt.tableId._hex).toEqual("0x015");
+    expect(txReceipt.tableId._hex).toEqual("0x015");
   });
 
   test("Create table options enable setting timeout for confirmation", async function () {
