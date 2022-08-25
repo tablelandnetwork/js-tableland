@@ -181,3 +181,17 @@ export const FetchReceiptNone = async () => {
     }),
   };
 };
+
+export const FetchReceiptError = async () => {
+  return {
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      result: {
+        receipt: {
+          error: "violated table constraint",
+        },
+      },
+    }),
+  };
+};

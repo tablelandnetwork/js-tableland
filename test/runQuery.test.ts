@@ -1,6 +1,7 @@
 import fetch from "jest-fetch-mock";
 import { connect, resultsToObjects, Connection } from "../src/main";
 import {
+  FetchReceiptError,
   FetchReceiptExists,
   FetchSelectQuerySuccess,
   FetchInsertQuerySuccess,
@@ -55,6 +56,17 @@ describe("read and write methods", function () {
       "UPDATE test_1 SET colname = val3 where colname = val2;"
     );
     expect(res).toEqual({ hash: "testhashinsertresponse" });
+  });
+
+  test("throws error when update query fails because of table constraint", async function () {
+    fetch.mockResponseOnce(FetchUpdateQuerySuccess);
+    fetch.mockResponseOnce(FetchReceiptError);
+
+    await expect(async function () {
+      await connection.write(
+        "UPDATE test_1 SET colname = val3 where colname = val2;"
+      );
+    }).rejects.toThrow("violated table constraint");
   });
 
   test("validates write query outside of actual transaction", async function () {
