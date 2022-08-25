@@ -6,6 +6,10 @@ export async function siwe(this: Connection): Promise<Token> {
   // calling this ensures that we have a signer
   await checkNetwork.call(this);
 
-  this.token = await userCreatesToken(this.signer!, this.options.chainId);
+  this.token = await userCreatesToken(
+    this.signer!,
+    this.options.chainId,
+    this.options.siweUri
+  );
   return this.token;
 }

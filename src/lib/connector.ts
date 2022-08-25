@@ -40,6 +40,8 @@ export interface ConnectOptions {
   contract?: string;
   // Boolean that indicates if tableland writes should be relayed via Validator
   rpcRelay?: boolean;
+  // SIWE URI. Defaults to document.location.origin when used in a browser environment and to https://tableland.xyz if document.location is not available.
+  siweUri?: string;
 }
 
 /**
@@ -75,6 +77,10 @@ export function connect(options: ConnectOptions): Connection {
     typeof options.rpcRelay === "boolean" ? options.rpcRelay : info.rpcRelay;
   // If a token was provided, we cache it
   const token = options.token;
+  const siweUri =
+    options.siweUri ??
+    globalThis.document?.location.origin ??
+    "https://tableland.xyz";
   const connectionObject: Connection = {
     token,
     signer,
@@ -85,6 +91,7 @@ export function connect(options: ConnectOptions): Connection {
       chain,
       chainId,
       contract,
+      siweUri,
     },
     get list() {
       return list;

@@ -18,7 +18,7 @@ export const ethers = {
               },
             },
             getAddress: function () {
-              return "testaddress";
+              return "0x0000000000000000000000000000000000001337";
             },
             signMessage: async function () {
               return "testsignedmessage";
@@ -32,6 +32,9 @@ export const ethers = {
 export const utils = {
   arrayify: function () {
     return new Uint8Array(5);
+  },
+  getAddress: function () {
+    return "0x0000000000000000000000000000000000001337";
   },
 };
 export const BigNumber = {

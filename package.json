@@ -71,6 +71,7 @@
     "add-js-extension": "^1.0.4",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^27.4.6",
+    "buffer": "^6.0.3",
     "esbuild": "^0.15.3",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
@@ -78,6 +79,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
+    "events": "^3.3.0",
     "flush-promises": "^1.0.2",
     "jest": "^27.4.7",
     "jest-fetch-mock": "^3.0.3",
@@ -94,6 +96,6 @@
     "@tableland/evm": "^2.0.4",
     "camelcase": "^6.3.0",
     "ethers": "^5.6.9",
-    "siwe": "^1.1.6"
+    "siwe": "^2.0.5"
   }
 }

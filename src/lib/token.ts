@@ -50,7 +50,8 @@ async function createToken(
 
 export async function userCreatesToken(
   signer: Signer,
-  chainId: number
+  chainId: number,
+  uri: string
 ): Promise<Token> {
   const now = Date.now();
   const exp = new Date(now + 10 * 60 * 60 * 1000).toISOString(); // Default to ~10 hours
@@ -58,7 +59,7 @@ export async function userCreatesToken(
   return await createToken(signer, {
     chainId,
     expirationTime: exp,
-    uri: globalThis.document?.location.origin,
+    uri,
     version: "1",
     statement: "Official Tableland SDK",
   });

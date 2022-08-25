@@ -34,7 +34,9 @@ describe("connect function", function () {
       "CREATE TABLE hello (id int primary key, val text);";
     await connection.hash(createStatement);
 
-    expect(await connection.signer?.getAddress()).toMatch("testaddress");
+    expect(await connection.signer?.getAddress()).toMatch(
+      "0x0000000000000000000000000000000000001337"
+    );
   });
 
   test("exposes public methods and properties", async function () {
@@ -92,6 +94,24 @@ describe("connect function", function () {
     });
 
     expect(connection1.token?.token === connection2.token?.token).toBe(true);
+  });
+
+  test("allows specifying SIWE URI", async function () {
+    const siweUri = "https://test.xyz";
+    const connection1 = connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+      siweUri,
+    });
+
+    expect(connection1.options.siweUri).toBe(siweUri);
+
+    const connection2 = connect({
+      network: "testnet",
+      host: "https://testnet.tableland.network",
+    });
+
+    expect(connection2.options.siweUri).not.toBe(siweUri);
   });
 
   test("throws error if provider network is not supported", async function () {
