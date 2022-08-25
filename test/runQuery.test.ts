@@ -66,9 +66,7 @@ describe("read and write methods", function () {
       await connection.write(
         "UPDATE test_1 SET colname = val3 where colname = val2;"
       );
-    }).rejects.toThrow(
-      "violated table constraint"
-    );
+    }).rejects.toThrow("violated table constraint");
   });
 
   test("validates write query outside of actual transaction", async function () {
