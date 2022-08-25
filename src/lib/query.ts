@@ -36,7 +36,10 @@ export async function write(
   const doRelay = shouldRelay(this, options);
   if (doRelay) {
     const response = await tablelandCalls.write.call(this, query);
-    if (!skipConfirm) await this.waitConfirm(response.hash);
+    if (!skipConfirm) {
+      const confirmation = await this.waitConfirm(response.hash);
+      if (confirmation.error) throw new Error(confirmation.error);
+    }
 
     return response;
   }
@@ -49,7 +52,10 @@ export async function write(
   const { tableId } = await tablelandCalls.validateWriteQuery.call(this, query);
 
   const txn = await ethCalls.runSql.call(this, tableId, query);
-  if (!skipConfirm) await this.waitConfirm(txn.transactionHash);
+  if (!skipConfirm) {
+    const confirmation = await this.waitConfirm(txn.transactionHash);
+    if (confirmation.error) throw new Error(confirmation.error);
+  }
 
   return { hash: txn.transactionHash };
 }
