@@ -1,4 +1,5 @@
 import { Signer, ethers } from "ethers";
+import BufferPolyfil from "buffer";
 import camelCase from "camelcase";
 import * as evm from "@tableland/evm/proxies.js";
 import {
@@ -27,9 +28,11 @@ const polyfills = {
 
     return buffer.toString("base64");
   },
+  Buffer: BufferPolyfil,
 };
 
 export const btoa = globalThis.btoa ?? polyfills.btoa;
+export const Buffer = globalThis.Buffer ?? polyfills.Buffer;
 
 export type NetworkName = "testnet" | "staging" | "custom";
 
