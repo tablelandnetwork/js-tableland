@@ -134,7 +134,7 @@ async function read(this: Connection, query: string): Promise<ReadQueryResult> {
   });
   const json = await SendCall.call(this, message);
 
-  return camelCaseKeys(json.result.data);
+  return json.result.data;
 }
 
 // Note: This method returns right away, once the write request has been sent to a validator for
