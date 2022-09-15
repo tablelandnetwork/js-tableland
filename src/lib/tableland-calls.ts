@@ -133,8 +133,9 @@ async function validateWriteQuery(
 async function read(
   this: Connection,
   query: string,
-  options?: ReadOptions
+  options: ReadOptions = {}
 ): Promise<ReadQueryResult> {
+  if (!options.output) options.output = "table";
   const message = await GeneralizedRPC.call(this, "runReadQuery", {
     statement: query,
     ...options,
@@ -206,31 +207,4 @@ async function setController(
   return camelCaseKeys(json.result.tx);
 }
 
-// NOTE: tablelandCalls.lockController is not being used because the
-//       Validator RPC endpoint has not been implemented yet.
-async function lockController(
-  this: Connection,
-  tableId: string
-): Promise<WriteQueryResult> {
-  const message = await GeneralizedRPC.call(this, "lockController", {
-    token_id: tableId,
-  });
-  if (!this.token) {
-    await this.siwe();
-  }
-
-  const json = await SendCall.call(this, message, this.token?.token);
-
-  return camelCaseKeys(json.result.tx);
-}
-
-export {
-  hash,
-  list,
-  receipt,
-  read,
-  validateWriteQuery,
-  write,
-  setController,
-  lockController,
-};
+export { hash, list, receipt, read, validateWriteQuery, write, setController };

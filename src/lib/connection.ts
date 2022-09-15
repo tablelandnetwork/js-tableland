@@ -69,8 +69,10 @@ export interface CreateOptions {
   timeout?: number;
 }
 
+export type ReadOutput = "table" | "objects";
+
 export interface ReadOptions {
-  output?: string;
+  output?: ReadOutput;
   unwrap?: boolean;
   extract?: boolean;
 }
