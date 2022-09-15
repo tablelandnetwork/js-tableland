@@ -7,7 +7,6 @@ import {
   FetchInsertQuerySuccess,
   FetchUpdateQuerySuccess,
   FetchValidateWriteQuery,
-  FetchSetControllerSuccess,
 } from "./fauxFetch";
 import { chainId } from "./constants";
 
@@ -99,13 +98,13 @@ describe("read and write methods", function () {
     fetch.mockResponseOnce(FetchValidateWriteQuery);
     fetch.mockResponseOnce(FetchReceiptExists);
 
-    const connection = connect({
+    const connection1 = connect({
       network: "testnet",
       host: "https://testnet.tableland.network",
       rpcRelay: false,
     });
 
-    const txReceipt = await connection.write(
+    const txReceipt = await connection1.write(
       "INSERT INTO test_1 (colname) values (val2);"
     );
 
@@ -122,16 +121,6 @@ describe("read and write methods", function () {
     expect(payload.params[0]?.statement).toEqual(queryStaement);
     expect(payload.params[0]).not.toHaveProperty("id");
     expect(payload.params[0]).not.toHaveProperty("create_statement");
-  });
-
-  test("returns RPC result when setting controller succeeds", async function () {
-    fetch.mockResponseOnce(FetchSetControllerSuccess);
-
-    const res = await connection.setController(
-      "0xControllerContract",
-      "prefix_74613_1"
-    );
-    expect(res).toEqual({ hash: "testhashsetcontrollerresponse" });
   });
 
   test("exports a function to map results to array of objects", async function () {

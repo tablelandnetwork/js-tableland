@@ -206,6 +206,8 @@ async function setController(
   return camelCaseKeys(json.result.tx);
 }
 
+// NOTE: tablelandCalls.lockController is not being used because the
+//       Validator RPC endpoint has not been implemented yet.
 async function lockController(
   this: Connection,
   tableId: string

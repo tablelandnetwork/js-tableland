@@ -23,7 +23,19 @@ module.exports = {
               };
             }
           }
-        }
+        },
+        getController: function () {
+          return "0xControllerContract"
+        },
+        lockController: function () {
+          return {
+            wait: async function () {
+              return {
+                transactionHash: "testhashlockcontrollerresponse"
+              };
+            }
+          };
+        },
       };
     },
   },
