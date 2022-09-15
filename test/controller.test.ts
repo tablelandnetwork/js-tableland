@@ -1,8 +1,6 @@
 import fetch from "jest-fetch-mock";
 import { connect, Connection } from "../src/main";
-import {
-  FetchSetControllerSuccess,
-} from "./fauxFetch";
+import { FetchSetControllerSuccess } from "./fauxFetch";
 import { chainId } from "./constants";
 
 describe("controller methods", function () {
@@ -34,9 +32,7 @@ describe("controller methods", function () {
   });
 
   test("getting controller succeeds", async function () {
-    const res = await connection.getController(
-      "prefix_74613_1"
-    );
+    const res = await connection.getController("prefix_74613_1");
     expect(res).toEqual("0xControllerContract");
   });
 
