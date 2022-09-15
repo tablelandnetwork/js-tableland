@@ -9,10 +9,5 @@ module.exports = {
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
-  setupFiles: ["./test/setupTest.ts"],
-  moduleNameMapper: {
-    "^@tableland/evm$": "<rootDir>/test/mock_modules/evm",
-    "^ethers$": "<rootDir>/test/mock_modules/ethers.ts",
-  },
   resolver: "jest-ts-webcompat-resolver",
 };
