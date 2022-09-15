@@ -69,6 +69,14 @@ export interface CreateOptions {
   timeout?: number;
 }
 
+export type ReadOutput = "table" | "objects";
+
+export interface ReadOptions {
+  output?: ReadOutput;
+  unwrap?: boolean;
+  extract?: boolean;
+}
+
 export interface WriteOptions {
   skipConfirm?: boolean;
   rpcRelay?: boolean;

@@ -5,6 +5,7 @@ import {
   WriteQueryResult,
   ReceiptResult,
   Connection,
+  ReadOptions,
 } from "./connection.js";
 import { list } from "./list.js";
 import { camelCaseKeys } from "./util.js";
@@ -89,6 +90,7 @@ async function GeneralizedRPC(
     | GetReceiptParams
     | SetControllerParams
     | LockControllerParams
+    | ReadOptions
 ) {
   return {
     jsonrpc: "2.0",
@@ -128,13 +130,19 @@ async function validateWriteQuery(
   return camelCaseKeys(json.result);
 }
 
-async function read(this: Connection, query: string): Promise<ReadQueryResult> {
+async function read(
+  this: Connection,
+  query: string,
+  options: ReadOptions = {}
+): Promise<ReadQueryResult> {
+  if (!options.output) options.output = "table";
   const message = await GeneralizedRPC.call(this, "runReadQuery", {
     statement: query,
+    ...options,
   });
   const json = await SendCall.call(this, message);
 
-  return camelCaseKeys(json.result.data);
+  return json.result.data;
 }
 
 // Note: This method returns right away, once the write request has been sent to a validator for
@@ -199,29 +207,4 @@ async function setController(
   return camelCaseKeys(json.result.tx);
 }
 
-async function lockController(
-  this: Connection,
-  tableId: string
-): Promise<WriteQueryResult> {
-  const message = await GeneralizedRPC.call(this, "lockController", {
-    token_id: tableId,
-  });
-  if (!this.token) {
-    await this.siwe();
-  }
-
-  const json = await SendCall.call(this, message, this.token?.token);
-
-  return camelCaseKeys(json.result.tx);
-}
-
-export {
-  hash,
-  list,
-  receipt,
-  read,
-  validateWriteQuery,
-  write,
-  setController,
-  lockController,
-};
+export { hash, list, receipt, read, validateWriteQuery, write, setController };

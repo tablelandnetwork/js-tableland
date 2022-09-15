@@ -7,6 +7,7 @@ import {
   ReadQueryResult,
   WriteQueryResult,
   Connection,
+  ReadOptions,
   WriteOptions,
 } from "./connection.js";
 import * as tablelandCalls from "./tableland-calls.js";
@@ -22,9 +23,10 @@ export function resultsToObjects({ rows, columns }: ReadQueryResult) {
 
 export async function read(
   this: Connection,
-  query: string
+  query: string,
+  options?: ReadOptions
 ): Promise<ReadQueryResult> {
-  return await tablelandCalls.read.call(this, query);
+  return await tablelandCalls.read.call(this, query, options);
 }
 
 export async function write(
