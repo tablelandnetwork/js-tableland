@@ -5,6 +5,7 @@ import {
   WriteQueryResult,
   ReceiptResult,
   Connection,
+  ReadOptions,
 } from "./connection.js";
 import { list } from "./list.js";
 import { camelCaseKeys } from "./util.js";
@@ -89,6 +90,7 @@ async function GeneralizedRPC(
     | GetReceiptParams
     | SetControllerParams
     | LockControllerParams
+    | ReadOptions
 ) {
   return {
     jsonrpc: "2.0",
@@ -128,9 +130,14 @@ async function validateWriteQuery(
   return camelCaseKeys(json.result);
 }
 
-async function read(this: Connection, query: string): Promise<ReadQueryResult> {
+async function read(
+  this: Connection,
+  query: string,
+  options?: ReadOptions
+): Promise<ReadQueryResult> {
   const message = await GeneralizedRPC.call(this, "runReadQuery", {
     statement: query,
+    ...options,
   });
   const json = await SendCall.call(this, message);
 

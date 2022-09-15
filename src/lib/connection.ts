@@ -69,6 +69,12 @@ export interface CreateOptions {
   timeout?: number;
 }
 
+export interface ReadOptions {
+  output?: string;
+  unwrap?: boolean;
+  extract?: boolean;
+}
+
 export interface WriteOptions {
   skipConfirm?: boolean;
   rpcRelay?: boolean;
