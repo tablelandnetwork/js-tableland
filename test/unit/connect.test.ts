@@ -3,8 +3,8 @@ import { Signer } from "ethers";
 import flushPromises from "flush-promises";
 // eslint-disable-next-line camelcase
 import { TablelandTables__factory } from "@tableland/evm";
-import { connect, NetworkName, SUPPORTED_CHAINS } from "../src/main";
-import { ConnectOptions } from "../src/lib/connector.js";
+import { connect, NetworkName, SUPPORTED_CHAINS } from "../../src/main";
+import { ConnectOptions } from "../../src/lib/connector.js";
 import {
   FetchCreateDryRunSuccess,
   FetchHashTableSuccess,

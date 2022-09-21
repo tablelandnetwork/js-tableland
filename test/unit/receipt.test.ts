@@ -1,5 +1,5 @@
 import fetch from "jest-fetch-mock";
-import { connect } from "../src/main";
+import { connect } from "../../src/main";
 import { FetchReceiptExists, FetchReceiptNone } from "./fauxFetch";
 import { chainId } from "./constants";
 

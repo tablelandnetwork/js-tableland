@@ -1,5 +1,5 @@
 import fetch from "jest-fetch-mock";
-import { connect, Connection } from "../src/main";
+import { connect, Connection } from "../../src/main";
 import { FetchHashTableSuccess, FetchHashTableError } from "./fauxFetch";
 import { chainId } from "./constants";
 

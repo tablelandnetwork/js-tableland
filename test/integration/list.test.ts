@@ -1,26 +1,17 @@
-import fetch from "jest-fetch-mock";
-import { FetchMyTables, FetchNoTables } from "../test/fauxFetch";
+import { ethers } from "ethers";
 import { connect } from "../src/main";
 
 describe("list method", function () {
   let connection: any;
   beforeAll(async function () {
-    // reset in case another test file hasn't cleaned up
-    fetch.resetMocks();
+    const provider = new ethers.providers.JsonRpcProvider();
     connection = connect({
-      network: "testnet",
-      host: "https://testnet.tableland.network",
+      chain: "local-tableland",
+      signer: provider.getSigner()
     });
   });
 
-  afterEach(function () {
-    // ensure mocks don't bleed into other tests
-    fetch.resetMocks();
-  });
-
   test("When I fetch my tables, I get some tables", async function () {
-    fetch.mockResponseOnce(FetchMyTables);
-
     const resp = await connection.list();
     const table = resp[0];
 
@@ -33,8 +24,6 @@ describe("list method", function () {
   });
 
   test("If I have no tables, I get empty Array", async function () {
-    fetch.mockResponseOnce(FetchNoTables);
-
     const resp = await connection.list();
 
     expect(resp).toEqual([]);
