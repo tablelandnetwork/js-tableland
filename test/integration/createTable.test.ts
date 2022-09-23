@@ -1,76 +1,47 @@
-import { connect } from "../src/main";
+import test from "tape";
+import { getAccounts } from "@tableland/local";
+import { connect } from "../../src/main.js";
 import { ethers } from "ethers";
-import { LocalTableland } from "@tableland/local";
+import { setup } from "./setupTest.js";
 
-describe("create method", function () {
-  let connection: any;
-  let localNode: any;
+let connection: any;
+// Starting the local network takes quite a while
+test("create method: setup", async function (t) {
+  await setup(t);
 
-  // Starting the local network takes quite a while
-  jest.setTimeout(200 * 1000);
-  beforeAll(function (done) {
+  const provider = new ethers.providers.JsonRpcProvider();
+  const wallet = new ethers.Wallet(getAccounts()[1].privateKey, provider);
+  connection = connect({
+    chain: "local-tableland",
+    signer: wallet
+  });
+});
 
-    localNode = new LocalTableland({
-      validatorDir: "../go-tableland",
-      registryDir: "../evm-tableland",
-      //silent: true
+test("create method: Creating table works", async function (t) {
+  const txReceipt = await connection.create("id int primary key, val text");
+  
+  t.equal(!!txReceipt.tableId._hex.match(/^0x0[1-9]/), true);
+});
+
+test("create method: Creating table throws if validation fails", async function (t) {
+  let createError = new Error();
+  try {
+    await connection.create("id int primary key, val text", {
+      prefix: "123test",
     });
+  } catch (err) {
+    createError = err as Error;
+  }
 
-    localNode.start();
+  t.equal(
+    createError.message,
+    "calling ValidateCreateTable parsing create table statement: unable to parse the query: syntax error at position 16 near '123'"
+  );
+});
 
-    localNode.initEmitter.on("validator ready", function () {
-      console.log("local node started");
-      const provider = new ethers.providers.JsonRpcProvider();
-      const signer = provider.getSigner();
-      connection = connect({
-        chain: "local-tableland",
-        signer
-      });
-
-      done();
-    });
+test("create method: Creating table accepts skipConfirm option", async function (t) {
+  const txReceipt = await connection.create("id int primary key, val text", {
+    skipConfirm: true,
   });
-
-  afterAll(async function () {
-    localNode.shutdown(true);
-    await new Promise(function (resolve) {
-      setTimeout(() => resolve(1), 3000);
-    });
-  });
-
-  test("Create table works", async function () {
-    const txReceipt = await connection.create("id int primary key, val text");
-    expect(txReceipt.tableId._hex).toEqual("0x02");
-  });
-
-  test("Create table throws if validation fails", async function () {
-    await expect(async function () {
-      await connection.create("id int primary key, val text", {
-        prefix: "123test",
-      });
-    }).rejects.toThrow(
-      "calling ValidateCreateTable parsing create table statement: unable to parse the query: syntax error at position 16 near '123'"
-    );
-  });
-
-  test("Create table waits to return until after confirmation", async function () {
-    const txReceipt = await connection.create("id int primary key, val text");
-    expect(txReceipt.tableId._hex).toEqual("0x03");
-  });
-
-  test("Create table options enable not waiting to return until after confirmation", async function () {
-    const txReceipt = await connection.create("id int primary key, val text", {
-      skipConfirm: true,
-    });
-    expect(txReceipt.tableId._hex).toEqual("0x04");
-  });
-
-  // TODO: can't think of a way to do this test without mocks
-  test.skip("Create table options enable setting timeout for confirmation", async function () {
-    await expect(async function () {
-      await connection.create("id int primary key, val text", {
-        timeout: 2000 /* 2 seconds */,
-      });
-    }).rejects.toThrow(/timeout exceeded: could not get transaction receipt:/);
-  }, 5000 /* 5 seconds */);
+  t.equal(!!txReceipt.tableId._hex.match(/^0x0[1-9]/), true);
 });

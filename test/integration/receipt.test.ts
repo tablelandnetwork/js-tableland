@@ -1,34 +1,33 @@
+import test from "tape";
 import { ethers } from "ethers";
-import { connect } from "../src/main";
-import { chainId } from "./constants";
+import { getAccounts } from "@tableland/local";
+import { connect } from "../../src/main.js";
+import { setup } from "./setupTest.js";
 
-describe("has method", function () {
-  let connection: any;
-  beforeAll(async function () {
-    const provider = new ethers.providers.JsonRpcProvider();
-    connection = connect({
-      chain: "local-tableland",
-      signer: provider.getSigner()
-    });
+let connection: any;
+test("receipt method: setup", async function (t) {
+  await setup(t);
+
+  const provider = new ethers.providers.JsonRpcProvider();
+  const wallet = new ethers.Wallet(getAccounts()[17].privateKey, provider);
+  connection = connect({
+    chain: "local-tableland",
+    signer: wallet
   });
+});
 
-  test("Can get receipt of a processed transaction", async function () {
-    const receipt = await connection.receipt("0x017");
+test("receipt method: Can get receipt of a processed transaction", async function (t) {
+  const { txnHash } = await connection.create("a int");
+  const receipt = await connection.receipt(txnHash);
 
-    // test that faux response makes it through
-    expect(receipt).toEqual({
-      chainId,
-      txnHash:
-        "0xc3e7d1e81b59556f414a5f5c23760eb61b4bfaa18150d924d7d3b334941dbecd",
-      blockNumber: 1000,
-      tableId: "2",
-    });
-  });
+  t.equal(receipt.chainId, 31337);
+  t.equal(receipt.txnHash, txnHash);
+  t.equal(typeof receipt.blockNumber, "number");
+  t.equal(typeof receipt.tableId, "string");
+});
 
-  test("Returns undefined for unprocessed transaction", async function () {
-    const receipt = await connection.receipt("0x017");
+test("receipt method: Returns undefined for unprocessed transaction", async function (t) {
+  const receipt = await connection.receipt("0x0000000000adf2ed24c61bd0d2f52bef11fca7f0d7e5a703a1e58a7fb2958d0e");
 
-    // test that faux response makes it through
-    expect(receipt).toEqual(undefined);
-  });
+  t.equal(receipt, undefined);
 });
