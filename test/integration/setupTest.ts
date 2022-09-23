@@ -1,5 +1,4 @@
-import test from "tape";
-import { Test } from "tape";
+import test, { Test } from "tape";
 import fetch from "node-fetch";
 import { LocalTableland } from "@tableland/local";
 
