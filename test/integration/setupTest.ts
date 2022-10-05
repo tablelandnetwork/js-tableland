@@ -39,6 +39,6 @@ test.onFinish(async function () {
 console.log("onFinish");
   if (!localNetwork) return;
 console.log("shutting down");
-  await localNetwork.shutdown(true);
+  await localNetwork.shutdown();
 console.log("shutdown");
 });
