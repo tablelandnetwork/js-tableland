@@ -41,11 +41,9 @@ export type ChainName =
   | "optimism"
   | "polygon"
   | "ethereum-goerli"
-  | "optimism-kovan"
   | "optimism-goerli"
   | "arbitrum-goerli"
   | "polygon-mumbai"
-  | "optimism-kovan-staging"
   | "optimism-goerli-staging"
   | "local-tableland"
   | "custom";
@@ -77,14 +75,6 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     contract: evm.proxies.ethereum,
     host: "https://testnet.tableland.network",
     rpcRelay: false,
-  },
-  "optimism-kovan": {
-    name: "optimism-kovan",
-    phrase: "Optimism Kovan",
-    chainId: 69,
-    contract: evm.proxies["optimism-kovan"],
-    host: "https://testnet.tableland.network",
-    rpcRelay: true,
   },
   "optimism-goerli": {
     name: "optimism-goerli",
@@ -127,14 +117,6 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     rpcRelay: false,
   },
   // staging
-  "optimism-kovan-staging": {
-    name: "optimism-kovan",
-    phrase: "Optimism Kovan",
-    chainId: 69,
-    contract: evm.proxies["optimism-kovan-staging"],
-    host: "https://staging.tableland.network",
-    rpcRelay: true,
-  },
   "optimism-goerli-staging": {
     name: "optimism-goerli",
     phrase: "Optimism Goerli",
