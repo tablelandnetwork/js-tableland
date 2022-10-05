@@ -11,10 +11,11 @@ let localNetwork: LocalTableland | undefined;
 export const setup = function (t: Test) {
   // if the local network is running the caller can proceed, but we
   // wait so that tests for hit the request rate limit on the validator
-  if (ready) return new Promise(resolve => setTimeout(() => resolve(0), 2500));
+  if (ready)
+    return new Promise((resolve) => setTimeout(() => resolve(0), 2500));
 
   // increase the timeout since this might take a while
-  t.timeoutAfter(200 * 1000)
+  t.timeoutAfter(200 * 1000);
   // if the promise exists return it so the caller can await it
   if (initializing) return initializing;
 
@@ -32,13 +33,13 @@ export const setup = function (t: Test) {
   });
 
   return initializing;
-}
+};
 
 // TODO: handle starting the local node in setup for all tests
 test.onFinish(async function () {
-console.log("onFinish");
+  console.log("onFinish");
   if (!localNetwork) return;
-console.log("shutting down");
+  console.log("shutting down");
   await localNetwork.shutdown();
-console.log("shutdown");
+  console.log("shutdown");
 });

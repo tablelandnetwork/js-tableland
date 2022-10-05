@@ -12,7 +12,7 @@ test("receipt method: setup", async function (t) {
   const wallet = new ethers.Wallet(getAccounts()[17].privateKey, provider);
   connection = connect({
     chain: "local-tableland",
-    signer: wallet
+    signer: wallet,
   });
 });
 
@@ -27,7 +27,9 @@ test("receipt method: Can get receipt of a processed transaction", async functio
 });
 
 test("receipt method: Returns undefined for unprocessed transaction", async function (t) {
-  const receipt = await connection.receipt("0x0000000000adf2ed24c61bd0d2f52bef11fca7f0d7e5a703a1e58a7fb2958d0e");
+  const receipt = await connection.receipt(
+    "0x0000000000adf2ed24c61bd0d2f52bef11fca7f0d7e5a703a1e58a7fb2958d0e"
+  );
 
   t.equal(receipt, undefined);
 });

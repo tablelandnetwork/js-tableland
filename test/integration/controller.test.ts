@@ -14,10 +14,12 @@ test("controller methods: setup", async function (t) {
   const wallet = new ethers.Wallet(getAccounts()[2].privateKey, provider);
   connection = connect({
     chain: "local-tableland",
-    signer: wallet
+    signer: wallet,
   });
 
-  const { name, tableId: id } = await connection.create("colname text", { prefix: "test" });
+  const { name, tableId: id } = await connection.create("colname text", {
+    prefix: "test",
+  });
   if (typeof name !== "string") throw new Error("cannot get tablename");
   if (typeof id === "undefined") throw new Error("cannot get tableId");
   tableName = name;

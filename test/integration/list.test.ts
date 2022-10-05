@@ -12,7 +12,7 @@ test("list method: setup", async function (t) {
   const wallet = new ethers.Wallet(getAccounts()[0].privateKey, provider);
   connection = connect({
     chain: "local-tableland",
-    signer: wallet
+    signer: wallet,
   });
 });
 
@@ -31,7 +31,7 @@ test.skip("list method: If I have no tables, I get empty Array", async function 
   const wallet = new ethers.Wallet(getAccounts()[18].privateKey, provider);
   const connection1 = connect({
     chain: "local-tableland",
-    signer: wallet
+    signer: wallet,
   });
   const resp = await connection1.list();
 

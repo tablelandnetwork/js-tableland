@@ -14,10 +14,12 @@ test("read and write methods: setup", async function (t) {
   const wallet = new ethers.Wallet(getAccounts()[17].privateKey, provider);
   connection = connect({
     chain: "local-tableland",
-    signer: wallet
+    signer: wallet,
   });
 
-  const { name, tableId: id } = await connection.create("colname text", { prefix: "test" });
+  const { name, tableId: id } = await connection.create("colname text", {
+    prefix: "test",
+  });
   if (typeof name !== "string") throw new Error("cannot get tablename");
   if (typeof id === "undefined") throw new Error("cannot get tableId");
   tableName = name;
@@ -51,11 +53,9 @@ test("read and write methods: returns RPC result when update query succeeds", as
 test.skip("read and write methods: throws when update fails due to table constraint", async function (t) {
   let updateError = new Error();
   try {
-    await connection.write(
-      `INSERT INTO ${tableName} (colname) values (1);`
-    );
+    await connection.write(`INSERT INTO ${tableName} (colname) values (1);`);
   } catch (err) {
-    console.log("TEST 1:", err)
+    console.log("TEST 1:", err);
     updateError = err as Error;
   }
 
@@ -85,7 +85,7 @@ test("read and write methods: returns transaction receipt when contract is calle
   const connection1 = connect({
     chain: "local-tableland",
     signer: wallet,
-    rpcRelay: false
+    rpcRelay: false,
   });
 
   const txReceipt = await connection1.write(

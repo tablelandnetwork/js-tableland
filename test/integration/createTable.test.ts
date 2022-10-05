@@ -13,13 +13,13 @@ test("create method: setup", async function (t) {
   const wallet = new ethers.Wallet(getAccounts()[1].privateKey, provider);
   connection = connect({
     chain: "local-tableland",
-    signer: wallet
+    signer: wallet,
   });
 });
 
 test("create method: Creating table works", async function (t) {
   const txReceipt = await connection.create("id int primary key, val text");
-  
+
   t.equal(!!txReceipt.tableId._hex.match(/^0x0[1-9]/), true);
 });
 

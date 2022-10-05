@@ -12,7 +12,7 @@ test("hash method: setup", async function (t) {
   const wallet = new ethers.Wallet(getAccounts()[4].privateKey, provider);
   connection = connect({
     chain: "local-tableland",
-    signer: wallet
+    signer: wallet,
   });
 });
 
@@ -37,5 +37,8 @@ test("hash method: Hashing a table throws if statement is not valid", async func
     hashError = err as Error;
   }
 
-  t.equal(hashError.message, "calling ValidateCreateTable parsing create table statement: unable to parse the query: syntax error at position 16 near '123'");
+  t.equal(
+    hashError.message,
+    "calling ValidateCreateTable parsing create table statement: unable to parse the query: syntax error at position 16 near '123'"
+  );
 });
