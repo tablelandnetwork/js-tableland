@@ -1,6 +1,6 @@
 import { SiweMessage, generateNonce } from "siwe";
 import { Signer } from "ethers";
-import { btoa } from "./util";
+import { btoa } from "./util.js";
 
 // Utilities and constants
 const { stringify } = JSON;

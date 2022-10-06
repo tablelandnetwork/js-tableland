@@ -1,6 +1,6 @@
 import fetch from "jest-fetch-mock";
-import { FetchMyTables, FetchNoTables } from "../test/fauxFetch";
-import { connect } from "../src/main";
+import { FetchMyTables, FetchNoTables } from "./fauxFetch";
+import { connect } from "../../src/main";
 
 describe("list method", function () {
   let connection: any;

@@ -5,6 +5,7 @@
 /docs/
 .idea/*
 .vscode
+test/integration/build/
 
 .DS_Store
 coverage

@@ -1,7 +1,7 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  roots: ["<rootDir>/src", "<rootDir>/test"],
+  roots: ["<rootDir>/src", "<rootDir>/test/unit"],
   testMatch: [
     "**/__tests__/**/*.+(ts|tsx|js)",
     "**/?(*.)+(spec|test).+(ts|tsx|js)",
@@ -9,10 +9,10 @@ module.exports = {
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
-  setupFiles: ["./test/setupTest.ts"],
+  setupFiles: ["./test/unit/setupTest.ts"],
   moduleNameMapper: {
-    "^@tableland/evm$": "<rootDir>/test/mock_modules/evm",
-    "^ethers$": "<rootDir>/test/mock_modules/ethers.ts",
+    "^@tableland/evm$": "<rootDir>/test/unit/mock_modules/evm",
+    "^ethers$": "<rootDir>/test/unit/mock_modules/ethers.ts",
   },
   resolver: "jest-ts-webcompat-resolver",
 };
