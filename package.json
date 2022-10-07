@@ -22,13 +22,13 @@
   "exports": {
     ".": {
       "require": "./dist/cjs/main.js",
-      "import": "./dist/esm/src/main.js",
-      "default": "./dist/esm/src/main.js"
+      "import": "./dist/esm/main.js",
+      "default": "./dist/esm/main.js"
     },
     "./connector": {
       "require": "./dist/cjs/lib/connector.js",
-      "import": "./dist/esm/src/lib/connector.js",
-      "default": "./dist/esm/src/lib/connector.js"
+      "import": "./dist/esm/lib/connector.js",
+      "default": "./dist/esm/lib/connector.js"
     }
   },
   "files": [
