@@ -127,7 +127,7 @@ export interface Connection {
      **/
     options?: CreateOptions
   ) => Promise<CreateTableReceipt>;
-  read: (query: string) => Promise<ReadQueryResult>;
+  read: (query: string, options?: ReadOptions) => Promise<ReadQueryResult>;
   write: (query: string, options?: WriteOptions) => Promise<WriteQueryResult>;
   hash: (schema: string, options?: HashOptions) => Promise<StructureHashResult>;
   receipt: (txnHash: string) => Promise<ReceiptResult | undefined>;

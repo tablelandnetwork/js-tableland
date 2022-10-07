@@ -17,8 +17,8 @@
   },
   "type": "module",
   "main": "./dist/cjs/main.js",
-  "module": "./dist/esm/src/main.js",
-  "types": "./dist/esm/src/main.d.ts",
+  "module": "./dist/esm/main.js",
+  "types": "./dist/esm/main.d.ts",
   "exports": {
     ".": {
       "require": "./dist/cjs/main.js",
