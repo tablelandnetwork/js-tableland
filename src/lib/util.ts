@@ -101,11 +101,11 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     host: "https://testnet.tableland.network",
     rpcRelay: true,
   },
-  "arbitrum": {
+  arbitrum: {
     name: "arbitrum",
     phrase: "Arbitrum",
     chainId: 42161,
-    contract: evm.proxies["arbitrum"],
+    contract: evm.proxies.arbitrum,
     host: "https://testnet.tableland.network",
     rpcRelay: false,
   },
