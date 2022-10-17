@@ -40,6 +40,7 @@ export type ChainName =
   | "ethereum"
   | "optimism"
   | "polygon"
+  | "arbitrum"
   | "ethereum-goerli"
   | "optimism-goerli"
   | "arbitrum-goerli"
@@ -99,6 +100,14 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     contract: evm.proxies["arbitrum-goerli"],
     host: "https://testnet.tableland.network",
     rpcRelay: true,
+  },
+  "arbitrum": {
+    name: "arbitrum",
+    phrase: "Arbitrum",
+    chainId: 42161,
+    contract: evm.proxies["arbitrum"],
+    host: "https://testnet.tableland.network",
+    rpcRelay: false,
   },
   "polygon-mumbai": {
     name: "maticmum",
