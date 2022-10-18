@@ -1,7 +1,7 @@
 import { Signer, ethers } from "ethers";
 import BufferPolyfil from "buffer";
 import camelCase from "camelcase";
-import * as evm from "@tableland/evm/proxies.js";
+import * as evm from "@tableland/evm/network.js";
 import {
   Connection,
   ReceiptResult,
