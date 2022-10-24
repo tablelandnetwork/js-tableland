@@ -53,11 +53,13 @@ export async function userCreatesToken(
   chainId: number,
   uri: string
 ): Promise<Token> {
+  const issuedAt = new Date().toISOString();
   const now = Date.now();
   const exp = new Date(now + 10 * 60 * 60 * 1000).toISOString(); // Default to ~10 hours
 
   return await createToken(signer, {
     chainId,
+    issuedAt,
     expirationTime: exp,
     uri,
     version: "1",
