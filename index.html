@@ -54,6 +54,8 @@
 <p>Installation is easy using npm or yarn. An ES bundle is also available for those operating purely in a browser environnement.</p>
 <pre><code class="language-bash"><span class="hl-0">npm i @tableland/sdk</span>
 </code></pre>
+<p>:warning: Please ensure you are using Node 18 (or newer).</p>
+<p>If you are using versions prior to v18, you will need to provide global access to <code>fetch</code>. Instructions on how to implement this can be found in the <code>node-fetch</code> documentation <a href="https://github.com/node-fetch/node-fetch#providing-global-access">here</a>. For Node 16, in particular, you can try using the <a href="https://nodejs.org/fa/blog/release/v16.15.0/#add-fetch-api"><code>--experimental-fetch</code></a> flag, which installs the <code>fetch</code>, <code>Request</code>, <code>Response</code>, <code>Headers</code>, and <code>FormData</code> globals.</p>
 <blockquote>
 <p>Note: Not seeing the build type you need for your project or idea? Let us know, we&#39;re happy to work with you to improve the SDK usability!</p>
 </blockquote>
