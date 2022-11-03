@@ -1,9 +1,5 @@
 import test, { Test } from "tape";
-import fetch from "node-fetch";
 import { LocalTableland } from "@tableland/local";
-
-// @ts-ignore
-globalThis.fetch = fetch;
 
 let initializing: Promise<void> | undefined;
 let ready = false;
