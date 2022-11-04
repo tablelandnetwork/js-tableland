@@ -1,17 +1,14 @@
 import test from "tape";
-import { ethers } from "ethers";
 import { getAccounts } from "@tableland/local";
 import { connect, Connection } from "../../src/main.js";
 import { setup } from "./setupTest.js";
 
 let tableName: string;
-let tableId: string;
 let connection: Connection;
 test("controller methods: setup", async function (t) {
   await setup(t);
 
-  const provider = new ethers.providers.JsonRpcProvider();
-  const wallet = new ethers.Wallet(getAccounts()[2].privateKey, provider);
+  const wallet = getAccounts()[2];
   connection = connect({
     chain: "local-tableland",
     signer: wallet,
@@ -23,7 +20,6 @@ test("controller methods: setup", async function (t) {
   if (typeof name !== "string") throw new Error("cannot get tablename");
   if (typeof id === "undefined") throw new Error("cannot get tableId");
   tableName = name;
-  tableId = id.toString();
 });
 
 test("controller methods: setting controller succeeds", async function (t) {
@@ -41,7 +37,7 @@ test("controller methods: getting controller succeeds", async function (t) {
 });
 
 test("controller methods: locking controller succeeds", async function (t) {
-  const res = await connection.lockController(tableId);
+  const res = await connection.lockController(tableName);
   t.equal(typeof res.hash, "string");
   t.equal(res.hash.length, 66);
 });
