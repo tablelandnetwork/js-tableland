@@ -8,8 +8,8 @@ let connection: any;
 test("list method: setup", async function (t) {
   await setup(t);
 
-  const provider = new ethers.providers.JsonRpcProvider();
-  const wallet = new ethers.Wallet(getAccounts()[0].privateKey, provider);
+  // use validator wallet so we can get healthbot table
+  const wallet = getAccounts()[0];
   connection = connect({
     chain: "local-tableland",
     signer: wallet,

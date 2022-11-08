@@ -10,8 +10,7 @@ let tableId: string;
 test("read and write methods: setup", async function (t) {
   await setup(t);
 
-  const provider = new ethers.providers.JsonRpcProvider();
-  const wallet = new ethers.Wallet(getAccounts()[17].privateKey, provider);
+  const wallet = getAccounts()[17];
   connection = connect({
     chain: "local-tableland",
     signer: wallet,

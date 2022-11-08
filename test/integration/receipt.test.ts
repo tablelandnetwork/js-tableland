@@ -1,5 +1,4 @@
 import test from "tape";
-import { ethers } from "ethers";
 import { getAccounts } from "@tableland/local";
 import { connect } from "../../src/main.js";
 import { setup } from "./setupTest.js";
@@ -8,8 +7,7 @@ let connection: any;
 test("receipt method: setup", async function (t) {
   await setup(t);
 
-  const provider = new ethers.providers.JsonRpcProvider();
-  const wallet = new ethers.Wallet(getAccounts()[17].privateKey, provider);
+  const wallet = getAccounts()[17];
   connection = connect({
     chain: "local-tableland",
     signer: wallet,
