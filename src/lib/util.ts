@@ -74,7 +74,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Ethereum Mainnet",
     chainId: 1,
     contract: evm.proxies.ethereum,
-    host: "https://testnet.tableland.network",
+    host: "https://tableland.network",
     rpcRelay: false,
   },
   "optimism-goerli": {
@@ -90,7 +90,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Optimism Mainnet",
     chainId: 10,
     contract: evm.proxies.optimism,
-    host: "https://testnet.tableland.network",
+    host: "https://tableland.network",
     rpcRelay: false,
   },
   "arbitrum-goerli": {
@@ -106,7 +106,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Arbitrum",
     chainId: 42161,
     contract: evm.proxies.arbitrum,
-    host: "https://testnet.tableland.network",
+    host: "https://tableland.network",
     rpcRelay: false,
   },
   "polygon-mumbai": {
@@ -122,7 +122,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Polygon Mainnet",
     chainId: 137,
     contract: evm.proxies.polygon,
-    host: "https://testnet.tableland.network",
+    host: "https://tableland.network",
     rpcRelay: false,
   },
   // staging
