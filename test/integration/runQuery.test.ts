@@ -1,5 +1,5 @@
 import test from "tape";
-import { ethers } from "ethers";
+import { ethers, getDefaultProvider } from "ethers";
 import { getAccounts } from "@tableland/local";
 import { connect, Connection } from "../../src/main.js";
 import { setup } from "./setupTest.js";
@@ -79,7 +79,8 @@ test("read and write methods: write options enable not waiting to return until a
 });
 
 test("read and write methods: returns transaction receipt when contract is called directly", async function (t) {
-  const provider = new ethers.providers.JsonRpcProvider();
+  const provider = getDefaultProvider("http://127.0.0.1:8545");
+
   const wallet = new ethers.Wallet(getAccounts()[17].privateKey, provider);
   const connection1 = connect({
     chain: "local-tableland",
