@@ -13,7 +13,7 @@ export const setup = function (t: Test) {
   }
 
   // increase the timeout since this might take a while
-  t.timeoutAfter(15 * 1000);
+  t.timeoutAfter(20 * 1000);
   // if the promise exists return it so the caller can await it
   if (initializing) return initializing;
 
