@@ -78,7 +78,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^29.0.3",
     "buffer": "^6.0.3",
-    "esbuild": "^0.15.10",
+    "esbuild": "^0.16.7",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
