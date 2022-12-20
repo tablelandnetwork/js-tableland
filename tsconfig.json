@@ -1,27 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "declaration": true,
-    "strict": true,
-    "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
-    "strictNullChecks": true /* Enable strict null checks. */,
-    "strictFunctionTypes": true /* Enable strict checking of function types. */,
-    "noUnusedLocals": true /* Report errors on unused locals. */,
-    "noUnusedParameters": true /* Report errors on unused parameters. */,
-    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
-    "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
+    "target": "ES2020",
+    "module": "ES2022",
+    "lib": ["DOM", "ES2022"],
+    "outDir": "./dist",
     "importHelpers": false,
-    "skipLibCheck": true,
+    "moduleResolution": "Node",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "sourceMap": true,
-    "outDir": "./dist/esm/",
-    "types": ["node", "jest"],
-    "lib": ["ES6", "DOM"]
+    "strict": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "types": ["@cloudflare/workers-types"]
   },
-  "include": ["src/**/*.ts", "test/setupTest.ts"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "include": ["src"]
 }

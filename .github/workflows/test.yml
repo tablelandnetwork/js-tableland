@@ -1,5 +1,4 @@
 name: Test
-
 on:
   push:
     branches:
@@ -13,11 +12,6 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        nodejs: [16]
-
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2.3.1
@@ -34,16 +28,16 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: Setup ⬢
-        uses: actions/setup-node@v2-beta
+      - name: Setup Node Environment ⬢
+        uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.nodejs }}
+          node-version: 16
 
       - name: Install 🔧
         run: npm install
 
       - name: Build 🛠
-        run: npm run build:all
+        run: npm run build
 
-      - name: Test 🧪
-        run: npm test
+      - name: Test/Coverage 🧪
+        run: npm coverage
