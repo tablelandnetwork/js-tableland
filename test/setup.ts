@@ -3,8 +3,6 @@ import { LocalTableland } from "@tableland/local";
 
 const lt = new LocalTableland({
   silent: true,
-  validatorDir: "../go-tableland",
-  verbose: false,
 });
 
 before(async function () {

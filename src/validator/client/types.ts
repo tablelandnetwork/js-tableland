@@ -62,7 +62,9 @@ type _OpDefaultReturnType<T> = "default" extends keyof T
 export type OpDefaultReturnType<OP> = _OpDefaultReturnType<OpResponseTypes<OP>>;
 
 // private symbol to prevent narrowing on "default" error status
-const never: unique symbol = Symbol();
+const never: unique symbol = Symbol(
+  "private symbol to prevent narrowing on 'default' error status"
+);
 
 type _OpErrorType<T> = {
   [S in Exclude<keyof T, 200 | 201>]: {
