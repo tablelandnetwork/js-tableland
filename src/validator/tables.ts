@@ -25,7 +25,9 @@ interface AssertedResponse
   schema: Schema;
 }
 
-export type Table = Camelize<AssertedResponse>;
+export interface Table extends Camelize<AssertedResponse> {
+  attributes?: Array<Camelize<Record<string, any>>>;
+}
 
 function assertResponse(obj: Response): obj is AssertedResponse {
   return (
@@ -39,7 +41,8 @@ function assertResponse(obj: Response): obj is AssertedResponse {
 
 function transformResponse(obj: Response): Table {
   if (assertResponse(obj)) {
-    return camelize(obj);
+    const { attributes: _, ...base } = camelize(obj);
+    return { ...base, attributes: obj.attributes?.map(camelize) };
   }
   /* c8 ignore next 2 */
   throw new Error("malformed table repsonse");

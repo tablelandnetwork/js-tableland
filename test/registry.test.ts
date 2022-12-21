@@ -2,7 +2,6 @@
 import { match, notStrictEqual, rejects, strictEqual } from "assert";
 import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
-// import { NonceManager } from "@ethersproject/experimental";
 import {
   overrideDefaults,
   getDefaultProvider,
@@ -19,10 +18,7 @@ describe("registry", function () {
   // Note that we're using the second account here
   const [, wallet, controller] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
-  // const baseSigner = wallet.connect(provider);
   const signer = wallet.connect(provider);
-  // Also demonstrates the nonce manager usage
-  // const signer = new NonceManager(baseSigner);
   const reg = new Registry({ signer });
 
   describe("controller", function () {

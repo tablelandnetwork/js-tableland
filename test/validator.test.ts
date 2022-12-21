@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {
+import assert, {
   strictEqual,
   rejects,
   match,
@@ -209,7 +209,8 @@ describe("validator", function () {
         chainId: 31337,
         tableId: "1",
       });
-      strictEqual(response.attributes![0].displayType, "date");
+      assert(response.attributes != null);
+      strictEqual(response.attributes[0].displayType, "date");
       // FIXME: this assertion was expecting undefined, and failing. what is supposed to be returned here? -JW
       strictEqual(
         response.animationUrl,
