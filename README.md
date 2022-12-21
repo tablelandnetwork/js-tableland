@@ -66,6 +66,9 @@ console.log(results);
 */
 ```
 
+Full library documentation [available on GitHub](https://tablelandnetwork.github.io/js-tableland/), and
+general docs, examples, and more [available on our docs site](https://docs.tableland.xyz).
+
 # Install
 
 You can install via npm/yarn:
