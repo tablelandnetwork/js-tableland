@@ -1,6 +1,7 @@
 import {
   type ValuesType,
   type Parameters,
+  type BaseType,
   getParameters,
   bindValues,
 } from "./helpers/binding.js";
@@ -16,7 +17,7 @@ import {
   extractReadonly,
   wrapResult,
 } from "./registry/utils.js";
-import { type ValueOf } from "./validator/index.js";
+import { type ValueOf } from "./validator/query.js";
 import {
   extractColumn,
   queryAll,
@@ -24,6 +25,8 @@ import {
   queryRaw,
   exec,
 } from "./lowlevel.js";
+
+export { type ValuesType, type Parameters, type ValueOf, type BaseType };
 
 export class Statement<S = unknown> {
   private readonly config: Config & Partial<AutoWaitConfig>;

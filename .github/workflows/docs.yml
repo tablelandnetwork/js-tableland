@@ -1,16 +1,15 @@
-name: Review
+name: Docs
 on:
   push:
     branches:
       - main
-  pull_request:
 
 concurrency:
-  group: review-${{github.ref}}
+  group: test-${{github.ref}}
   cancel-in-progress: true
 
 jobs:
-  lint:
+  docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -29,15 +28,24 @@ jobs:
             ${{ runner.os }}-
 
       - name: Setup ⬢
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2-beta
         with:
           node-version: 16
 
       - name: Install 🔧
         run: npm install
 
-      - name: Lint/Format 🙈
-        run: npm run prettier && npm run lint
+      - name: Build 🛠
+        run: npm run build
 
       - name: Docs 📓
-        run: npm run docs
+        run: |
+          npm run docs
+          touch docs/.nojekyll
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: docs

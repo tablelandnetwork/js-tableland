@@ -1,4 +1,9 @@
-export { type Signal } from "./await.js";
+export {
+  type Signal,
+  type Wait,
+  type SignalAndInterval,
+  type Interval,
+} from "./await.js";
 export {
   type ChainName,
   type ChainInfo,

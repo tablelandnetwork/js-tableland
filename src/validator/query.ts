@@ -12,8 +12,8 @@ export interface TableFormat<T = unknown> {
 export type ObjectsFormat<T> = T[];
 
 export type BaseParams = Paths["/query"]["get"]["parameters"]["query"];
-export type Params<T extends Format> = BaseParams & { format?: T };
 export type Format = BaseParams["format"];
+export type Params<T extends Format> = BaseParams & { format?: T };
 
 export async function getQuery<T = unknown>(
   config: FetchConfig,

@@ -1,7 +1,7 @@
 {
   "name": "@tableland/sdk",
-  "version": "4.0.0",
-  "description": "A D1Database client and helpers for the @tableland network",
+  "version": "4.0.0-pre.0",
+  "description": "A D1Database client and helpers for the Tableland network",
   "publishConfig": {
     "access": "public"
   },
@@ -60,7 +60,8 @@
     "prepublishOnly": "npm run build",
     "test": "mocha",
     "coverage": "c8 mocha --exit",
-    "clean": "rm -rf dist",
+    "docs": "typedoc --entryPoints src/index.ts",
+    "clean": "rm -rf dist coverage docs",
     "build:api": "npx openapi-typescript https://raw.githubusercontent.com/tablelandnetwork/docs/carson/429-code/specs/validator/tableland-openapi-spec.yaml --output src/validator/client/validator.ts --immutable-types --path-params-as-types",
     "build:ts": "npx tsc",
     "build": "npm run build:api && npm run build:ts"
@@ -95,6 +96,7 @@
     "openapi-typescript": "^6.1.0",
     "prettier": "^2.8.1",
     "ts-node": "^10.9.1",
+    "typedoc": "^0.23.23",
     "typescript": "^4.9.4"
   },
   "dependencies": {

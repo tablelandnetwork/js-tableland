@@ -20,8 +20,8 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: Setup Node Environment ⬢
-        uses: actions/setup-node@v1
+      - name: Setup ⬢
+        uses: actions/setup-node@v2-beta
         with:
           node-version: 16
 

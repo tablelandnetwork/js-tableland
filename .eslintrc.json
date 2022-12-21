@@ -15,5 +15,5 @@
   "rules": {
     "import/order": "warn"
   },
-  "ignorePatterns": ["/dist/", "/coverage/"]
+  "ignorePatterns": ["/dist/", "/coverage/", "/docs/"]
 }

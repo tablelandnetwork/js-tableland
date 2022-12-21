@@ -8,7 +8,7 @@
 [![Release](https://img.shields.io/github/release/tablelandnetwork/js-tableland.svg)](https://github.com/tablelandnetwork/js-tableland/releases/latest)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg)](https://github.com/RichardLitt/standard-readme)
 
-> A D1Database client and helpers for the @tableland network
+> A D1Database client and helpers for the Tableland network
 
 # Table of Contents
 
@@ -23,7 +23,7 @@
 
 # Background
 
-The @tableland/sdk library provides a minimal client and SDK that implements the D1Database interface on top of the @tableland network. It can be used as a drop-in replacement to work with many community-created D1 tools and libraries. It also comes with a set of helper utilities for working with @tableland.
+The `@tableland/sdk` library provides a minimal client and SDK that implements the D1Database interface on top of the Tableland network. It can be used as a drop-in replacement to work with many community-created D1 tools and libraries. It also comes with a set of helper utilities for working with Tableland.
 
 # Usage
 

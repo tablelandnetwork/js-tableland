@@ -18,8 +18,13 @@ import {
 } from "./receipt.js";
 
 export { ApiError } from "./client/index.js";
-export { ObjectsFormat };
-export { ValueOf } from "./query.js";
+export {
+  type TransactionReceipt,
+  type Table,
+  type TableFormat,
+  type ObjectsFormat,
+  type QueryParams,
+};
 
 export class Validator {
   constructor(readonly config: ReadConfig) {}

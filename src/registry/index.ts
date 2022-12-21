@@ -2,7 +2,7 @@ import { type SignerConfig } from "../helpers/connection.js";
 import { type ContractTransaction } from "../helpers/ethers.js";
 import { type TableIdentifier } from "./contract.js";
 import { listTables } from "./tables.js";
-import { safeTransferFrom, type Params as TransferParams } from "./transfer.js";
+import { safeTransferFrom, type TransferParams } from "./transfer.js";
 import {
   setController,
   type SetParams,
@@ -12,7 +12,20 @@ import {
 import { createTable, type CreateTableParams } from "./create.js";
 import { runSQL, type RunSQLParams } from "./run.js";
 
-export { Result, Metadata, WaitableTransactionReceipt } from "./utils.js";
+export {
+  type Result,
+  type Metadata,
+  type WaitableTransactionReceipt,
+  type Named,
+} from "./utils.js";
+
+export {
+  type TableIdentifier,
+  type CreateTableParams,
+  type RunSQLParams,
+  type TransferParams,
+  type SetParams,
+};
 
 export class Registry {
   constructor(readonly config: SignerConfig) {}
