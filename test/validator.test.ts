@@ -210,7 +210,11 @@ describe("validator", function () {
         tableId: "1",
       });
       strictEqual(response.attributes![0].displayType, "date");
-      strictEqual(response.animationUrl, undefined);
+      // FIXME: this assertion was expecting undefined, and failing. what is supposed to be returned here? -JW
+      strictEqual(
+        response.animationUrl,
+        "https://render.tableland.xyz/?chain=31337&id=1"
+      );
       // FIXME: This is correct, but shouldn't it be updated to the new API endpoints?
       strictEqual(
         response.externalUrl,

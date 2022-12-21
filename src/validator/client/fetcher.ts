@@ -142,8 +142,8 @@ async function getResponseData(response: Response) {
   if (response.status === 204 /* no content */) {
     return undefined;
   }
-  if ((contentType?.includes("application/json")) ?? false) {
-      return await response.json();
+  if (contentType?.includes("application/json") ?? false) {
+    return await response.json();
   }
   const text = await response.text();
   try {

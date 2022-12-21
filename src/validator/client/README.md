@@ -2,7 +2,7 @@
 
 # 📘️ openapi-typescript-fetch
 
-A typed fetch client for [openapi-typescript](https://github.com/drwpow/openapi-typescript) 
+A typed fetch client for [openapi-typescript](https://github.com/drwpow/openapi-typescript)
 
 **Features**
 
@@ -75,7 +75,7 @@ try {
 } catch(e) {
   // check which operation threw the exception
   if (e instanceof addPet.Error) {
-    // get discriminated union { status, data } 
+    // get discriminated union { status, data }
     const error = e.getActualType()
     if (error.status === 400) {
       error.data.validationErrors // only available for a 400 response
@@ -119,6 +119,7 @@ fetcher.use(logger)
 This library can be used server side with [node-fetch](https://www.npmjs.com/package/node-fetch)
 
 Node CommonJS setup
+
 ```ts
 // install node-fetch v2
 npm install node-fetch@2
@@ -149,23 +150,26 @@ import './fetch-polyfill'
 - `TypedFetch` - Fetch operation type
 
 ```ts
-import { paths, operations } from './petstore'
+import { paths, operations } from "./petstore";
 
-type Arg = OpArgType<operations['findPetsByStatus']>
-type Ret = OpReturnType<operations['findPetsByStatus']>
-type Err = OpErrorType<operations['findPetsByStatus']>
+type Arg = OpArgType<operations["findPetsByStatus"]>;
+type Ret = OpReturnType<operations["findPetsByStatus"]>;
+type Err = OpErrorType<operations["findPetsByStatus"]>;
 
-type Arg = OpArgType<paths['/pet/findByStatus']['get']>
-type Ret = OpReturnType<paths['/pet/findByStatus']['get']>
-type Err = OpErrorType<paths['/pet/findByStatus']['get']>
+type Arg = OpArgType<paths["/pet/findByStatus"]["get"]>;
+type Ret = OpReturnType<paths["/pet/findByStatus"]["get"]>;
+type Err = OpErrorType<paths["/pet/findByStatus"]["get"]>;
 
-type FindPetsByStatus = TypedFetch<operations['findPetsByStatus']>
+type FindPetsByStatus = TypedFetch<operations["findPetsByStatus"]>;
 
-const findPetsByStatus = fetcher.path('/pet/findByStatus').method('get').create()
+const findPetsByStatus = fetcher
+  .path("/pet/findByStatus")
+  .method("get")
+  .create();
 
-type Arg = FetchArgType<typeof findPetsByStatus>
-type Ret = FetchReturnType<typeof findPetsByStatus>
-type Err = FetchErrorType<typeof findPetsByStatus>
+type Arg = FetchArgType<typeof findPetsByStatus>;
+type Ret = FetchReturnType<typeof findPetsByStatus>;
+type Err = FetchErrorType<typeof findPetsByStatus>;
 ```
 
 ### Utility Methods
@@ -173,8 +177,7 @@ type Err = FetchErrorType<typeof findPetsByStatus>
 - `arrayRequestBody` - Helper to merge params when request body is an array [see issue](https://github.com/ajaishankar/openapi-typescript-fetch/issues/3#issuecomment-952963986)
 
 ```ts
-
-const body = arrayRequestBody([{ item: 1}], { param: 2})
+const body = arrayRequestBody([{ item: 1 }], { param: 2 });
 
 // body type is { item: number }[] & { param: number }
 ```
