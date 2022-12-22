@@ -49,7 +49,7 @@ describe("statement", function () {
       deepStrictEqual(results, []);
       strictEqual(error, undefined);
       assert(meta.duration != null);
-      match(meta.txn!.name!, /^test_run_31337_\d+$/);
+      match(meta.txn!.name, /^test_run_31337_\d+$/);
       const { name } = await meta.txn!.wait();
       tableName = name ?? "";
     });

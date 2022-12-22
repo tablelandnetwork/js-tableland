@@ -7,7 +7,7 @@ import {
   type Config,
   type ReadConfig,
   extractBaseUrl,
-} from "../helpers/connection.js";
+} from "../helpers/config.js";
 import {
   type ContractTransaction,
   getContractReceipt,
@@ -19,7 +19,8 @@ export type WaitableTransactionReceipt = TransactionReceipt &
   Named;
 
 export interface Named {
-  name?: string;
+  name: string;
+  prefix: string;
 }
 
 export interface ExtractedStatement {
@@ -91,7 +92,7 @@ export async function wrapTransaction(
     if (receipt.error != null) {
       throw new Error(receipt.error);
     }
-    return { ...receipt, name };
+    return { ...receipt, name, prefix };
   };
-  return { ...params, wait, name };
+  return { ...params, wait, name, prefix };
 }

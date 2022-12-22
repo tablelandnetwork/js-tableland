@@ -6,7 +6,7 @@ import {
   type ContractReceipt,
 } from "ethers";
 import { type TransactionReceipt } from "../validator/receipt.js";
-import { type SignerConfig } from "./connection.js";
+import { type SignerConfig } from "./config.js";
 
 type ExternalProvider = providers.ExternalProvider;
 const { getDefaultProvider, Web3Provider } = providers;

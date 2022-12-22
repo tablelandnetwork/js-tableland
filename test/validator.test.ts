@@ -36,14 +36,14 @@ describe("validator", function () {
 
   let txn: WaitableTransactionReceipt;
   this.beforeAll(async function () {
-    this.timeout("30s"); // FIXME: Drop back down to 10s
+    this.timeout("10s");
     const { meta } = await db
       .prepare(
         "CREATE TABLE test_apis (id integer, name text not null, primary key (id));"
       )
       .run();
     txn = meta.txn!;
-    match(txn.name!, /^test_apis_31337_\d+$/);
+    match(txn.name, /^test_apis_31337_\d+$/);
   });
 
   describe("health", function () {
@@ -114,7 +114,7 @@ describe("validator", function () {
         db.config.autoWait = false;
         try {
           const { meta } = await db
-            .prepare(`INSERT INTO ${txn.name!}(name) VALUES(NULL);`)
+            .prepare(`INSERT INTO ${txn.name}(name) VALUES(NULL);`)
             .run();
           transactionHash = meta.txn!.transactionHash!;
           // This will throw
@@ -143,7 +143,7 @@ describe("validator", function () {
         const {
           meta: { txn: localTxn },
         } = await db
-          .prepare(`INSERT INTO ${txn.name!}(name) VALUES('Lucas');`)
+          .prepare(`INSERT INTO ${txn.name}(name) VALUES('Lucas');`)
           .run();
         localTransaction = localTxn!;
       });
@@ -172,7 +172,7 @@ describe("validator", function () {
         db.config.autoWait = false;
         try {
           const { meta } = await db
-            .prepare(`INSERT INTO ${txn.name!}(name) VALUES(NULL);`)
+            .prepare(`INSERT INTO ${txn.name}(name) VALUES(NULL);`)
             .run();
           transactionHash = meta.txn!.transactionHash;
           // This will throw
@@ -184,7 +184,7 @@ describe("validator", function () {
       test("when we poll for a transaction receipt and it fails", async function () {
         try {
           const { meta } = await db
-            .prepare(`INSERT INTO ${txn.name!}(name) VALUES(NULL);`)
+            .prepare(`INSERT INTO ${txn.name}(name) VALUES(NULL);`)
             .run();
           transactionHash = meta.txn!.transactionHash;
         } catch (err) {
@@ -211,12 +211,11 @@ describe("validator", function () {
       });
       assert(response.attributes != null);
       strictEqual(response.attributes[0].displayType, "date");
-      // FIXME: this assertion was expecting undefined, and failing. what is supposed to be returned here? -JW
       strictEqual(
         response.animationUrl,
         "https://render.tableland.xyz/?chain=31337&id=1"
       );
-      // FIXME: This is correct, but shouldn't it be updated to the new API endpoints?
+      // TODO: This is correct, but shouldn't it be updated to the new API endpoints?
       strictEqual(
         response.externalUrl,
         "http://localhost:8080/chain/31337/tables/1"
@@ -281,7 +280,7 @@ describe("validator", function () {
       // The remote API returns 404 here, but downstream (in the sdk) we catch it
       await rejects(
         api.queryByStatement<{ counter: number }>({
-          statement: `select * from ${txn.name!} where id=-1;`,
+          statement: `select * from ${txn.name} where id=-1;`,
           format: "objects",
         }),
         (err: any) => {
@@ -333,7 +332,7 @@ describe("validator", function () {
           "CREATE TABLE test_apis_json (id integer, json text not null);"
         )
         .run();
-      const jsonTableName = meta.txn!.name!;
+      const jsonTableName = meta.txn!.name;
       await getDelay(500);
       await db
         .prepare(

@@ -1,4 +1,4 @@
-import { type SignerConfig } from "../helpers/connection.js";
+import { type SignerConfig } from "../helpers/config.js";
 import { type TableIdentifier, getContractAndOverrides } from "./contract.js";
 
 export async function listTables(

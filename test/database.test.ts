@@ -7,8 +7,6 @@ import { getChainId, overrideDefaults } from "../src/helpers/index.js";
 import { Database } from "../src/database.js";
 import { Statement } from "../src/statement.js";
 
-// TODO: Create a test that checks that the chainId is being auto-detected from a read query
-
 // Just to test out these functions
 overrideDefaults(getChainId("localhost"), {
   contractAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",

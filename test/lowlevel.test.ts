@@ -40,7 +40,7 @@ describe("lowlevel", function () {
         }
       );
       strictEqual(txn.error, undefined);
-      match(txn.name!, /^test_exec_31337_\d+$/);
+      match(txn.name, /^test_exec_31337_\d+$/);
       const { name } = await txn.wait();
       tableName = name ?? "";
     });

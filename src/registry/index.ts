@@ -1,4 +1,4 @@
-import { type SignerConfig } from "../helpers/connection.js";
+import { type SignerConfig } from "../helpers/config.js";
 import { type ContractTransaction } from "../helpers/ethers.js";
 import { type TableIdentifier } from "./contract.js";
 import { listTables } from "./tables.js";

@@ -7,7 +7,7 @@ import {
   ReadConfig,
   type SignerConfig,
   type Config,
-} from "../src/helpers/connection.js";
+} from "../src/helpers/config.js";
 import {
   getDefaultProvider,
   type ExternalProvider,

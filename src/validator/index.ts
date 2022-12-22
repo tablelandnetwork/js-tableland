@@ -1,5 +1,5 @@
 import { type Signal, type SignalAndInterval } from "../helpers/await.js";
-import { type ReadConfig } from "../helpers/connection.js";
+import { type ReadConfig } from "../helpers/config.js";
 import { getHealth } from "./health.js";
 import { getVersion, type Version } from "./version.js";
 import { getTable, type Table, type Params as TableParams } from "./tables.js";

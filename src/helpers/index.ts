@@ -22,7 +22,7 @@ export {
   type AutoWaitConfig,
   extractBaseUrl,
   extractSigner,
-} from "./connection.js";
+} from "./config.js";
 export {
   type Signer,
   type ExternalProvider,
