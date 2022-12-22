@@ -14,7 +14,7 @@ import {
   getChainId,
 } from "../src/helpers/index.js";
 
-describe("connection", function () {
+describe("config", function () {
   describe("extractBaseUrl()", function () {
     test("where baseUrl is explicitly provided", async function () {
       const conn: ReadConfig = { baseUrl: "baseUrl" };

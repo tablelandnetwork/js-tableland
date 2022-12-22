@@ -26,9 +26,9 @@ describe("database", function () {
   });
 
   test("when initialized via .readOnly()", async function () {
-    const db = await Database.readOnly("polygon-mumbai");
+    const db = await Database.readOnly("maticmum");
     strictEqual(db.config.signer, undefined);
-    strictEqual(db.config.baseUrl, "https://testnet.tableland.network/api/v1");
+    strictEqual(db.config.baseUrl, "https://testnets.tableland.network/api/v1");
   });
 
   test("when initialized via .forSigner()", async function () {

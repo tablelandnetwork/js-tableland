@@ -25,7 +25,13 @@ const entries = Object.entries(proxies) as Array<[ChainName, string]>;
 const mapped = entries.map(([chainName, contractAddress]) => {
   const uri = new URL(baseURIs[chainName]);
   const baseUrl = `${uri.protocol}//${uri.host}/api/v1`;
-  const chainId = parseInt(uri.pathname.split("/")[2]);
+  const chainId = parseInt(
+    uri.pathname
+      .split("/")
+      .filter((v) => v !== "")
+      /* c8 skip next */
+      .pop() ?? ""
+  );
   const entry: [ChainName, any] = [
     chainName,
     { chainName, chainId, contractAddress, baseUrl },
@@ -59,7 +65,14 @@ export function getChainInfo(chainNameOrId: ChainName | number): ChainInfo {
 }
 
 export function isTestnet(chainNameOrId: ChainName | number): boolean {
-  return getChainInfo(chainNameOrId).baseUrl.includes("testnet");
+  const includesTestnet =
+    getChainInfo(chainNameOrId).baseUrl.includes("testnet");
+  return (
+    includesTestnet ||
+    chainNameOrId === "localhost" ||
+    chainNameOrId === "local-tableland" ||
+    chainNameOrId === 31337
+  );
 }
 
 /**
