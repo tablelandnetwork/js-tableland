@@ -8,7 +8,7 @@ const firstSearch =
   /(?<create>^CREATE\s+TABLE\s+)(?<name>\S+)(?<schema>\s*\(.*\)[;]?$)/i;
 // Match _anything_ between pairs of "", ``, '', or []
 const secondSearch =
-  /(?<=^")(.*?)(?="$)(?<=^\[)(.*?)(?=\]$)|(?<=^')(.*?)(?='$)|(?<=^`)(.*?)(?=`$)|(^[^[`'].*?[^\]'`]$)/;
+  /(?<=^")(.*?)(?="$)|(?<=^\[)(.*?)(?=\]$)|(?<=^')(.*?)(?='$)|(?<=^`)(.*?)(?=`$)|(^[^[`'].*?[^\]'`]$)/;
 
 export interface PrepareParams {
   statement: string;

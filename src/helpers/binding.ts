@@ -1,5 +1,5 @@
 const placeholderRegExp =
-  /["'`](?:(?<=")[^"\\]*(?:\\.[^"\\]*)*"|(?<=')[^'\\]*(?:\\.[^'\\]*)*'|[^`]*`)|(\?\d*|[:@$][a-zA-Z_]\w+)/gmu;
+  /[["'`](?:(?<=")[^"\\]*(?:\\.[^"\\]*)*"|(?<=')[^'\\]*(?:\\.[^'\\]*)*'|(?<=`)[^`\\]*(?:\\.[^`\\]*)*`|(?<=\[)[^[\]\\]*(?:\\.[^[\]\\]*)*\])|(\?\d*|[:@$][a-zA-Z_]\w+)/gmu;
 
 function isPlainObject(obj: any): obj is Record<string, BaseType> {
   if (typeof obj !== "object" || obj === null) return false;
