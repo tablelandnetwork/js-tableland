@@ -85,7 +85,6 @@
     "@typescript-eslint/parser": "^5.47.0",
     "assert": "^2.0.0",
     "c8": "^7.12.0",
-    "camelize-ts": "^2.2.0",
     "d1-orm": "^0.7.1",
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
@@ -102,6 +101,7 @@
   "dependencies": {
     "@tableland/evm": "^4.0.0-pre.1",
     "@tableland/sqlparser": "^1.0.0-pre.0",
+    "camelize-ts": "^2.2.0",
     "ethers": "^5.7.2"
   }
 }
