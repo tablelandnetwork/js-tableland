@@ -33,8 +33,18 @@ describe("validator", function () {
   const signer = wallet.connect(provider);
   const db = new Database({ signer, autoWait: true, baseUrl });
   const api = new Validator({ baseUrl });
-
   let txn: WaitableTransactionReceipt;
+
+  test("when initialized via constructor", async function () {
+    const reg = new Validator({ baseUrl });
+    strictEqual(reg.config.baseUrl, baseUrl);
+  });
+
+  test("when initialized via .readOnly()", async function () {
+    const reg = Validator.forChain("maticmum");
+    strictEqual(reg.config.baseUrl, getBaseUrl("maticmum"));
+  });
+
   this.beforeAll(async function () {
     this.timeout("10s");
     const { meta } = await db

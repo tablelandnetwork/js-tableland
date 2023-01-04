@@ -21,6 +21,16 @@ describe("registry", function () {
   const signer = wallet.connect(provider);
   const reg = new Registry({ signer });
 
+  test("when initialized via constructor", async function () {
+    const reg = new Registry({ signer });
+    strictEqual(reg.config.signer, signer);
+  });
+
+  test("when initialized via .readOnly()", async function () {
+    const reg = await Registry.forSigner(signer);
+    strictEqual(reg.config.signer, signer);
+  });
+
   describe("controller", function () {
     let receipt: RegistryReceipt;
     this.beforeAll(async function () {
