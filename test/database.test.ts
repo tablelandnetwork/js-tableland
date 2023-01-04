@@ -26,7 +26,7 @@ describe("database", function () {
   });
 
   test("when initialized via .readOnly()", async function () {
-    const db = await Database.readOnly("maticmum");
+    const db = Database.readOnly("maticmum");
     strictEqual(db.config.signer, undefined);
     strictEqual(db.config.baseUrl, "https://testnets.tableland.network/api/v1");
   });

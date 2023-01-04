@@ -1,5 +1,8 @@
-import { type SignerConfig } from "../helpers/config.js";
-import { type ContractTransaction } from "../helpers/ethers.js";
+import {
+  type SignerConfig,
+  type Signer,
+  type ContractTransaction,
+} from "../helpers/index.js";
 import { type TableIdentifier } from "./contract.js";
 import { listTables } from "./tables.js";
 import { safeTransferFrom, type TransferParams } from "./transfer.js";
@@ -29,6 +32,10 @@ export {
 
 export class Registry {
   constructor(readonly config: SignerConfig) {}
+
+  static async forSigner(signer: Signer): Promise<Registry> {
+    return new Registry({ signer });
+  }
 
   async listTables(owner?: string): Promise<TableIdentifier[]> {
     return await listTables(this.config, owner);

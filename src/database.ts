@@ -18,7 +18,7 @@ export class Database<D = unknown> {
     this.config = config;
   }
 
-  static async readOnly(chainNameOrId: ChainName | number): Promise<Database> {
+  static readOnly(chainNameOrId: ChainName | number): Database {
     const baseUrl = getBaseUrl(chainNameOrId);
     return new Database({ baseUrl });
   }
@@ -51,15 +51,6 @@ export class Database<D = unknown> {
         throw new Error(
           "statement error: batch must contain uniform types (e.g., CREATE, INSERT, SELECT, etc)"
         );
-      }
-      // Reads can be done "concurrently"
-      if (type === "read") {
-        const results = await Promise.all(
-          statements.map(async (stmt) => {
-            return await stmt.all<T>(undefined, opts);
-          })
-        );
-        return results;
       }
       // Mutating queries are sent as a single query to the smart contract
       const sql = statements.map((stmt) => stmt.toString()).join(";");

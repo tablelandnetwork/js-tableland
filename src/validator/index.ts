@@ -1,5 +1,10 @@
-import { type Signal, type SignalAndInterval } from "../helpers/await.js";
-import { type ReadConfig } from "../helpers/config.js";
+import {
+  type Signal,
+  type SignalAndInterval,
+  type ReadConfig,
+  type ChainName,
+  getBaseUrl,
+} from "../helpers/index.js";
 import { getHealth } from "./health.js";
 import { getVersion, type Version } from "./version.js";
 import { getTable, type Table, type Params as TableParams } from "./tables.js";
@@ -28,6 +33,11 @@ export {
 
 export class Validator {
   constructor(readonly config: ReadConfig) {}
+
+  static forChain(chainNameOrId: ChainName | number): Validator {
+    const baseUrl = getBaseUrl(chainNameOrId);
+    return new Validator({ baseUrl });
+  }
 
   /**
    * Get health status
