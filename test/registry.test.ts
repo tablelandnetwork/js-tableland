@@ -26,7 +26,7 @@ describe("registry", function () {
     strictEqual(reg.config.signer, signer);
   });
 
-  test("when initialized via .readOnly()", async function () {
+  test("when initialized via .forSigner()", async function () {
     const reg = await Registry.forSigner(signer);
     strictEqual(reg.config.signer, signer);
   });

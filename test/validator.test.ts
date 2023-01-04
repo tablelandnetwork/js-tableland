@@ -40,7 +40,7 @@ describe("validator", function () {
     strictEqual(reg.config.baseUrl, baseUrl);
   });
 
-  test("when initialized via .readOnly()", async function () {
+  test("when initialized via .forChain()", async function () {
     const reg = Validator.forChain("maticmum");
     strictEqual(reg.config.baseUrl, getBaseUrl("maticmum"));
   });
