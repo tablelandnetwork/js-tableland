@@ -1,5 +1,5 @@
-import { Fetcher } from "./fetcher";
-import { ApiResponse, ApiError, FetchConfig } from "./types";
+import { Fetcher } from "./fetcher.js";
+import { ApiResponse, ApiError, FetchConfig } from "./types.js";
 import type { paths as Paths, components as Components } from "./validator.js";
 
 export { ApiResponse, Fetcher, ApiError, FetchConfig };
