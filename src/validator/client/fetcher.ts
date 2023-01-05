@@ -1,3 +1,4 @@
+/* c8-ignore */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */

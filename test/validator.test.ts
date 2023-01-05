@@ -198,7 +198,7 @@ describe("validator", function () {
             .run();
           transactionHash = meta.txn!.transactionHash;
         } catch (err) {
-          // no op
+          /* c8 ignore next 2 */
         }
 
         const receipt = await api.pollForReceiptByTransactionHash({

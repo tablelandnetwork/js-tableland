@@ -59,7 +59,7 @@
     "format": "npm run prettier:fix && npm run lint:fix",
     "prepublishOnly": "npm run build",
     "test": "mocha",
-    "coverage": "c8 mocha --exit",
+    "coverage": "c8 --exclude src/validator/client/fetcher.ts --exclude test mocha --exit",
     "docs": "typedoc --entryPoints src/index.ts",
     "clean": "rm -rf dist coverage docs",
     "build:api": "npx openapi-typescript https://raw.githubusercontent.com/tablelandnetwork/docs/carson/429-code/specs/validator/tableland-openapi-spec.yaml --output src/validator/client/validator.ts --immutable-types --path-params-as-types",
