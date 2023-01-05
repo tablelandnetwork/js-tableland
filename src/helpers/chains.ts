@@ -29,8 +29,7 @@ const mapped = entries.map(([chainName, contractAddress]) => {
     uri.pathname
       .split("/")
       .filter((v) => v !== "")
-      /* c8 skip next */
-      .pop() ?? ""
+      .pop() /* c8 ignore next */ ?? ""
   );
   const entry: [ChainName, any] = [
     chainName,

@@ -52,10 +52,16 @@ export class Database<D = unknown> {
           "statement error: batch must contain uniform types (e.g., CREATE, INSERT, SELECT, etc)"
         );
       }
-      // Mutating queries are sent as a single query to the smart contract
-      const sql = statements.map((stmt) => stmt.toString()).join(";");
-      const result = await this.prepare(sql).all<T>(undefined, opts);
-      return [result];
+      if (type === "read") {
+        return await Promise.all(
+          statements.map(async (stmt) => await stmt.all<T>(undefined, opts))
+        );
+      } else {
+        // Mutating queries are sent as a single query to the smart contract
+        const sql = statements.map((stmt) => stmt.toString()).join(";");
+        const result = await this.prepare(sql).all<T>(undefined, opts);
+        return [result];
+      }
     } catch (cause: any) {
       if (cause.message === "ALL_ERROR") {
         throw new Error("BATCH_ERROR", { cause: cause.cause });
