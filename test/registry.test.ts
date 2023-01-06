@@ -2,17 +2,9 @@
 import { match, notStrictEqual, rejects, strictEqual } from "assert";
 import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
-import {
-  overrideDefaults,
-  getDefaultProvider,
-  RegistryReceipt,
-} from "../src/helpers/index.js";
+import { getDefaultProvider, RegistryReceipt } from "../src/helpers/index.js";
 import { getContractReceipt } from "../src/helpers/ethers.js";
 import { Registry } from "../src/registry/index.js";
-
-overrideDefaults("localhost", {
-  contractAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-});
 
 describe("registry", function () {
   // Note that we're using the second account here

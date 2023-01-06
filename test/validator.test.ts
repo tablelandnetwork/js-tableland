@@ -13,17 +13,12 @@ import {
   getDefaultProvider,
   getBaseUrl,
   getChainId,
-  overrideDefaults,
 } from "../src/helpers/index.js";
 import { Database } from "../src/index.js";
 import { Validator } from "../src/validator/index.js";
 import type { WaitableTransactionReceipt } from "../src/registry/index.js";
 
-const chainId = getChainId("localhost");
-const contractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-
-// Just to test out these functions
-overrideDefaults(chainId, { contractAddress });
+const chainId = getChainId("local-tableland");
 
 describe("validator", function () {
   // Note that we're using the second account here
@@ -301,6 +296,7 @@ describe("validator", function () {
     });
 
     test("where query is called with an invalid statement", async function () {
+      await getDelay(500);
       await rejects(
         api.queryByStatement<{ counter: number }>({
           statement: `select nothing from blurg*;`,

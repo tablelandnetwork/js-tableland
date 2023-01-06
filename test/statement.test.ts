@@ -9,12 +9,8 @@ import assert, {
 import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
 import { getDelay } from "../src/helpers/utils.js";
-import { overrideDefaults, getDefaultProvider } from "../src/helpers/index.js";
+import { getDefaultProvider } from "../src/helpers/index.js";
 import { Database, Statement } from "../src/index.js";
-
-overrideDefaults("localhost", {
-  contractAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-});
 
 describe("statement", function () {
   // Note that we're using the second account here

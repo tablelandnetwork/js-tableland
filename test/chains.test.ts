@@ -8,7 +8,6 @@ import {
   isTestnet,
   type ChainName,
   supportedChains,
-  overrideDefaults,
 } from "../src/helpers/chains.js";
 
 describe("chains", function () {
@@ -27,12 +26,10 @@ describe("chains", function () {
     });
 
     test("where we check the known default localhost contract address", async function () {
-      const localhost = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512";
+      const localhost = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
       const matic = "0x5c4e6A9e5C1e1BF445A062006faF19EA6c49aFeA";
-      overrideDefaults("localhost", {
-        contractAddress: localhost,
-      });
-      strictEqual(getContractAddress("localhost"), localhost);
+      // Note we're checking local-tableland here, rather than localhost
+      strictEqual(getContractAddress("local-tableland"), localhost);
       strictEqual(getContractAddress("matic"), matic);
     });
 

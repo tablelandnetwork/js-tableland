@@ -3,14 +3,8 @@ import assert, { deepStrictEqual, strictEqual, rejects, match } from "assert";
 import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
 import { getDefaultProvider } from "ethers";
-import { getChainId, overrideDefaults } from "../src/helpers/index.js";
 import { Database } from "../src/database.js";
 import { Statement } from "../src/statement.js";
-
-// Just to test out these functions
-overrideDefaults(getChainId("localhost"), {
-  contractAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-});
 
 describe("database", function () {
   // Note that we're using the second account here

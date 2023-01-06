@@ -4,8 +4,10 @@ import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
 import {
   overrideDefaults,
+  getChainId,
   getDefaultProvider,
   getBaseUrl,
+  getContractAddress,
 } from "../src/helpers/index.js";
 import {
   exec,
@@ -16,9 +18,10 @@ import {
 } from "../src/lowlevel.js";
 import { extractReadonly } from "../src/registry/utils.js";
 
-overrideDefaults("localhost", {
-  contractAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-});
+// Just to test out these functions
+const chainId = getChainId("local-tableland");
+const contractAddress = getContractAddress(chainId);
+overrideDefaults(chainId, { contractAddress });
 
 describe("lowlevel", function () {
   // Note that we're using the second account here
