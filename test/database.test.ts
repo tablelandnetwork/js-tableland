@@ -280,6 +280,7 @@ describe("database", function () {
       this.beforeAll(() => {
         db.config.autoWait = true;
       });
+
       test("when executing throws a runtime error", async function () {
         const sql = `INSERT INTO ${tableName} (id, name, age) VALUES (1, 'Bobby', 5);
           INSERT INTO ${tableName} (id, name, age) VALUES (1, 'Tables', 42)`;
@@ -288,6 +289,18 @@ describe("database", function () {
           return true;
         });
       });
+
+      test("when querying a table right after creation", async function () {
+        const { meta } = await db.exec(
+          "CREATE TABLE exec_nowait (keyy TEXT, vall TEXT);"
+        );
+        const tableName = meta.txn?.name ?? "";
+        match(tableName, /^exec_nowait_31337_\d+$/);
+
+        const { results } = await db.exec(`SELECT * FROM ${tableName};`);
+        deepStrictEqual(results, []);
+      });
+
       this.afterAll(() => {
         db.config.autoWait = false;
       });
