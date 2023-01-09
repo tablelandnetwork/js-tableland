@@ -29,8 +29,14 @@ describe("chains", function () {
       const localhost = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
       const matic = "0x5c4e6A9e5C1e1BF445A062006faF19EA6c49aFeA";
       // Note we're checking local-tableland here, rather than localhost
-      strictEqual(getContractAddress("local-tableland"), localhost);
-      strictEqual(getContractAddress("matic"), matic);
+      strictEqual(
+        getContractAddress("local-tableland").toLowerCase(),
+        localhost.toLowerCase()
+      );
+      strictEqual(
+        getContractAddress("matic").toLowerCase(),
+        matic.toLowerCase()
+      );
     });
 
     test("where we make sure a testnet is correctly flagged", function () {

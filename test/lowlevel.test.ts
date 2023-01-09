@@ -17,6 +17,7 @@ import {
   extractColumn,
 } from "../src/lowlevel.js";
 import { extractReadonly } from "../src/registry/utils.js";
+import { getDelay } from "../src/helpers/utils.js";
 
 // Just to test out these functions
 const chainId = getChainId("local-tableland");
@@ -378,6 +379,7 @@ describe("lowlevel", function () {
   describe("queryRaw()", function () {
     let tableName: string;
     this.beforeAll(async function () {
+      await getDelay(500);
       this.timeout("10s");
       {
         const txn = await exec(
