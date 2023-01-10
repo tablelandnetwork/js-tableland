@@ -1,3 +1,4 @@
-node_modules
-dist
-test/integration/build/*
+/dist/
+/coverage/
+/docs/
+/src/validator/client/

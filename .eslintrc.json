@@ -1,14 +1,19 @@
 {
   "env": {
-    "browser": false,
-    "es2021": true,
-    "jest": true,
+    "browser": true,
+    "es2022": true,
+    "mocha": true,
     "node": true
   },
-  "plugins": ["@typescript-eslint"],
-  "extends": ["standard", "prettier"],
+  "plugins": ["@typescript-eslint", "import"],
+  "extends": ["standard-with-typescript", "prettier"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 12
-  }
+    "ecmaVersion": 12,
+    "project": "./lint.tsconfig.json"
+  },
+  "rules": {
+    "import/order": "warn"
+  },
+  "ignorePatterns": ["/dist/", "/coverage/", "/docs/", "/src/validator/client/"]
 }

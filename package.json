@@ -1,108 +1,110 @@
 {
   "name": "@tableland/sdk",
-  "version": "3.1.5",
-  "description": "A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.",
-  "repository": "https://github.com/tablelandnetwork/js-tableland",
-  "license": "MIT",
+  "version": "4.0.0-pre.1",
+  "description": "A database client and helpers for the Tableland network",
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [
-    "tableland",
-    "sql",
-    "ethereum"
-  ],
-  "engines": {
-    "node": ">=12.0.0"
-  },
   "type": "module",
-  "main": "./dist/cjs/main.js",
-  "module": "./dist/esm/main.js",
-  "types": "./dist/esm/main.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/cjs/main.js",
-      "import": "./dist/esm/main.js",
-      "default": "./dist/esm/main.js"
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/esm/index.js"
     },
-    "./connector": {
-      "require": "./dist/cjs/lib/connector.js",
-      "import": "./dist/esm/lib/connector.js",
-      "default": "./dist/esm/lib/connector.js"
+    "./helpers": {
+      "require": "./dist/cjs/helpers/index.js",
+      "import": "./dist/esm/helpers/index.js",
+      "default": "./dist/esm/helpers/index.js"
+    },
+    "./registry": {
+      "require": "./dist/cjs/registry/index.js",
+      "import": "./dist/esm/registry/index.js",
+      "default": "./dist/esm/registry/index.js"
+    },
+    "./validator": {
+      "require": "./dist/cjs/validator/index.js",
+      "import": "./dist/esm/validator/index.js",
+      "default": "./dist/esm/validator/index.js"
+    },
+    "./database": {
+      "require": "./dist/cjs/database.js",
+      "import": "./dist/esm/database.js",
+      "default": "./dist/esm/database.js"
+    },
+    "./statement": {
+      "require": "./dist/cjs/statement.js",
+      "import": "./dist/esm/statement.js",
+      "default": "./dist/esm/statement.js"
+    },
+    "./**/*.js": {
+      "require": "./dist/cjs/*",
+      "import": "./dist/esm/*",
+      "default": "./dist/esm/*"
     }
   },
   "files": [
     "dist/**/*.js?(.map)",
     "dist/**/*.d.ts",
-    "dist/**/package.json",
     "src/**/*.ts"
   ],
-  "moduleTypes": {
-    "jest.config.js": "cjs"
-  },
   "scripts": {
     "lint": "eslint '**/*.{js,ts}'",
     "lint:fix": "npm run lint -- --fix",
     "prettier": "prettier '**/*.{ts,json,sol,md}' --check",
     "prettier:fix": "npm run prettier -- --write",
     "format": "npm run prettier:fix && npm run lint:fix",
-    "prepublishOnly": "npm run build:all",
-    "test": "npm run test:unit && npm run test:e2e",
-    "test:unit": "jest --verbose",
-    "test:e2e": "npm run build:test && node --experimental-fetch ./node_modules/tape/bin/tape test/integration/build/test/integration/*.test.js",
-    "clean": "rm -rf dist build package docs",
-    "ts-node": "ts-node",
-    "docs": "typedoc --entryPoints src/main.ts",
-    "docs:html": "typedoc --entryPoints src/main.ts --plugin none",
-    "build:esm": "tsc -p tsconfig.json",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esbuild": "esbuild src/main.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/main.js --format=esm  && node ./node_modules/add-js-extension/dist/bin.js ./dist/esm --once",
-    "build:dev": "esbuild src/main.ts --bundle --outfile=dist/esbuild/main.js --format=esm --sourcemap=inline",
-    "build:watch": "esbuild src/main.ts --bundle --watch --outfile=dist/esbuild/main.js --format=esm && node ./node_modules/add-js-extension/dist/bin.js ./dist/esm --once",
-    "build:all": "npm run build:esm && npm run build:cjs && npm run build:esbuild && ./fixup.sh",
-    "build:test": "tsc -p tsconfig.e2e.json"
+    "prepublishOnly": "npm run build",
+    "test": "mocha",
+    "coverage": "c8 --exclude src/validator/client/fetcher.ts --exclude test mocha --exit",
+    "docs": "typedoc --entryPoints src/index.ts",
+    "clean": "rm -rf dist coverage docs",
+    "build:api": "npx openapi-typescript https://raw.githubusercontent.com/tablelandnetwork/docs/main/specs/validator/tableland-openapi-spec.yaml --output src/validator/client/validator.ts --immutable-types --path-params-as-types",
+    "build:esm": "npx tsc",
+    "build:cjs": "npx tsc -p tsconfig.cjs.json",
+    "build": "npm run build:api && npm run build:esm && npm run build:cjs && ./fixup"
   },
+  "keywords": [
+    "tableland",
+    "sql",
+    "ethereum",
+    "database"
+  ],
+  "license": "MIT AND Apache-2.0",
   "devDependencies": {
-    "@babel/preset-env": "^7.19.3",
-    "@babel/preset-typescript": "^7.16.7",
-    "@babel/register": "^7.18.9",
-    "@tableland/local": "^0.0.4",
-    "@types/chai": "^4.2.22",
-    "@types/jest": "^29.0.3",
-    "@types/mocha": "^10.0.0",
-    "@types/node": "^18.8.2",
-    "@types/tape": "^4.13.2",
-    "@typescript-eslint/eslint-plugin": "^5.39.0",
-    "@typescript-eslint/parser": "^5.30.5",
-    "add-js-extension": "^1.0.4",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^29.0.3",
-    "buffer": "^6.0.3",
-    "esbuild": "^0.16.7",
-    "eslint": "^8.19.0",
-    "eslint-config-prettier": "^8.5.0",
+    "@databases/escape-identifier": "^1.0.3",
+    "@databases/sql": "^3.2.0",
+    "@ethersproject/experimental": "^5.7.0",
+    "@tableland/local": "^0.0.5-pre.2",
+    "@types/assert": "^1.5.6",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.11.17",
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "@typescript-eslint/parser": "^5.47.0",
+    "assert": "^2.0.0",
+    "c8": "^7.12.0",
+    "d1-orm": "^0.7.1",
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-config-standard": "^17.0.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-n": "^15.3.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "events": "^3.3.0",
-    "flush-promises": "^1.0.2",
-    "jest": "^29.0.3",
-    "jest-fetch-mock": "^3.0.3",
-    "jest-ts-webcompat-resolver": "^1.0.0",
-    "prettier": "^2.7.1",
-    "tape": "^5.6.1",
-    "ts-jest": "^29.0.1",
+    "eslint-plugin-n": "^15.6.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "mocha": "^10.2.0",
+    "openapi-typescript": "^6.1.0",
+    "prettier": "^2.8.1",
     "ts-node": "^10.9.1",
-    "typedoc": "^0.23.10",
-    "typedoc-plugin-markdown": "^3.13.4",
-    "typescript": "^4.7.4"
+    "typedoc": "^0.23.23",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
-    "@stablelib/base64": "^1.0.1",
-    "@tableland/evm": "^3.0.0",
-    "camelcase": "^6.3.0",
-    "ethers": "^5.6.9",
-    "siwe": "^2.0.5"
+    "@tableland/evm": "^4.0.0-pre.2",
+    "@tableland/sqlparser": "^1.0.0-pre.0",
+    "camelize-ts": "^2.2.0",
+    "ethers": "^5.7.2"
   }
 }

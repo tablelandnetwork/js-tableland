@@ -1,12 +1,6 @@
 /node_modules/
-/build/
-/lib/
 /dist/
-/docs/
-.idea/*
+/coverage/
 .vscode
-test/integration/build/
-
 .DS_Store
-coverage
-*.log
+/docs/

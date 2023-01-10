@@ -1,5 +1,4 @@
 name: Test
-
 on:
   push:
     branches:
@@ -16,7 +15,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        nodejs: [16]
+        nodejs: [16, 18]
 
     steps:
       - name: Checkout 🛎️
@@ -43,7 +42,7 @@ jobs:
         run: npm install
 
       - name: Build 🛠
-        run: npm run build:all
+        run: npm run build
 
-      - name: Test 🧪
-        run: npm test
+      - name: Test/Coverage 🧪
+        run: npm run coverage

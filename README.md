@@ -2,99 +2,103 @@
 
 [![Review](https://github.com/tablelandnetwork/js-tableland/actions/workflows/review.yml/badge.svg)](https://github.com/tablelandnetwork/js-tableland/actions/workflows/review.yml)
 [![Test](https://github.com/tablelandnetwork/js-tableland/actions/workflows/test.yml/badge.svg)](https://github.com/tablelandnetwork/js-tableland/actions/workflows/test.yml)
-[![Docs](https://github.com/tablelandnetwork/js-tableland/actions/workflows/docs.yml/badge.svg)](https://github.com/tablelandnetwork/js-tableland/actions/workflows/docs.yml)
-[![GitHub package.json version](https://img.shields.io/github/package-json/v/tablelandnetwork/js-tableland.svg)](./package.json)
+[![Publish](https://github.com/tablelandnetwork/js-tableland/actions/workflows/publish.yml/badge.svg)](https://github.com/tablelandnetwork/js-tableland/actions/workflows/publish.yml)
+[![License](https://img.shields.io/github/license/tablelandnetwork/js-tableland.svg)](./LICENSE)
+[![Version](https://img.shields.io/github/package-json/v/tablelandnetwork/js-tableland.svg)](./package.json)
 [![Release](https://img.shields.io/github/release/tablelandnetwork/js-tableland.svg)](https://github.com/tablelandnetwork/js-tableland/releases/latest)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg)](https://github.com/RichardLitt/standard-readme)
 
-A TypeScript/JavaScript library for creating and querying Tables on the Tableland network.
+> A D1Database client and helpers for the Tableland network
 
 # Table of Contents
 
 - [@tableland/sdk](#tablelandsdk)
 - [Table of Contents](#table-of-contents)
 - [Background](#background)
-- [Install](#install)
 - [Usage](#usage)
-- [API](#api)
-- [Feedback](#feedback)
+- [Install](#install)
+- [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
 
 # Background
 
-The Tableland project provides a zero-config Typescript/Javascript SDK that make it easy to interact with the Tableland network from Ethereum-based applications. The [`@tableland/sdk`](https://github.com/tablelandnetwork/js-tableland) SDK should feel comfortable to developers already familiar with the [`ethersjs` Javascript library](https://docs.ethers.io/). The Tableland SDK provides a small but powerful API surface that integrates nicely with existing ETH development best practices.
-
-Simply import the library, connect to the Tableland network, and you are ready to start creating and updating tables.
-
-> Note: Interested in supporting additional chains and ecosystems? Create an Issue and let us know!
-
-# Install
-
-Installation is easy using npm or yarn. An ES bundle is also available for those operating purely in a browser environnement.
-
-```bash
-npm i @tableland/sdk
-```
-
-:warning: Please ensure you are using Node 18 (or newer).
-
-If you are using versions prior to v18, you will need to provide global access to `fetch`. Instructions on how to implement this can be found in the `node-fetch` documentation [here](https://github.com/node-fetch/node-fetch#providing-global-access). For Node 16, in particular, you can try using the [`--experimental-fetch`](https://nodejs.org/fa/blog/release/v16.15.0/#add-fetch-api) flag, which installs the `fetch`, `Request`, `Response`, `Headers`, and `FormData` globals.
-
-> Note: Not seeing the build type you need for your project or idea? Let us know, we're happy to work with you to improve the SDK usability!
+The `@tableland/sdk` library provides a minimal client and SDK that implements the D1Database interface on top of the Tableland network. It can be used as a drop-in replacement to work with many community-created D1 tools and libraries. It also comes with a set of helper utilities for working with Tableland.
 
 # Usage
 
-Most common Tableland usage patterns will follow something like the following. In general, you'll need to connect, create, mutate, and query your tables. In that order :)
+```ts
+import { Database } from "@tableland/sdk";
+import { providers } from "ethers";
 
-```typescript
-import { connect } from "@tableland/sdk";
+// A Web3Provider wraps a standard Web3 provider, which is
+// what MetaMask injects as window.ethereum into each page
+const provider = new providers.Web3Provider(window.ethereum);
 
-// Connect
-const connection = await connect({ network: "testnet" });
+// MetaMask requires requesting permission to connect users accounts
+await provider.send("eth_requestAccounts", []);
 
-// Create
-await connection.create("id int primary key, val text");
+// The MetaMask plugin also allows signing transactions to
+// pay for gas when calling smart contracts like the @tableland
+// registry...
+const signer = provider.getSigner();
+const db = new Database({ signer });
 
-// Write
-const write = await connection.write(
-  "INSERT INTO test_1 (colname) values (val1);"
-);
-console.log(write);
-// {"hash": "blahhash"}
-
-// Read
-const query = await connection.read("SELECT * FROM test_1;");
-console.log(query);
-// {columns: [{name: "colname"}], rows: ["val1"]}
+// Prepared statements allow users to reuse query logic by binding values
+const stmt = db.prepare("SELECT name, age FROM users_80001_1 LIMIT ?").bind(3);
+const { results } = await stmt.all();
+console.log(results);
+/*
+[
+  {
+     name: "John",
+     age: 42,
+  },
+   {
+     name: "Anthony",
+     age: 37,
+  },
+    {
+     name: "Dave",
+     age: 29,
+  },
+ ]
+*/
 ```
-
-# API
 
 Full library documentation [available on GitHub](https://tablelandnetwork.github.io/js-tableland/), and
 general docs, examples, and more [available on our docs site](https://docs.tableland.xyz).
 
-# Feedback
+# Install
 
-Reach out with feedback and ideas:
+You can install via npm/yarn:
 
-- [twitter.com/tableland\_\_](https://twitter.com/tableland__)
-- [Create a new issue](https://github.com/tablelandnetwork/js-tableland/issues)
+```bash
+npm i @tableland/sdk
+# yarn add @tableland/sdk
+```
+
+Or directly via GitHub:
+
+```bash
+npm i tablelandnetwork/js-tableland
+```
+
+# Development
+
+Get started by cloning, installing, building, and testing the project:
+
+```shell
+git clone git@github.com:tablelandnetwork/js-tableland.git
+cd js-tableland
+npm install
+npm run build
+npm test
+```
 
 # Contributing
 
 PRs accepted.
-
-To get started clone this repo, then do:
-
-```bash
-# use the latest node and npm LTS
-npm install
-npm run build
-
-# see if everything is working
-npm test
-```
 
 Small note: If editing the README, please conform to the
 [standard-readme](https://github.com/RichardLitt/standard-readme) specification.

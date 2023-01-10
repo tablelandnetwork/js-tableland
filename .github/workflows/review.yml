@@ -1,5 +1,4 @@
 name: Review
-
 on:
   push:
     branches:
@@ -16,7 +15,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        nodejs: [16]
+        nodejs: [16, 18]
 
     steps:
       - name: Checkout 🛎️
@@ -42,5 +41,8 @@ jobs:
       - name: Install 🔧
         run: npm install
 
-      - name: Lint 🙈
+      - name: Lint/Format 🙈
         run: npm run prettier && npm run lint
+
+      - name: Docs 📓
+        run: npm run docs

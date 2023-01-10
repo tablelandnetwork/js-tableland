@@ -1,13 +1,17 @@
 name: Docs
-
 on:
   push:
     branches:
       - main
 
+concurrency:
+  group: test-${{github.ref}}
+  cancel-in-progress: true
+
 jobs:
   docs:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2.3.1
@@ -27,13 +31,17 @@ jobs:
       - name: Setup ⬢
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Install 🔧
+        run: npm install
+
+      - name: Build 🛠
+        run: npm run build
+
+      - name: Docs 📓
         run: |
-          npm install
-          npm run build:all
-          npm run docs:html
+          npm run docs
           touch docs/.nojekyll
 
       - name: Deploy 🚀
