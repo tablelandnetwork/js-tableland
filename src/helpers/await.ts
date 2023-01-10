@@ -46,16 +46,16 @@ export async function getAsyncPoller<T = unknown>(
     Promise.resolve(fn())
       .then((result) => {
         if (result.done) {
-          resolve(result.data);
+          return resolve(result.data);
         }
         if (abortSignal.aborted) {
-          reject(abortSignal.reason);
+          return reject(abortSignal.reason);
         } else {
           setTimeout(checkCondition, interval, resolve, reject);
         }
       })
       .catch((err) => {
-        reject(err);
+        return reject(err);
       });
   };
   return await new Promise(checkCondition);
