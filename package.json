@@ -81,7 +81,7 @@
     "@tableland/local": "^0.0.5-pre.2",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^18.11.17",
+    "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
     "@typescript-eslint/parser": "^5.47.0",
     "assert": "^2.0.0",
