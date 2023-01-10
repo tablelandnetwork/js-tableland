@@ -24,6 +24,7 @@ import {
   queryFirst,
   queryRaw,
   exec,
+  errorWithCause,
 } from "./lowlevel.js";
 
 export { type ValuesType, type Parameters, type ValueOf, type BaseType };
@@ -62,8 +63,8 @@ export class Statement<S = unknown> {
   toString(): string {
     try {
       return bindValues(this.sql, this.parameters);
-    } catch (cause) {
-      throw new Error("BIND_ERROR", { cause });
+    } catch (cause: any) {
+      throw errorWithCause("BIND_ERROR", cause);
     }
   }
 
@@ -126,14 +127,14 @@ export class Statement<S = unknown> {
           return wrapResult(receipt, performance.now() - start);
         }
       }
-    } catch (cause) {
+    } catch (cause: any) {
       if (
         cause instanceof Error &&
         cause.message.includes("column not found")
       ) {
-        throw new Error("COLUMN_NOTFOUND", { cause });
+        throw errorWithCause("COLUMN_NOTFOUND", cause);
       }
-      throw new Error("ALL_ERROR", { cause });
+      throw errorWithCause("ALL_ERROR", cause);
     }
   }
 
@@ -175,14 +176,14 @@ export class Statement<S = unknown> {
           return null;
         }
       }
-    } catch (cause) {
+    } catch (cause: any) {
       if (
         cause instanceof Error &&
         cause.message.includes("column not found")
       ) {
-        throw new Error("COLUMN_NOTFOUND", { cause });
+        throw errorWithCause("COLUMN_NOTFOUND", cause);
       }
-      throw new Error("FIRST_ERROR", { cause });
+      throw errorWithCause("FIRST_ERROR", cause);
     }
   }
 
@@ -196,8 +197,8 @@ export class Statement<S = unknown> {
             type,
             tables,
           });
-          await queryAll(config, sql, opts);
-          return wrapResult([], performance.now() - start);
+          const results = await queryAll<never>(config, sql, opts);
+          return wrapResult(results, performance.now() - start);
         }
         default: {
           let receipt = await exec(this.config, { type, sql, tables });
@@ -208,8 +209,8 @@ export class Statement<S = unknown> {
           return wrapResult(receipt, performance.now() - start);
         }
       }
-    } catch (cause) {
-      throw new Error("RUN_ERROR", { cause });
+    } catch (cause: any) {
+      throw errorWithCause("RUN_ERROR", cause);
     }
   }
 
@@ -233,8 +234,8 @@ export class Statement<S = unknown> {
           return [];
         }
       }
-    } catch (cause) {
-      throw new Error("RAW_ERROR", { cause });
+    } catch (cause: any) {
+      throw errorWithCause("RAW_ERROR", cause);
     }
   }
 }

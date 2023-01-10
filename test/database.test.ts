@@ -233,8 +233,10 @@ describe("database", function () {
       INSERT INTO wontwork_31337_3 (name, age) VALUES ('Tables', 6);`;
       await rejects(db.exec(sql), (err: any) => {
         match(
-          err.cause.message,
-          /^error parsing statement: syntax error at position \d+ near 'INSERT'$/
+          // Note that we're checking error directly here to ensure out custom (postfix)
+          // message is included
+          err.message,
+          /^EXEC_ERROR: error parsing statement: syntax error at position \d+ near 'INSERT'$/
         );
         return true;
       });

@@ -47,6 +47,10 @@ export async function exec(
   }
 }
 
+export function errorWithCause(code: string, cause: Error): Error {
+  return new Error(`${code}: ${cause.message}`, { cause });
+}
+
 function catchNotFound(err: unknown): [] {
   if (err instanceof ApiError && err.status === 404) {
     return [];

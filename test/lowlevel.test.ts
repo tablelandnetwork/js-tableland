@@ -23,6 +23,8 @@ import { getDelay } from "../src/helpers/utils.js";
 const chainId = getChainId("local-tableland");
 const contractAddress = getContractAddress(chainId);
 overrideDefaults(chainId, { contractAddress });
+// Do it again, with a string this time
+overrideDefaults("local-tableland", { contractAddress });
 
 describe("lowlevel", function () {
   // Note that we're using the second account here

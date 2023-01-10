@@ -10,6 +10,7 @@ import {
   normalize,
 } from "./helpers/index.js";
 import { Statement } from "./statement.js";
+import { errorWithCause } from "./lowlevel.js";
 
 export class Database<D = unknown> {
   readonly config: Config & Partial<AutoWaitConfig>;
@@ -63,10 +64,10 @@ export class Database<D = unknown> {
         return [result];
       }
     } catch (cause: any) {
-      if (cause.message === "ALL_ERROR") {
-        throw new Error("BATCH_ERROR", { cause: cause.cause });
+      if (cause.message.startsWith("ALL_ERROR") === true) {
+        throw errorWithCause("BATCH_ERROR", cause.cause);
       }
-      throw new Error("BATCH_ERROR", { cause });
+      throw errorWithCause("BATCH_ERROR", cause);
     }
   }
 
@@ -84,14 +85,14 @@ export class Database<D = unknown> {
       result.meta.count = count;
       return result;
     } catch (cause: any) {
-      if (cause.message === "RUN_ERROR") {
-        throw new Error("EXEC_ERROR", { cause: cause.cause });
+      if (cause.message.startsWith("RUN_ERROR") === true) {
+        throw errorWithCause("EXEC_ERROR", cause.cause);
       }
-      throw new Error("EXEC_ERROR", { cause });
+      throw errorWithCause("EXEC_ERROR", cause);
     }
   }
 
   async dump(_opts: Signal = {}): Promise<ArrayBuffer> {
-    throw new Error("DUMP_ERROR", { cause: new Error("not implemented yet") });
+    throw errorWithCause("DUMP_ERROR", new Error("not implemented yet"));
   }
 }
