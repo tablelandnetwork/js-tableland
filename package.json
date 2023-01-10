@@ -65,7 +65,7 @@
     "build:api": "npx openapi-typescript https://raw.githubusercontent.com/tablelandnetwork/docs/main/specs/validator/tableland-openapi-spec.yaml --output src/validator/client/validator.ts --immutable-types --path-params-as-types",
     "build:esm": "npx tsc",
     "build:cjs": "npx tsc -p tsconfig.cjs.json",
-    "build": "npm run build:api && npm run build:esm && npm run build:cjs"
+    "build": "npm run build:api && npm run build:esm && npm run build:cjs && ./fixup"
   },
   "keywords": [
     "tableland",
