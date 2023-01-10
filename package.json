@@ -1,49 +1,49 @@
 {
   "name": "@tableland/sdk",
   "version": "4.0.0-pre.1",
-  "description": "A D1Database client and helpers for the Tableland network",
+  "description": "A database client and helpers for the Tableland network",
   "publishConfig": {
     "access": "public"
   },
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/esm/index.js"
     },
     "./helpers": {
-      "require": "./dist/helpers/index.js",
-      "import": "./dist/helpers/index.js",
-      "default": "./dist/helpers/index.js"
+      "require": "./dist/cjs/helpers/index.js",
+      "import": "./dist/esm/helpers/index.js",
+      "default": "./dist/esm/helpers/index.js"
     },
     "./registry": {
-      "require": "./dist/registry/index.js",
-      "import": "./dist/registry/index.js",
-      "default": "./dist/registry/index.js"
+      "require": "./dist/cjs/registry/index.js",
+      "import": "./dist/esm/registry/index.js",
+      "default": "./dist/esm/registry/index.js"
     },
     "./validator": {
-      "require": "./dist/validator/index.js",
-      "import": "./dist/validator/index.js",
-      "default": "./dist/validator/index.js"
+      "require": "./dist/cjs/validator/index.js",
+      "import": "./dist/esm/validator/index.js",
+      "default": "./dist/esm/validator/index.js"
     },
     "./database": {
-      "require": "./dist/database.js",
-      "import": "./dist/database.js",
-      "default": "./dist/database.js"
+      "require": "./dist/cjs/database.js",
+      "import": "./dist/esm/database.js",
+      "default": "./dist/esm/database.js"
     },
     "./statement": {
-      "require": "./dist/statement.js",
-      "import": "./dist/statement.js",
-      "default": "./dist/statement.js"
+      "require": "./dist/cjs/statement.js",
+      "import": "./dist/esm/statement.js",
+      "default": "./dist/esm/statement.js"
     },
     "./**/*.js": {
-      "require": "./dist/*",
-      "import": "./dist/*",
-      "default": "./dist/*"
+      "require": "./dist/cjs/*",
+      "import": "./dist/esm/*",
+      "default": "./dist/esm/*"
     }
   },
   "files": [
@@ -63,8 +63,9 @@
     "docs": "typedoc --entryPoints src/index.ts",
     "clean": "rm -rf dist coverage docs",
     "build:api": "npx openapi-typescript https://raw.githubusercontent.com/tablelandnetwork/docs/main/specs/validator/tableland-openapi-spec.yaml --output src/validator/client/validator.ts --immutable-types --path-params-as-types",
-    "build:ts": "npx tsc",
-    "build": "npm run build:api && npm run build:ts"
+    "build:esm": "npx tsc",
+    "build:cjs": "npx tsc -p tsconfig.cjs.json",
+    "build": "npm run build:api && npm run build:esm && npm run build:cjs"
   },
   "keywords": [
     "tableland",
