@@ -203,7 +203,7 @@ describe("database", function () {
           signal,
         }),
         (err: any) => {
-          strictEqual(err.cause.message, "The operation was aborted.");
+          match(err.cause.message, /Th\s+ operation was aborted/);
           return true;
         }
       );

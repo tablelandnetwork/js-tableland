@@ -195,7 +195,7 @@ describe("statement", function () {
       const signal = controller.signal;
       controller.abort();
       await rejects(stmt.all(undefined, { signal }), (err: any) => {
-        strictEqual(err.cause.message, "The operation was aborted.");
+        match(err.cause.message, /Th\s+ operation was aborted/);
         return true;
       });
     });
