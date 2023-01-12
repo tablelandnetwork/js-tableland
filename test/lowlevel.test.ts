@@ -222,7 +222,7 @@ describe("lowlevel", function () {
           { signal }
         ),
         (err: any) => {
-          match(err.message, /Th\s+ operation was aborted/);
+          match(err.message, /Th(e|is) operation was aborted/);
           return true;
         }
       );

@@ -48,7 +48,7 @@ describe("await", function () {
     const signal = controller.signal;
     setTimeout(() => controller.abort(), 5);
     await rejects(testPolling({ signal, interval: 10 }), (err: any) => {
-      match(err.message, /Th\s+ operation was aborted/);
+      match(err.message, /Th(e|is) operation was aborted/);
       return true;
     });
   });
