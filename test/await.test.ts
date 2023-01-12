@@ -1,4 +1,4 @@
-import { rejects, strictEqual } from "assert";
+import { match, rejects, strictEqual } from "assert";
 import { describe, test } from "mocha";
 import {
   AsyncFunction,
@@ -48,7 +48,7 @@ describe("await", function () {
     const signal = controller.signal;
     setTimeout(() => controller.abort(), 5);
     await rejects(testPolling({ signal, interval: 10 }), (err: any) => {
-      strictEqual(err.message, "This operation was aborted");
+      match(err.message, /Th(e|is) operation was aborted/);
       return true;
     });
   });

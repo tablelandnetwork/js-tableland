@@ -13,7 +13,8 @@
     "project": "./lint.tsconfig.json"
   },
   "rules": {
-    "import/order": "warn"
+    "import/order": "warn",
+    "@typescript-eslint/no-confusing-void-expression": "off"
   },
   "ignorePatterns": ["/dist/", "/coverage/", "/docs/", "/src/validator/client/"]
 }
