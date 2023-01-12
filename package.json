@@ -49,6 +49,7 @@
   "files": [
     "dist/**/*.js?(.map)",
     "dist/**/*.d.ts",
+    "dist/**/package.json",
     "src/**/*.ts"
   ],
   "scripts": {
