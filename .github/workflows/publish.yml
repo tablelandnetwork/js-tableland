@@ -1,12 +1,13 @@
 name: Publish
 on:
-  push:
-    tags:
-      - "*"
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Version of this release"
+        required: true
 jobs:
   publish:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2.3.1
@@ -21,10 +22,22 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: Setup ⬢
-        uses: actions/setup-node@v2-beta
+      - name: Setup Node Environment ⬢
+        uses: actions/setup-node@v1
         with:
           node-version: 18
+
+      - name: Tag release
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ github.event.inputs.release_version }}
+          message: "Release ${{ github.event.inputs.release_version }}"
+      
+      - name: Update version in package.json
+        id: version-bump
+        uses: jaywcjlove/github-action-package@v1.3.0
+        with:
+          version: ${{ github.event.inputs.release_version }}
 
       - name: Install 🔧
         run: npm install
