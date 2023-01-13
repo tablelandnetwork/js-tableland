@@ -330,6 +330,83 @@ describe("validator", function () {
       deepStrictEqual(response.rows, [[1]]);
     });
 
+    test("where query is called with unwrap as 'true' on multiple rows", async function () {
+      // TODO: Note that for now we'll fail here, but it would be nice to handle NDJSON
+      this.timeout("10s");
+      await getDelay(500);
+      const { meta } = await db
+        .prepare("CREATE TABLE test_unwrap_rows (keyy TEXT, val TEXT);")
+        .run();
+      await db.batch([
+        db.prepare(
+          `INSERT INTO ${
+            meta.txn?.name ?? ""
+          } (keyy, val) VALUES ('tree', 'aspen')`
+        ),
+        db.prepare(
+          `INSERT INTO ${
+            meta.txn?.name ?? ""
+          } (keyy, val) VALUES ('tree', 'pine')`
+        ),
+      ]);
+      await rejects(
+        api.queryByStatement<{ counter: number }>({
+          statement: `SELECT * FROM ${meta.txn?.name ?? ""};`,
+          unwrap: true,
+        }),
+        (err: any) => {
+          strictEqual(err.message, "Unexpected token { in JSON at position 30");
+          return true;
+        }
+      );
+    });
+
+    test("where query is called with extract as 'true'", async function () {
+      await getDelay(500);
+      const response = await api.queryByStatement<{ counter: number }>({
+        statement: "select * from healthbot_31337_1;",
+        extract: true,
+      });
+      deepStrictEqual(response, [1]);
+    });
+
+    test("where query is called with extract as 'true' on multiple columns", async function () {
+      this.timeout("10s");
+      await getDelay(500);
+      const { meta } = await db
+        .prepare("CREATE TABLE test_unwrap_rows (keyy TEXT, val TEXT);")
+        .run();
+      await db
+        .prepare(
+          `INSERT INTO ${
+            meta.txn?.name ?? ""
+          } (keyy, val) VALUES ('tree', 'aspen')`
+        )
+        .run();
+      await rejects(
+        api.queryByStatement<{ counter: number }>({
+          statement: `SELECT * FROM ${meta.txn?.name ?? ""};`,
+          extract: true,
+        }),
+        (err: any) => {
+          strictEqual(
+            err.message,
+            "Error formatting data: extracting values: can only extract values for result sets with one column but this has 2"
+          );
+          return true;
+        }
+      );
+    });
+
+    test("where query is called with unwrap as 'true'", async function () {
+      await getDelay(500);
+      const response = await api.queryByStatement<{ counter: number }>({
+        statement: "select * from healthbot_31337_1;",
+        unwrap: true,
+      });
+      deepStrictEqual(response, { counter: 1 });
+    });
+
     test("where query returns a column with json", async function () {
       this.timeout("10s");
       await getDelay(500);
