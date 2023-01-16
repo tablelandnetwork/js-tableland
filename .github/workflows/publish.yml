@@ -32,7 +32,7 @@ jobs:
         with:
           tag: ${{ github.event.inputs.release_version }}
           message: "Release ${{ github.event.inputs.release_version }}"
-      
+
       - name: Update version in package.json
         id: version-bump
         uses: jaywcjlove/github-action-package@v1.3.0
@@ -42,15 +42,11 @@ jobs:
       - name: Install 🔧
         run: npm install
 
-      - name: Latest
-        id: tag
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
-
       - name: Conditional
         id: cond
         uses: haya14busa/action-cond@v1
         with:
-          cond: ${{ contains(steps.tag.outputs.tag, '-') }}
+          cond: ${{ contains(github.event.inputs.release_version, '-') }}
           if_true: "next"
           if_false: "latest"
 
