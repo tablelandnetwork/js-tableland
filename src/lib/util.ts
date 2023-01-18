@@ -66,7 +66,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Ethereum Goerli",
     chainId: 5,
     contract: evm.proxies["ethereum-goerli"],
-    host: "https://testnet.tableland.network",
+    host: "https://testnets.tableland.network",
     rpcRelay: true,
   },
   ethereum: {
@@ -82,7 +82,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Optimism Goerli",
     chainId: 420,
     contract: evm.proxies["optimism-goerli"],
-    host: "https://testnet.tableland.network",
+    host: "https://testnets.tableland.network",
     rpcRelay: true,
   },
   optimism: {
@@ -98,7 +98,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Arbitrum Goerli",
     chainId: 421613,
     contract: evm.proxies["arbitrum-goerli"],
-    host: "https://testnet.tableland.network",
+    host: "https://testnets.tableland.network",
     rpcRelay: true,
   },
   arbitrum: {
@@ -114,7 +114,7 @@ export const SUPPORTED_CHAINS: Record<ChainName, SupportedChain> = {
     phrase: "Polygon Mumbai",
     chainId: 80001,
     contract: evm.proxies["polygon-mumbai"],
-    host: "https://testnet.tableland.network",
+    host: "https://testnets.tableland.network",
     rpcRelay: true,
   },
   polygon: {
