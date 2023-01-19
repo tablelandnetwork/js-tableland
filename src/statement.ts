@@ -40,7 +40,7 @@ export class Statement<S = unknown> {
     parameters?: Parameters
   ) {
     this.config = config;
-    this.sql = sql;
+    this.sql = sql.trim();
     this.parameters = parameters;
   }
 
