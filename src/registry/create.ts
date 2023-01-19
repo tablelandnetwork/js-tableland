@@ -25,7 +25,6 @@ export async function prepareCreateTable({
     `${first}_${chainId}`,
     true
   );
-  statement = statement.trim();
   const stmt = statement.replace(
     firstSearch,
     function (_, create: string, name: string, schema: string) {
