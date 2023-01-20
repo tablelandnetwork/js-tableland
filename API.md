@@ -362,6 +362,68 @@ console.log(rows[1].results);
 */
 ```
 
+## Additional APIs
+
+For folks that want more fine-grained access to Tableland, such as getting, setting, and locking controller contracts, or listing a user’s tables, etc you might find that these operations don’t fit within the `Database` abstraction provided above. This is where the two additional core APIs come into play.
+
+For direct access to API calls on the validator(s), you can leverage the `Validator` class:
+
+```typescript
+import { Validator } from "@tableland/sdk";
+
+// Pull info from an existing Database instance
+const obj = new Validator(db.config); // Must have baseUrl defined
+
+const isHealthy = await obj.health();
+console.log(isHealthy); // true
+
+const { name, schema } = await obj.getTableById({
+  chainId: 80001,
+  tableId: "1",
+});
+console.log(name); // healthbot_31337_1
+console.log(schema);
+/*
+{
+	columns: [
+		{
+			name: "counter",
+			type: "integer",
+		},
+	],
+}
+*/
+```
+
+Similarly, for more direct access to the Tableland Tables smart contract methods, you can leverage the `Registry` class:
+
+```typescript
+import { Registry, helpers } from "@tableland/sdk";
+// There are a whole lot more functions and tools in helpers to explore
+const { getContractReceipt } = helpers;
+
+// Pull info from an existing Database instance
+const reg = await new Registry(db.config); // Must have signer defined
+
+const tx = await reg.createTable({
+  chainId: 31337,
+  statement: "create table test_ownership_31337 (id int, name text)",
+});
+// Helper function to extract table name event information
+const receipt = await getContractReceipt(tx);
+
+// List my tables
+const results = await reg.listTables(/* default to connected wallet address */);
+
+// Transfer the above table to my friend!
+const tx = await reg.safeTransferFrom({
+  to: friendAddress,
+  tableName: receipt, // Also accepts name as string
+});
+// Tableland adopts this "wait" style pattern from ethers!
+await tx.wait();
+```
+
 ## Typescript
 
 The `Database` API and all related classes and modules are written in Typescript, and provide a generic interface to fully-typed queries and responses (if you want). Currently, if you do _not_ provide types, it will default to `unknown`. This is probably _not_ what you want, so passing in `any` is fine, but you can do a whole lot more if you provide a concrete type.
@@ -414,6 +476,68 @@ console.log(results[0][0]);
 */
 ```
 
+## Integrations
+
+With `Database` interface, we have made third party library integrations our top priority. For example, if you are writing Tableland interactions inside a React app that uses something like [`wagmi`](https://wagmi.sh/), the above examples might start off something like the following (inside your components/hooks):
+
+```typescript
+import { useSigner } from "wagmi";
+import { Database } from "@tableland/sdk";
+
+function App() {
+  const { data: signer } = useSigner()
+
+	const db = Database.fromSigner(signer);
+	...
+}
+```
+
+Additionally, thanks to our support for [Cloudflare’s `D1Database` interface](https://developers.cloudflare.com/d1/platform/client-api/), support for an ORM is possible via [`d1-orm`](https://docs.interactions.rest/d1-orm/). See our tests for a quick example of creating, updating, and querying a table via a Model object.
+
+Additional integrations provide some client-side safety for injecting table names, query parameters, and more via prepared statement syntax. While you don’t need [`@databases/sql`](https://www.atdatabases.org/) to leverage prepared statements with the Tableland SDK, it does provide some nice methods for working with raw SQL strings, so we leverage it here:
+
+```typescript
+import sql, { FormatConfig } from "@databases/sql";
+import { escapeSQLiteIdentifier } from "@databases/escape-identifier";
+import { Database } from "@tableland/sdk";
+
+// See https://www.atdatabases.org/docs/sqlite
+const sqliteFormat: FormatConfig = {
+  escapeIdentifier: (str) => escapeSQLiteIdentifier(str),
+  formatValue: (value) => ({ placeholder: "?", value }),
+};
+
+// First, we'll test out using sql identifiers
+const primaryKey = sql.ident("id");
+const query = sql`CREATE TABLE test_sql (${primaryKey} integer primary key, counter integer, info text);`;
+const { text, values } = query.format(sqliteFormat);
+const { meta } = await db.prepare(text).bind(values).run();
+const { name } = await meta.txn.wait();
+console.log(`Created table ${name}`);
+```
+
+What about all those fancy `ethersjs` tools out there? We can leverage those in Tableland quite nicely, as we have pretty direct control over the `Signer` interface that drives our database mutations. Here's how you might instantiate a `Database` within a NodeJS app:
+
+```typescript
+import { NonceManager } from "@ethersproject/experimental";
+import { Database, helpers } from "@tableland/sdk";
+import { Wallet } from "ethers";
+const { getDefaultProvider } = helpers;
+
+// Or maybe you want to use the dotenv package
+const privateKey = process.env.PRIVATE_KEY;
+
+const wallet = new Wallet(privateKey);
+const provider = getDefaultProvider("http://127.0.0.1:8545");
+// const signer = wallet.connect(provider);
+const baseSigner = wallet.connect(provider);
+// Also demonstrates the nonce manager usage
+const signer = new NonceManager(baseSigner);
+const db = new Database({ signer });
+
+// No need to await individual transations (due to nonce manager)!
+```
+
 ## Errors
 
 The `stmt.` and `db.` methods will throw a [Error object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) whenever an error occurs.
@@ -421,7 +545,7 @@ The `stmt.` and `db.` methods will throw a [Error object](https://developer.mozi
 `Database` Errors use [cause property](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause) for details.
 
 ```js
-new Error("D1_ERROR", { cause: new Error("Error detail") });
+new Error("ERROR: ...", { cause: new Error("Error detail") });
 ```
 
 To capture exceptions:
@@ -437,7 +561,7 @@ try {
 }
 /*
 {
-  "message": "EXEC_ERROR",
+  "message": "EXEC_ERROR: ...",
   "cause": "Error in line 1: INSERTZ INTO my_table (name, employees) VALUES (): sql error: near \"INSERTZ\": syntax error in INSERTZ INTO my_table (name, employees) VALUES () at offset 0"
 }
 */
