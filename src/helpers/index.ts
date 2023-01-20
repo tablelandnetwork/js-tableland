@@ -21,6 +21,7 @@ export {
   type Config,
   type AutoWaitConfig,
   extractBaseUrl,
+  extractChainId,
   extractSigner,
 } from "./config.js";
 export {
