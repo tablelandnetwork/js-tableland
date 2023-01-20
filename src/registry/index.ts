@@ -64,6 +64,11 @@ export class Registry {
     return await listTables(this.config, owner);
   }
 
+  /**
+   * Safely transfers the ownership of a given table ID to another address.
+   *
+   * Requires the msg sender to be the owner, approved, or operator
+   */
   async safeTransferFrom(params: TransferParams): Promise<ContractTransaction> {
     return await safeTransferFrom(this.config, params);
   }
