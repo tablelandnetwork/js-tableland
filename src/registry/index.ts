@@ -30,17 +30,45 @@ export {
   type SetParams,
 };
 
+/**
+ * Registry provides direct access to remote Registry smart contract APIs.
+ */
 export class Registry {
-  constructor(readonly config: SignerConfig) {}
+  readonly config: SignerConfig;
+  /**
+   * Create a Registry instance with the specified connection configuration.
+   * @param config The connection configuration. This must include an ethersjs
+   * Signer. If passing the config from a pre-existing Database instance, it
+   * must have a non-null signer key defined.
+   */
+  constructor(config: Partial<SignerConfig>) {
+    if (config.signer == null) {
+      throw new Error("missing signer information");
+    }
+    this.config = config as SignerConfig;
+  }
 
+  /**
+   * Create a Registry that is connected to the given Signer.
+   * @param signer An ethersjs Signer to use for mutating queries.
+   */
   static async forSigner(signer: Signer): Promise<Registry> {
     return new Registry({ signer });
   }
 
+  /**
+   * Gets the list of table IDs of the requested owner.
+   * @param owner The address owning the table.
+   */
   async listTables(owner?: string): Promise<TableIdentifier[]> {
     return await listTables(this.config, owner);
   }
 
+  /**
+   * Safely transfers the ownership of a given table ID to another address.
+   *
+   * Requires the msg sender to be the owner, approved, or operator
+   */
   async safeTransferFrom(params: TransferParams): Promise<ContractTransaction> {
     return await safeTransferFrom(this.config, params);
   }

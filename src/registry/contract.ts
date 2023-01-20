@@ -9,8 +9,17 @@ import { getContractAddress } from "../helpers/chains.js";
 
 const connect = Factory.connect;
 
+/**
+ * TableIdentifier represents the information required to identify a table on the Tableland network.
+ */
 export interface TableIdentifier {
+  /**
+   * The target chain id.
+   */
   chainId: number;
+  /**
+   * The target table id.
+   */
   tableId: string;
 }
 

@@ -11,8 +11,17 @@ const secondSearch =
   /(?<=^")(.*?)(?="$)|(?<=^\[)(.*?)(?=\]$)|(?<=^')(.*?)(?='$)|(?<=^`)(.*?)(?=`$)|(^[^[`'].*?[^\]'`]$)/;
 
 export interface PrepareParams {
+  /**
+   * SQL statement string.
+   */
   statement: string;
+  /**
+   * The target chain id.
+   */
   chainId: number;
+  /**
+   * The first table name in a series of SQL statements.
+   */
   first: string;
 }
 
@@ -42,7 +51,13 @@ export async function prepareCreateTable({
 }
 
 export interface CreateTableParams {
+  /**
+   * SQL statement string.
+   */
   statement: string;
+  /**
+   * The target chain id.
+   */
   chainId: number;
 }
 

@@ -27,6 +27,8 @@ The `@tableland/sdk` library provides a minimal client and SDK that implements t
 
 # Usage
 
+See the [API documentation](./API.md) for details.
+
 ```ts
 import { Database } from "@tableland/sdk";
 import { providers } from "ethers";

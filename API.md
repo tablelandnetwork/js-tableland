@@ -362,53 +362,55 @@ console.log(rows[1].results);
 */
 ```
 
-## PRAGMA statements
+## Typescript
 
-The `Database` API supports the following [SQLite PRAGMA](https://www.sqlite.org/pragma.html)-style statements. Note that these are not true PRAGMA statements, and are instead processed client-side and may leverage on-chain transactions and/or queries.
+The `Database` API and all related classes and modules are written in Typescript, and provide a generic interface to fully-typed queries and responses (if you want). Currently, if you do _not_ provide types, it will default to `unknown`. This is probably _not_ what you want, so passing in `any` is fine, but you can do a whole lot more if you provide a concrete type.
 
-| PRAGMA       | Description                                                                                                                                                                                               |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
-| `table_list` | Returns information about the tables and views in the schema, one table per row of output                                                                                                                 |
-| `table_info` | This pragma returns one row for each column in the named table. Columns in the result set include the column name, data type, whether or not the column can be NULL, and the default value for the column |     |
+Types can be provided on the Database constructor, on the Statement constructor (prepare), or callers can override them on any of the query/execution APIs directly (i.e., `run`, `all`, `first`, or `raw`).
 
-Other PRAGMAs are disabled because of Tableland implementation specifics.
+```typescript
+// Define a custom type
+type User {
+  name: string;
+  age: number;
+}
 
-```js
-const r = await db.batch([
-  db.prepare("PRAGMA table_list"),
-  db.prepare("PRAGMA table_info(my_table)"),
-]);
-console.log(r);
+const user = {
+  name: "John Clemente",
+  age: 42,
+}
+
+type UserInferred = typeof user
+
+const db = new Database<User>({ ... })
+const stmt = db.prepare("SELECT * FROM users WHERE name = ?1");
+
+// From now on, query results will be fully typed
+const { results } = await stmt.bind("John").all<UserInferred>();
+// Assuming you have the above type correctly defined,
+// you should get something like this:
+console.log(results[0].name) // Fully typed
 /*
-[
-  {
-    "results": [
-      {
-      "schema": "main",
-      "name": "my_table",
-      "type": "table",
-      "ncol": 3,
-      "wr": 0,
-      "strict": 0
-      },
-      ...
-    ]
-  },
-  {
-    "results": [
-      {
-        "cid": 0,
-        "name": "cid",
-        "type": "INTEGER",
-        "notnull": 0,
-        "dflt_value": null,
-        "pk": 1
-      },
-      ...
-    ]
-  }
-]
+"John Clemente"
+*/
+```
 
+Note that the generic type system for `Database` is relatively sophisticated, so it should correctly determine the response shape of `raw` versus `all`, etc. Building on the previous example:
+
+```typescript
+// Callers do not need to define these types,
+// they are provided for illustrative purposes
+type ValueOf<T> = T[keyof T];
+type RawUser = ValueOf<User>;
+
+// Results will be typed with the correct structure
+const results = await stmt.bind("John").raw<User>();
+
+// The results here are basically defined as
+// type Array<RawUser>
+console.log(results[0][0]);
+/*
+"John Clemente"
 */
 ```
 

@@ -29,6 +29,18 @@ import {
 
 export { type ValuesType, type Parameters, type ValueOf, type BaseType };
 
+/**
+ * Statement defines a single SQL statement.
+ * Both static and prepared statements are supported. In the current
+ * implementation, the prepared statements are prepared locally, and
+ * executed remotely (on-chain).
+ * Mutating transactions such as INSERTs, DELETEs, and UPDATEs produce
+ * a two-phase transaction. Firstly, the transaction is sent to the
+ * registry contract, and awaited. The returned `txn` information also
+ * contains a `wait` method than can be used to await finalization on
+ * the Tableland network. This method will also throw an exception if
+ * any runtime errors occur.
+ */
 export class Statement<S = unknown> {
   private readonly config: Config & Partial<AutoWaitConfig>;
   private readonly sql: string;
@@ -49,7 +61,7 @@ export class Statement<S = unknown> {
    * We follow the SQLite convention for prepared statements parameter binding.
    * We support Ordered (?NNNN), Anonymous (?), and Named (@name, :name, $name) parameters.
    * @param values A variadic list of values to bind. May include base types, and objects.
-   * @returns A bound Statement.
+   * @returns A new bound Statement.
    */
   bind<T = S>(...values: ValuesType[]): Statement<T> {
     const parameters = getParameters(...values);
@@ -68,6 +80,10 @@ export class Statement<S = unknown> {
     }
   }
 
+  /**
+   * Export a Statement's sql string and parameters.
+   * @returns
+   */
   toObject(): { sql: string; parameters?: Parameters } {
     return {
       sql: this.sql,
@@ -86,6 +102,11 @@ export class Statement<S = unknown> {
     return { type, sql, tables };
   }
 
+  /**
+   * Executes a query and returns all rows and metadata.
+   * @param colName If provided, filter results to the provided column.
+   * @param opts Additional options to control execution.
+   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async all<T = S, K extends keyof T = keyof T>(
     colName?: undefined,
@@ -138,6 +159,14 @@ export class Statement<S = unknown> {
     }
   }
 
+  /**
+   * Executes a query and returns the first row of the results.
+   * This does not return metadata like the other methods.
+   * Instead it returns the object directly. If the query returns no
+   * rows, then first() will return null.
+   * @param colName If provided, filter results to the provided column.
+   * @param opts Additional options to control execution.
+   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async first<T = S, K extends keyof T = keyof T>(): Promise<T>;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -187,6 +216,13 @@ export class Statement<S = unknown> {
     }
   }
 
+  /**
+   * Runs the query/queries, but returns no results. Instead, run()
+   * returns the metrics only. Useful for write operations like
+   * UPDATE, DELETE or INSERT.
+   * @param opts Additional options to control execution.
+   * @returns A results object with metadata only (results are null or an empty array).
+   */
   async run(opts: Signal = {}): Promise<Result<never>> {
     try {
       const start = performance.now();
@@ -214,6 +250,11 @@ export class Statement<S = unknown> {
     }
   }
 
+  /**
+   * Same as stmt.all(), but returns an array of rows instead of objects.
+   * @param opts Additional options to control execution.
+   * @returns An array of raw query results.
+   */
   async raw<T = S>(opts: Signal = {}): Promise<Array<ValueOf<T>>> {
     try {
       const { sql, type, tables } = await this.#parseAndExtract();

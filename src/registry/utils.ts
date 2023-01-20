@@ -14,18 +14,42 @@ import {
 } from "../helpers/ethers.js";
 import { validateTables, type StatementType } from "../helpers/parser.js";
 
+/**
+ * WaitableTransactionReceipt represents a named TransactionReceipt with a wait method.
+ */
 export type WaitableTransactionReceipt = TransactionReceipt &
   Wait<TransactionReceipt & Named> &
   Named;
 
+/**
+ * Named represents a named table with a prefix.
+ */
 export interface Named {
+  /**
+   * Full table name.
+   */
   name: string;
+  /**
+   * Table name prefix.
+   */
   prefix: string;
 }
 
+/**
+ * ExtractedStatement represents a SQL statement string with the type and tables extracted.
+ */
 export interface ExtractedStatement {
+  /**
+   * SQL statement string.
+   */
   sql: string;
+  /**
+   * List of table names referenced within the statement.
+   */
   tables: string[];
+  /**
+   * The statement type. Must be one of "read", "write", "create", or "acl".
+   */
   type: StatementType;
 }
 
@@ -56,16 +80,43 @@ export function wrapResult<T = unknown>(
   return { ...result, results: resultsOrReceipt };
 }
 
+/**
+ * Metadata represents meta information about an executed statement/transaction.
+ */
 export interface Metadata {
+  /**
+   * Total client-side duration of the async call.
+   */
   duration: number;
+  /**
+   * The optional transactionn information receipt.
+   */
   txn?: WaitableTransactionReceipt;
+  /**
+   * Metadata may contrain additional arbitrary key/values pairs.
+   */
   [key: string]: any;
 }
 
+/**
+ * Result represents the core return result for an executed statement.
+ */
 export interface Result<T = unknown> {
+  /**
+   * Possibly empty list of query results.
+   */
   results: T[];
+  /**
+   * Whether the query or transaction was successful.
+   */
   success: boolean; // almost always true
+  /**
+   * If there was an error, this will contain the error string.
+   */
   error?: string;
+  /**
+   * Additional meta information.
+   */
   meta: Metadata;
 }
 
