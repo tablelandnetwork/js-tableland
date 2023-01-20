@@ -7,6 +7,7 @@ import {
   type Config,
   type ReadConfig,
   extractBaseUrl,
+  extractChainId,
 } from "../helpers/config.js";
 import {
   type ContractTransaction,
@@ -130,12 +131,16 @@ export async function extractReadonly(
 }
 
 export async function wrapTransaction(
-  conn: ReadConfig,
+  conn: Config,
   prefix: string,
   tx: ContractTransaction
 ): Promise<WaitableTransactionReceipt> {
   const params = await getContractReceipt(tx);
-  const name = `${prefix}_${params.chainId}_${params.tableId}`;
+  const chainId =
+    params.chainId === 0 || params.chainId == null
+      ? await extractChainId(conn)
+      : params.chainId;
+  const name = `${prefix}_${chainId}_${params.tableId}`;
   const wait = async (
     opts: SignalAndInterval = {}
   ): Promise<TransactionReceipt & Named> => {

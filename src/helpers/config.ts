@@ -43,3 +43,16 @@ export async function extractSigner(
   }
   return conn.signer;
 }
+
+export async function extractChainId(conn: Config): Promise<number> {
+  const signer = await extractSigner(conn);
+  const chainId = await signer.getChainId();
+
+  if (chainId === 0 || isNaN(chainId) || chainId == null) {
+    throw new Error(
+      "cannot find chainId: is your signer connected to a network?"
+    );
+  }
+
+  return chainId;
+}

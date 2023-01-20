@@ -57,10 +57,19 @@ const supportedChainsById = Object.fromEntries(
  * @returns An object containing the default chainId, contractAddress, chainName, and baseUrl for the given chain.
  */
 export function getChainInfo(chainNameOrId: ChainName | number): ChainInfo {
-  if (typeof chainNameOrId === "number") {
-    return supportedChainsById[chainNameOrId];
+  const chainInfo =
+    typeof chainNameOrId === "number"
+      ? supportedChainsById[chainNameOrId]
+      : supportedChains[chainNameOrId];
+
+  // Something about the way we are using `Object.fromEntries` to generate these
+  // maps makes eslint think that this value is always true, hence the disable
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  if (!chainInfo) {
+    throw new Error(`cannot use unsupported chain: ${chainNameOrId}`);
   }
-  return supportedChains[chainNameOrId];
+
+  return chainInfo;
 }
 
 export function isTestnet(chainNameOrId: ChainName | number): boolean {
