@@ -8,8 +8,17 @@ import {
 } from "./contract.js";
 
 export interface PrepareParams {
+  /**
+   * SQL statement string.
+   */
   statement: string;
+  /**
+   * The target chain id.
+   */
   chainId: number;
+  /**
+   * The first table name in a series of SQL statements.
+   */
   first: string;
 }
 
@@ -24,6 +33,9 @@ export async function prepareRunSQL({
 }
 
 export interface RunSQLParams extends TableIdentifier {
+  /**
+   * SQL statement string.
+   */
   statement: string;
 }
 

@@ -31,9 +31,29 @@ export {
   type QueryParams,
 };
 
+/**
+ * Validator provides direct access to remote Validator REST APIs.
+ */
 export class Validator {
-  constructor(readonly config: ReadConfig) {}
+  readonly config: ReadConfig;
+  /**
+   * Create a Validator instance with the specified connection configuration.
+   * @param config The connection configuration. This must include a baseUrl
+   * string. If passing the config from a pre-existing Database instance, it
+   * must have a non-null baseUrl key defined.
+   */
+  constructor(config: Partial<ReadConfig>) {
+    if (config.baseUrl == null) {
+      throw new Error("missing baseUrl information");
+    }
+    this.config = config as ReadConfig;
+  }
 
+  /**
+   * Create a new Validator instance that uses the default baseUrl for a given chain.
+   * @param chainNameOrId The name or id of the chain to target.
+   * @returns A Validator with a default baseUrl.
+   */
   static forChain(chainNameOrId: ChainName | number): Validator {
     const baseUrl = getBaseUrl(chainNameOrId);
     return new Validator({ baseUrl });

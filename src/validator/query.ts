@@ -2,13 +2,22 @@ import { type Signal } from "../helpers/await.js";
 import { type FetchConfig, type Paths, getFetcher } from "./client/index.js";
 import { hoistApiError } from "./errors.js";
 
+/**
+ * ValueOf represents only the values of a given keyed interface.
+ */
 export type ValueOf<T> = T[keyof T];
 
+/**
+ * TableFormat represents a object with rows and columns.
+ */
 export interface TableFormat<T = unknown> {
   rows: Array<ValueOf<T>>;
   columns: Array<{ name: string }>;
 }
 
+/**
+ * ObjectsFormat represents an array of rows as key/value objects.
+ */
 export type ObjectsFormat<T> = T[];
 
 export type BaseParams = Paths["/query"]["get"]["parameters"]["query"];

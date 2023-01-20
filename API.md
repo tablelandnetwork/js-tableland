@@ -364,11 +364,11 @@ console.log(rows[1].results);
 
 ## Typescript
 
-The `Database` API and all related classes and modules are written in Typescript, and provide a generic interface to fully typed queries and responses (if you want). Currently, if you do _not_ provide types, it will default to `unknown`. This is probably _not_ what you want, so passing in `any` is fine, but you can do a whole lot more if you provide a concrete type.
+The `Database` API and all related classes and modules are written in Typescript, and provide a generic interface to fully-typed queries and responses (if you want). Currently, if you do _not_ provide types, it will default to `unknown`. This is probably _not_ what you want, so passing in `any` is fine, but you can do a whole lot more if you provide a concrete type.
 
 Types can be provided on the Database constructor, on the Statement constructor (prepare), or callers can override them on any of the query/execution APIs directly (i.e., `run`, `all`, `first`, or `raw`).
 
-```ts
+```typescript
 // Define a custom type
 type User {
   name: string;
@@ -397,7 +397,7 @@ console.log(results[0].name) // Fully typed
 
 Note that the generic type system for `Database` is relatively sophisticated, so it should correctly determine the response shape of `raw` versus `all`, etc. Building on the previous example:
 
-```ts
+```typescript
 // Callers do not need to define these types,
 // they are provided for illustrative purposes
 type ValueOf<T> = T[keyof T];

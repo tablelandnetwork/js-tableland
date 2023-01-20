@@ -3,7 +3,13 @@ import { type ContractTransaction } from "../helpers/ethers.js";
 import { type TableIdentifier, getContractSetup } from "./contract.js";
 
 export interface TransferParams {
+  /**
+   * Name or tableId and chainId of the token to be transferred.
+   */
   tableName: string | TableIdentifier;
+  /**
+   * Address to receive the ownership of the given token ID.
+   */
   to: string;
 }
 
