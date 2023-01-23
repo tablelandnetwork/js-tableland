@@ -81,5 +81,10 @@ export async function pollTransactionReceipt(
     }
   };
   const receipt = await getAsyncPoller(fn, interval, signal);
+
+  if (typeof receipt === "undefined") {
+    throw new Error("could not get transaction receipt");
+  }
+
   return receipt;
 }

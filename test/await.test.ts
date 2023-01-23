@@ -14,7 +14,7 @@ describe("await", function () {
     async function testPolling({
       signal,
       interval,
-    }: SignalAndInterval = {}): Promise<boolean> {
+    }: SignalAndInterval = {}): Promise<boolean | undefined> {
       let first = true;
       const fn: AsyncFunction<boolean> = async () => {
         callCount += 1;
@@ -38,7 +38,7 @@ describe("await", function () {
     async function testPolling({
       signal,
       interval,
-    }: SignalAndInterval = {}): Promise<boolean> {
+    }: SignalAndInterval = {}): Promise<boolean | undefined> {
       const fn: AsyncFunction<boolean> = async () => {
         return { done: false };
       };

@@ -40,9 +40,12 @@ export async function getAsyncPoller<T = unknown>(
   fn: AsyncFunction<T>,
   interval: number = 1500,
   signal?: AbortSignal
-): Promise<T> {
+): Promise<Awaited<T> | undefined> {
   const abortSignal = getAbortSignal(signal, 10_000);
-  const checkCondition = (resolve: Function, reject: Function): void => {
+  const checkCondition = (
+    resolve: (data: T | undefined) => void,
+    reject: (err: Error) => void
+  ): void => {
     Promise.resolve(fn())
       .then((result) => {
         if (result.done) {
@@ -51,7 +54,9 @@ export async function getAsyncPoller<T = unknown>(
         if (abortSignal.aborted) {
           return reject(abortSignal.reason);
         } else {
-          setTimeout(checkCondition, interval, resolve, reject);
+          setTimeout(function () {
+            checkCondition(resolve, reject);
+          }, interval);
         }
       })
       .catch((err) => {
