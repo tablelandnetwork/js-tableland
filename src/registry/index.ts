@@ -42,6 +42,7 @@ export class Registry {
    * must have a non-null signer key defined.
    */
   constructor(config: Partial<SignerConfig>) {
+    /* c8 ignore next 3 */
     if (config.signer == null) {
       throw new Error("missing signer information");
     }

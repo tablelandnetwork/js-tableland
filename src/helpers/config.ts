@@ -49,6 +49,7 @@ export async function extractChainId(conn: Config): Promise<number> {
   const chainId = await signer.getChainId();
 
   if (chainId === 0 || isNaN(chainId) || chainId == null) {
+    /* c8 ignore next 4 */
     throw new Error(
       "cannot find chainId: is your signer connected to a network?"
     );

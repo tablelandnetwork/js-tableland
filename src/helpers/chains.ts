@@ -62,10 +62,8 @@ export function getChainInfo(chainNameOrId: ChainName | number): ChainInfo {
       ? supportedChainsById[chainNameOrId]
       : supportedChains[chainNameOrId];
 
-  // Something about the way we are using `Object.fromEntries` to generate these
-  // maps makes eslint think that this value is always true, hence the disable
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-  if (!chainInfo) {
+  /* c8 ignore next 3 */
+  if (chainInfo == null) {
     throw new Error(`cannot use unsupported chain: ${chainNameOrId}`);
   }
 
