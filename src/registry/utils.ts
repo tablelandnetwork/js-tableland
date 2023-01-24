@@ -135,12 +135,13 @@ export async function wrapTransaction(
   prefix: string,
   tx: ContractTransaction
 ): Promise<WaitableTransactionReceipt> {
-  const params = await getContractReceipt(tx);
+  const _params = await getContractReceipt(tx);
   const chainId =
-    params.chainId === 0 || params.chainId == null
+    _params.chainId === 0 || _params.chainId == null
       ? await extractChainId(conn)
-      : params.chainId;
-  const name = `${prefix}_${chainId}_${params.tableId}`;
+      : _params.chainId;
+  const name = `${prefix}_${chainId}_${_params.tableId}`;
+  const params = { ..._params, chainId };
   const wait = async (
     opts: SignalAndInterval = {}
   ): Promise<TransactionReceipt & Named> => {

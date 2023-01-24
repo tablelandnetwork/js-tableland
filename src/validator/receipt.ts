@@ -1,11 +1,14 @@
-import camelize, { type Camelize } from "camelize-ts";
+import {
+  camelize,
+  type Camelize,
+  type PartialRequired,
+} from "../helpers/utils.js";
 import {
   type AsyncFunction,
   type Signal,
   type SignalAndInterval,
   getAsyncPoller,
 } from "../helpers/await.js";
-import { type PartialRequired } from "../helpers/utils.js";
 import { hoistApiError } from "./errors.js";
 import {
   type Components,

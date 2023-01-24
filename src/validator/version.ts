@@ -1,4 +1,4 @@
-import camelize, { type Camelize } from "camelize-ts";
+import { camelize, type Camelize } from "../helpers/utils.js";
 import { type Signal } from "../helpers/await.js";
 import {
   getFetcher,

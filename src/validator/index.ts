@@ -43,6 +43,7 @@ export class Validator {
    * must have a non-null baseUrl key defined.
    */
   constructor(config: Partial<ReadConfig>) {
+    /* c8 ignore next 3 */
     if (config.baseUrl == null) {
       throw new Error("missing baseUrl information");
     }

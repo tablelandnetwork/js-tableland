@@ -4,6 +4,7 @@ import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
 import { getDefaultProvider, RegistryReceipt } from "../src/helpers/index.js";
 import { getContractReceipt } from "../src/helpers/ethers.js";
+import { wrapTransaction } from "../src/registry/utils.js";
 import { Registry } from "../src/registry/index.js";
 
 describe("registry", function () {
@@ -34,6 +35,17 @@ describe("registry", function () {
       receipt = await getContractReceipt(tx);
       notStrictEqual(receipt.tableId, undefined);
       strictEqual(receipt.chainId, 31337);
+    });
+
+    test("regression: when a tx comes back without a chainId", async function () {
+      const tx = await reg.createTable({
+        chainId: 31337,
+        statement: "create table test_no_chainid_31337 (id int, name text)",
+      });
+      tx.chainId = 0; // Wipe out chainId information, which can happen
+      // with MetaMask if no provider is connected
+      const wrapped = await wrapTransaction(reg.config, "test_no_chainid", tx);
+      strictEqual(wrapped.chainId, 31337);
     });
 
     test("when setting the controller succeeds", async function () {
