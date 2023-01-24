@@ -43,7 +43,7 @@ describe("registry", function () {
         statement: "create table test_no_chainid_31337 (id int, name text)",
       });
       tx.chainId = 0; // Wipe out chainId information, which can happen
-      // with MetaMask if no provided is connected
+      // with MetaMask if no provider is connected
       const wrapped = await wrapTransaction(reg.config, "test_no_chainid", tx);
       strictEqual(wrapped.chainId, 31337);
     });
