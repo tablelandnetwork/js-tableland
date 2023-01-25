@@ -21,6 +21,7 @@ import type { WaitableTransactionReceipt } from "../src/registry/index.js";
 const chainId = getChainId("local-tableland");
 
 describe("validator", function () {
+  this.timeout("10s");
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
@@ -41,7 +42,6 @@ describe("validator", function () {
   });
 
   this.beforeAll(async function () {
-    this.timeout("10s");
     const { meta } = await db
       .prepare(
         "CREATE TABLE test_apis (id integer, name text not null, primary key (id));"
@@ -113,7 +113,6 @@ describe("validator", function () {
     });
 
     describe("without autoWait", function () {
-      this.timeout("10s");
       let transactionHash: string = "";
       this.beforeEach(async () => {
         db.config.autoWait = false;
@@ -141,7 +140,6 @@ describe("validator", function () {
     });
 
     describe("without autoWait", function () {
-      this.timeout("10s");
       let localTransaction: WaitableTransactionReceipt;
       this.beforeEach(async () => {
         db.config.autoWait = false;
@@ -172,7 +170,6 @@ describe("validator", function () {
 
     describe("without autoWait", function () {
       let transactionHash: string = "";
-      this.timeout("10s");
       this.beforeEach(async () => {
         db.config.autoWait = false;
         try {
@@ -240,18 +237,38 @@ describe("validator", function () {
       });
     });
 
-    test("when we call the tables api on an empty table", async function () {
-      const { chainId, tableId } = txn;
-      await rejects(
-        api.getTableById({
-          chainId,
-          tableId,
-        }),
-        (err: any) => {
-          strictEqual(err.message, "Failed to fetch metadata");
-          return true;
-        }
-      );
+    test("when we call the tables api on an empty table it returns metadata", async function () {
+      // create an empty table
+      const { meta } = await db
+        .prepare(
+          "CREATE TABLE test_apis (id integer, name text not null, primary key (id));"
+        )
+        .run();
+
+      const tableName = meta.txn?.name ?? "";
+      const tableId = meta.txn?.tableId ?? "";
+
+      match(tableName, /^test_apis_31337_\d+$/);
+      match(tableId, /^\d+$/);
+
+      // get the metadata for the empty table
+      const res = await api.getTableById({
+        chainId,
+        tableId,
+      });
+
+      // ensure that the metadata matches the schema used above
+      strictEqual(res.name, tableName);
+      strictEqual(Array.isArray(res.schema.columns), true);
+      strictEqual(res.schema.columns.length, 2);
+      strictEqual(res.schema.columns[0].name, "id");
+      strictEqual(res.schema.columns[1].name, "name");
+
+      const query = await db.prepare(`select * from ${tableName};`).all();
+
+      // ensure that the table is actually empty
+      strictEqual(Array.isArray(query.results), true);
+      strictEqual(query.results.length, 0);
     });
 
     test("when we call the tables api with invalid params", async function () {
@@ -332,7 +349,6 @@ describe("validator", function () {
 
     test("where query is called with unwrap as 'true' on multiple rows", async function () {
       // TODO: Note that for now we'll fail here, but it would be nice to handle NDJSON
-      this.timeout("10s");
       await getDelay(500);
       const { meta } = await db
         .prepare("CREATE TABLE test_unwrap_rows (keyy TEXT, val TEXT);")
@@ -371,7 +387,6 @@ describe("validator", function () {
     });
 
     test("where query is called with extract as 'true' on multiple columns", async function () {
-      this.timeout("10s");
       await getDelay(500);
       const { meta } = await db
         .prepare("CREATE TABLE test_unwrap_rows (keyy TEXT, val TEXT);")
@@ -408,7 +423,6 @@ describe("validator", function () {
     });
 
     test("where query returns a column with json", async function () {
-      this.timeout("10s");
       await getDelay(500);
       const { meta } = await db
         .prepare(
