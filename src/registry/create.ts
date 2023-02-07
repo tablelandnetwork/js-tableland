@@ -6,9 +6,7 @@ import { getContractAndOverrides } from "./contract.js";
 // Match _anything_ between create table and schema portion of create statement
 const firstSearch =
   /(?<create>^CREATE\s+TABLE\s+)(?<name>\S+)(?<schema>\s*\(.*\)[;]?$)/i;
-// Match _anything_ between pairs of "", ``, '', or []
-const secondSearch =
-  /(?<=^")(.*?)(?="$)|(?<=^\[)(.*?)(?=\]$)|(?<=^')(.*?)(?='$)|(?<=^`)(.*?)(?=`$)|(^[^[`'].*?[^\]'`]$)/;
+const escapeChars = /"|'|`|\]|\[/;
 
 export interface PrepareParams {
   /**
@@ -37,14 +35,9 @@ export async function prepareCreateTable({
   const stmt = statement.replace(
     firstSearch,
     function (_, create: string, name: string, schema: string) {
-      const newName = name.replace(secondSearch, function (sub, ...args) {
-        if (sub != null) {
-          return tableName;
-        }
-        /* c8 ignore next */
-        return sub;
-      });
-      return create + newName + schema;
+      // If this name has any escape chars, escape the whole thing.
+      const newName = escapeChars.test(name) ? `[${tableName}]` : tableName;
+      return `${create.trim()} ${newName.trim()} ${schema.trim()}`;
     }
   );
   return { statement: stmt, chainId, prefix };
