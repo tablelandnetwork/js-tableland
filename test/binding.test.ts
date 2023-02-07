@@ -5,10 +5,24 @@ import {
   bindValues,
   ValuesType,
   Parameters,
+  placeholderRegExp,
 } from "../src/helpers/binding.js";
 
 describe("binding", function () {
   let parameters: Parameters;
+
+  describe("placeholderRegExp", function () {
+    test("where the regexp captures and doesn't capture the right things", function () {
+      const inputString =
+        "INSERT INTO [peop?le] VALUES (@name, ?, :name, `:name`, ?,'?', ?4, \"?3\", ?, '\\'?')";
+      // Grab all hits, extract the matches, and filter on if it was a capture or not
+      const matches = Array.from(inputString.matchAll(placeholderRegExp))
+        .map(([_, match]) => match)
+        .filter(Boolean);
+      // We only want things that weren't escaped
+      deepStrictEqual(matches, ["@name", "?", ":name", "?", "?4", "?"]);
+    });
+  });
   describe("getParameters()", function () {
     test("where all combinations of input parameters are used", function () {
       const values: ValuesType[] = [
