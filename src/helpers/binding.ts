@@ -2,8 +2,8 @@
 // _not_ within quotes (", ', `) or [] "escapes". This works by having two top level
 // "groups" that are or'd together. The first group is non-capturing, and catches quotes
 // and escapes, and the second group is capturing, and catches all the placeholder types
-const placeholderRegExp =
-  /[["'`](?:(?<=")[^"\\]*(?:\\.[^"\\]*)*"|(?<=')[^'\\]*(?:\\.[^'\\]*)*'|(?<=`)[^`\\]*(?:\\.[^`\\]*)*`|(?<=\[)[^[\]\\]*(?:\\.[^[\]\\]*)*\])|(\?\d*|[:@$][a-zA-Z_]\w+)/gmu;
+export const placeholderRegExp =
+  /(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`|\[(?:[^[\\]|\\.)*\])|(\?\d*|[:@$][a-zA-Z_]\w+)/gmu;
 
 function isPlainObject(obj: any): obj is Record<string, BaseType> {
   if (typeof obj !== "object" || obj === null) return false;
