@@ -17,47 +17,33 @@ export default {
   data: function () {
     return {
       tablename: "",
-      message: ""
+      message: "",
+      statement: "",
+      successMsg: "",
+      responseJson: ""
     };
   },
 
   methods: {
-    create: async function () {
-      const { meta } = await db
-        .prepare("CREATE TABLE browser_table (k text, v text, num integer);")
-        .run();
+    runSql: async function (statementArg, successArg) {
+      try {
+        const statementStr = (statementArg || this.$data.statement).trim();
+        const successMsg = (successArg || this.$data.successMsg).trim();
 
-      this.$data.tablename = meta.txn.name;
-      this.$data.message = "table was created";
-    },
-    doDelete: async function () {
-      const { meta } = await db
-        .prepare(`DELETE FROM ${this.tablename} WHERE num = 2`)
-        .run();
+        if (!statementStr) throw new Error("no statement available");
+        if (!successMsg) throw new Error("no success message available");
 
-      this.$data.tablename = meta.txn.name;
-      this.$data.message = "data was deleted";
-    },
-    insert: async function () {
-      const { meta } = await db
-        .prepare(`INSERT INTO ${this.tablename} (k, v, num) VALUES ('name', 'number', 1);`)
-        .run();
+        const res = await db
+          .prepare(statementStr)
+          .all();
 
-      this.$data.message = "data was inserted";
-    },
-    read: async function () {
-      const { results } = await db
-        .prepare(`SELECT * FROM ${this.tablename};`)
-        .run();
+        this.$data.message = successMsg;
+        this.$data.responseJson = JSON.stringify(res);
 
-      this.$data.message = `table was read, data is: ${JSON.stringify(results)}`;
-    },
-    update: async function () {
-      const { meta } = await db
-        .prepare(`UPDATE ${this.tablename} SET num = 2 WHERE num = 1;`)
-        .run();
-
-      this.$data.message = "table was updated";
+        return res;
+      } catch (err) {
+        this.$data.message = `runSql Error: ${err}`;
+      }
     }
   }
 }
@@ -69,12 +55,16 @@ export default {
     {{ message }}
   </div>
 
+  <div data-testid="response">
+    {{ responseJson }}
+  </div>
+
   <main>
-    <button name="create" @click="create">create</button>
-    <button name="dodelete" @click="dodelete">dodelete</button>
-    <button name="insert" @click="insert">insert</button>
-    <button name="read" @click="read">read</button>
-    <button name="update" @click="update">update</button>
+    <form @submit.prevent="eve => runSql()">
+      <input type="text" name="statement" v-model="statement">
+      <input type="text" name="success" v-model="successMsg">
+      <input type="submit" name="submit" value="submit">
+    </form>
   </main>
 </template>
 

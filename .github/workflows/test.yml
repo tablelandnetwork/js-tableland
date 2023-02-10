@@ -46,3 +46,6 @@ jobs:
 
       - name: Test/Coverage 🧪
         run: npm run coverage
+
+      - name: Test/Browser 🧪
+        run: npm run test:browser
