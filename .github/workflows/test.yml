@@ -5,6 +5,10 @@ on:
       - main
   pull_request:
 
+# enable test runners to know where they are
+env:
+  CI: true
+
 concurrency:
   group: test-${{github.ref}}
   cancel-in-progress: true
