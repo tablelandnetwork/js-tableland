@@ -47,5 +47,8 @@ jobs:
       - name: Test/Coverage 🧪
         run: npm run coverage
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Test/Browser 🧪
         run: npm run test:browser
