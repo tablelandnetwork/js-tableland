@@ -17,6 +17,7 @@ import { getDefaultProvider } from "../src/helpers/index.js";
 import { Database } from "../src/index.js";
 
 describe("thirdparty", function () {
+  this.timeout("10s");
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
@@ -56,8 +57,6 @@ describe("thirdparty", function () {
     type User = Infer<typeof users>;
 
     this.beforeAll(async function () {
-      this.timeout("10s");
-
       const create = await users.CreateTable({
         strategy: "default",
       });

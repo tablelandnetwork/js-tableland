@@ -11,6 +11,7 @@ import { wrapTransaction } from "../src/registry/utils.js";
 import { Registry } from "../src/registry/index.js";
 
 describe("registry", function () {
+  this.timeout("10s");
   // Note that we're using the second account here
   const [, wallet, controller] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
@@ -30,7 +31,6 @@ describe("registry", function () {
   describe("controller", function () {
     let receipt: RegistryReceipt;
     this.beforeAll(async function () {
-      this.timeout("10s");
       const tx = await reg.createTable({
         chainId: 31337,
         statement: "create table test_controller_31337 (id int, name text)",

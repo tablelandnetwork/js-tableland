@@ -13,6 +13,7 @@ import { getDefaultProvider } from "../src/helpers/index.js";
 import { Database, Statement } from "../src/index.js";
 
 describe("statement", function () {
+  this.timeout("10s");
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
@@ -38,7 +39,6 @@ describe("statement", function () {
   describe(".run()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      this.timeout("10s");
       const { results, error, meta } = await db
         .prepare("CREATE TABLE test_run (counter integer);")
         .run();

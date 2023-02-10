@@ -7,6 +7,7 @@ import { Database } from "../src/database.js";
 import { Statement } from "../src/statement.js";
 
 describe("database", function () {
+  this.timeout("10s");
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
@@ -46,7 +47,6 @@ describe("database", function () {
   describe(".batch()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      this.timeout("10s");
       const { results, error, meta } = await db
         .prepare(
           "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
