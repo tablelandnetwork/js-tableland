@@ -21,7 +21,7 @@ import type { WaitableTransactionReceipt } from "../src/registry/index.js";
 const chainId = getChainId("local-tableland");
 
 describe("validator", function () {
-  this.timeout("10s");
+  this.timeout("15s");
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");

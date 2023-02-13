@@ -5,6 +5,10 @@ on:
       - main
   pull_request:
 
+# enable test runners to know where they are
+env:
+  CI: true
+
 concurrency:
   group: test-${{github.ref}}
   cancel-in-progress: true
@@ -46,3 +50,13 @@ jobs:
 
       - name: Test/Coverage 🧪
         run: npm run coverage
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Test/Browser 🧪
+        run: |
+          cd test/browser/server
+          npm install
+          cd ../../
+          npm run test:browser

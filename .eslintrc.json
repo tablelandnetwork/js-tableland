@@ -16,5 +16,11 @@
     "import/order": "warn",
     "@typescript-eslint/no-confusing-void-expression": "off"
   },
-  "ignorePatterns": ["/dist/", "/coverage/", "/docs/", "/src/validator/client/"]
+  "ignorePatterns": [
+    "/dist/",
+    "/coverage/",
+    "/docs/",
+    "/src/validator/client/",
+    "*.d.ts"
+  ]
 }

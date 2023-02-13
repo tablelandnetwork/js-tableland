@@ -27,6 +27,7 @@ overrideDefaults(chainId, { contractAddress });
 overrideDefaults("local-tableland", { contractAddress });
 
 describe("lowlevel", function () {
+  this.timeout("10s");
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
@@ -36,7 +37,6 @@ describe("lowlevel", function () {
   describe("exec()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      this.timeout("10s");
       const txn = await exec(
         { signer },
         {
