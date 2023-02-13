@@ -3,8 +3,8 @@ import { describe, test } from "mocha";
 import {
   getParameters,
   bindValues,
-  ValuesType,
-  Parameters,
+  type ValuesType,
+  type Parameters,
   placeholderRegExp,
 } from "../src/helpers/binding.js";
 

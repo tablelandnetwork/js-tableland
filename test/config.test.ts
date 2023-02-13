@@ -4,7 +4,7 @@ import { getAccounts } from "@tableland/local";
 import {
   extractBaseUrl,
   extractSigner,
-  ReadConfig,
+  type ReadConfig,
   type SignerConfig,
   type Config,
 } from "../src/helpers/config.js";

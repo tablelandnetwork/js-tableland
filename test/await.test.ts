@@ -1,10 +1,10 @@
 import { match, rejects, strictEqual } from "assert";
 import { describe, test } from "mocha";
 import {
-  AsyncFunction,
+  type AsyncFunction,
   getAbortSignal,
   getAsyncPoller,
-  SignalAndInterval,
+  type SignalAndInterval,
 } from "../src/helpers/await.js";
 import { getDelay } from "../src/helpers/utils.js";
 

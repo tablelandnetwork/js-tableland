@@ -1,9 +1,9 @@
 import {
-  TablelandTables,
+  type TablelandTables,
   TablelandTables__factory as Factory,
 } from "@tableland/evm";
-import { Overrides } from "ethers";
-import { getOverrides, Signer } from "../helpers/ethers.js";
+import type { Overrides } from "ethers";
+import { getOverrides, type Signer } from "../helpers/ethers.js";
 import { validateTableName } from "../helpers/parser.js";
 import { getContractAddress } from "../helpers/chains.js";
 
