@@ -98,6 +98,13 @@ npm run build
 npm test
 ```
 
+To run tests in a few of the common browser environments we are using Playwright. Once your code changes are finished you can run the brower tests by doing:
+
+- `cd test/browser/server`
+- `npm install`
+- `cd ../../`
+- `npm run test:browser`
+
 # Contributing
 
 PRs accepted.

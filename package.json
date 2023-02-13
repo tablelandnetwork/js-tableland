@@ -53,7 +53,6 @@
     "src/**/*.ts"
   ],
   "scripts": {
-    "postinstall": "cd test/browser/server && npm install",
     "lint": "eslint '**/*.{js,ts}'",
     "lint:fix": "npm run lint -- --fix",
     "prettier": "prettier '**/*.{ts,json,sol,md}' --check",

@@ -55,4 +55,8 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Test/Browser 🧪
-        run: npm run test:browser
+        run: |
+          cd test/browser/server
+          npm install
+          cd ../../
+          npm run test:browser
