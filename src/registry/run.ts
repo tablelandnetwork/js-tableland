@@ -3,7 +3,7 @@ import { type ContractTransaction } from "../helpers/ethers.js";
 import { validateTableName } from "../helpers/parser.js";
 import {
   getContractAndOverrides,
-  TableIdentifier,
+  type TableIdentifier,
   assertChainId,
 } from "./contract.js";
 

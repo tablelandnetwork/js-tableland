@@ -10,7 +10,7 @@ import {
   QueryType,
   type Infer,
 } from "d1-orm";
-import sql, { FormatConfig } from "@databases/sql";
+import sql, { type FormatConfig } from "@databases/sql";
 import { escapeSQLiteIdentifier } from "@databases/escape-identifier";
 import { NonceManager } from "@ethersproject/experimental";
 import { getDefaultProvider } from "../src/helpers/index.js";

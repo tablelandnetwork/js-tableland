@@ -2,7 +2,10 @@
 import { match, notStrictEqual, rejects, strictEqual } from "assert";
 import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
-import { getDefaultProvider, RegistryReceipt } from "../src/helpers/index.js";
+import {
+  getDefaultProvider,
+  type RegistryReceipt,
+} from "../src/helpers/index.js";
 import { getContractReceipt } from "../src/helpers/ethers.js";
 import { wrapTransaction } from "../src/registry/utils.js";
 import { Registry } from "../src/registry/index.js";

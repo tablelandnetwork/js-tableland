@@ -93,8 +93,8 @@ export async function getSigner(external?: ExternalProvider): Promise<Signer> {
 
 export {
   Signer,
-  ExternalProvider,
   getDefaultProvider,
-  ContractTransaction,
-  ContractReceipt,
+  type ExternalProvider,
+  type ContractTransaction,
+  type ContractReceipt,
 };
