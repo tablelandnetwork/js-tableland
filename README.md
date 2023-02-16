@@ -68,6 +68,22 @@ console.log(results);
 */
 ```
 
+## Build Tools
+
+The Tableland SDK uses an optimized WASM build of our SQL parser under the hood. Unfortunately, some build systems such as [Vite](https://vitejs.dev) require an adjustment to their configuration to support this feature. To temporarily work around this issue, simply add `@tableland/sqlparser` to the `excluded` list under `optimizeDeps` in your `vite.config.ts` file:
+
+```typescript
+...
+optimizeDeps: {
+    exclude: [
+      "@tableland/sqlparser"
+    ]
+  }
+...
+```
+
+See [our own Rigs project](https://github.com/tablelandnetwork/rigs/blob/main/animation_url/vite.config.ts#L17) for an example of using this in production.
+
 Full library documentation [available on GitHub](https://tablelandnetwork.github.io/js-tableland/), and
 general docs, examples, and more [available on our docs site](https://docs.tableland.xyz).
 
