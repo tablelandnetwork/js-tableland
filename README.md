@@ -70,7 +70,7 @@ console.log(results);
 
 ## Build Tools
 
-The Tableland SDK uses an optimized WASM build of our SQL parser under the hood. Unfortunately, some build systems such as [Vite](https://vitejs.dev) require an adjustment to their configuration to support this feature. To temporarily work around this issue, simply add `@tableland/sqlparser` to the excluded list under `optimizeDeps` in your `vite.config.ts` file:
+The Tableland SDK uses an optimized WASM build of our SQL parser under the hood. Unfortunately, some build systems such as [Vite](https://vitejs.dev) require an adjustment to their configuration to support this feature. To temporarily work around this issue, simply add `@tableland/sqlparser` to the `excluded` list under `optimizeDeps` in your `vite.config.ts` file:
 
 ```typescript
 ...
