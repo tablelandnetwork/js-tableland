@@ -1,4 +1,4 @@
-import { strictEqual } from "assert";
+import { strictEqual, throws } from "assert";
 import { describe, test } from "mocha";
 import {
   getBaseUrl,
@@ -8,6 +8,7 @@ import {
   isTestnet,
   type ChainName,
   supportedChains,
+  overrideDefaults,
 } from "../src/helpers/chains.js";
 
 describe("chains", function () {
@@ -91,6 +92,19 @@ describe("chains", function () {
       const maticmum = getChainInfo("maticmum");
       strictEqual(maticmum.baseUrl, testnetsUrl);
       strictEqual(maticmum.chainId, 80001);
+    });
+  });
+
+  describe("overrideDefaults()", function () {
+    test("when called incorrectly", async function () {
+      throws(
+        // @ts-expect-error need to tell ts to ignore this since we are testing a failure when used without ts
+        () => overrideDefaults("homestead"), // didn't pass in overrides
+        (err: any) => {
+          strictEqual(err.message, "override values must be an Object");
+          return true;
+        }
+      );
     });
   });
 });
