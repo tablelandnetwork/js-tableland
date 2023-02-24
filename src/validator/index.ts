@@ -42,7 +42,7 @@ export class Validator {
    * string. If passing the config from a pre-existing Database instance, it
    * must have a non-null baseUrl key defined.
    */
-  constructor(config: Partial<ReadConfig>) {
+  constructor(config: Partial<ReadConfig> = {}) {
     /* c8 ignore next 3 */
     if (config.baseUrl == null) {
       throw new Error("missing baseUrl information");

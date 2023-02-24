@@ -112,13 +112,16 @@ export function overrideDefaults(
   chainNameOrId: ChainName | number,
   values: Record<keyof ChainInfo, number | string>
 ): void {
+  if (values == null || typeof values !== "object") {
+    throw new Error("override values must be an Object");
+  }
   for (const [key, value] of Object.entries(values)) {
     if (typeof chainNameOrId === "number") {
-      const found = supportedChainsById[chainNameOrId];
+      const found = getChainInfo(chainNameOrId);
       found[key] = value;
       supportedChains[found.chainName][key as keyof ChainInfo] = value;
     } else {
-      const found = supportedChains[chainNameOrId];
+      const found = getChainInfo(chainNameOrId);
       found[key] = value;
       supportedChainsById[found.chainId][key as keyof ChainInfo] = value;
     }
