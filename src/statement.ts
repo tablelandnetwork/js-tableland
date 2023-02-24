@@ -51,6 +51,10 @@ export class Statement<S = unknown> {
     sql: string,
     parameters?: Parameters
   ) {
+    if (typeof sql !== "string") {
+      throw new Error("SQL statement must be a String");
+    }
+
     this.config = config;
     this.sql = sql.trim();
     this.parameters = parameters;
