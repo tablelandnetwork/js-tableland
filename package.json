@@ -109,6 +109,6 @@
   "dependencies": {
     "@tableland/evm": "^4.0.0",
     "@tableland/sqlparser": "^1.0.4",
-    "ethers": "^5.7.2"
+    "ethers": "^6.0.8"
   }
 }
