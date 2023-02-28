@@ -36,6 +36,18 @@ describe("statement", function () {
     deepStrictEqual(stmt, new Statement(db.config, sql));
   });
 
+  test("when initialized incorrectly", async function () {
+    const sqlString = 12;
+    throws(
+      // @ts-expect-error need to tell ts to ignore this since we are testing a failure when used without ts
+      () => new Statement(db.config, sqlString),
+      (err: any) => {
+        strictEqual(err.message, "SQL statement must be a String");
+        return true;
+      }
+    );
+  });
+
   describe(".run()", function () {
     let tableName: string;
     this.beforeAll(async function () {

@@ -10,6 +10,9 @@ import { isTestnet } from "./chains.js";
 export type { NormalizedStatement, StatementType };
 
 export async function normalize(sql: string): Promise<NormalizedStatement> {
+  if (typeof sql !== "string") {
+    throw new Error("SQL statement must be a String");
+  }
   /* c8 ignore next 3 */
   if (__wasm == null) {
     await init();
@@ -21,6 +24,9 @@ export async function validateTableName(
   tableName: string,
   isCreate = false
 ): Promise<ValidatedTable> {
+  if (typeof tableName !== "string") {
+    throw new Error("table name must be a String");
+  }
   /* c8 ignore next 3 */
   if (__wasm == null) {
     await init();

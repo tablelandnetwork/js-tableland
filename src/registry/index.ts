@@ -41,7 +41,7 @@ export class Registry {
    * Signer. If passing the config from a pre-existing Database instance, it
    * must have a non-null signer key defined.
    */
-  constructor(config: Partial<SignerConfig>) {
+  constructor(config: Partial<SignerConfig> = {}) {
     /* c8 ignore next 3 */
     if (config.signer == null) {
       throw new Error("missing signer information");

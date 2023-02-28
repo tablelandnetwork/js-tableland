@@ -16,7 +16,7 @@ export interface AutoWaitConfig {
 export type Config = Partial<ReadConfig & SignerConfig>;
 
 export async function extractBaseUrl(
-  conn: Config,
+  conn: Config = {},
   chainNameOrId?: ChainName | number
 ): Promise<string> {
   if (conn.baseUrl == null) {
@@ -35,7 +35,7 @@ export async function extractBaseUrl(
 }
 
 export async function extractSigner(
-  conn: Config,
+  conn: Config = {},
   external?: ExternalProvider
 ): Promise<Signer> {
   if (conn.signer == null) {
@@ -44,7 +44,7 @@ export async function extractSigner(
   return conn.signer;
 }
 
-export async function extractChainId(conn: Config): Promise<number> {
+export async function extractChainId(conn: Config = {}): Promise<number> {
   const signer = await extractSigner(conn);
   const chainId = await signer.getChainId();
 
