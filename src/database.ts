@@ -35,6 +35,7 @@ export class Database<D = unknown> {
 
   /**
    * Create a Database that uses the default baseUrl for a given chain.
+   * @deprecated since 4.0.1
    * @param chainNameOrId The name or id of the chain to target.
    * @returns A Database without a signer configured.
    */
