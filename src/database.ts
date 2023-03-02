@@ -35,10 +35,14 @@ export class Database<D = unknown> {
 
   /**
    * Create a Database that uses the default baseUrl for a given chain.
+   * @deprecated since 4.0.1, will be deleted in 5.0.0
    * @param chainNameOrId The name or id of the chain to target.
    * @returns A Database without a signer configured.
    */
   static readOnly(chainNameOrId: ChainName | number): Database {
+    console.warn(
+      "`Database.readOnly()` is a depricated method, use `new Database()`"
+    );
     const baseUrl = getBaseUrl(chainNameOrId);
     return new Database({ baseUrl });
   }
