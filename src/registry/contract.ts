@@ -23,7 +23,7 @@ export interface TableIdentifier {
   tableId: string;
 }
 
-async function getTableIdentifier(
+export async function getTableIdentifier(
   tableName: string | TableIdentifier
 ): Promise<TableIdentifier> {
   const { tableId, chainId } =
