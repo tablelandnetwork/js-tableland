@@ -159,7 +159,7 @@ export class Registry {
    * - `msg.sender` must be `caller` or contract owner
    * - `tableId` must exist
    * - `caller` must be authorized by the table controller
-   * - `statement` must be less than or equal to 35000 bytes
+   * - `statement` must be less than or equal to 35000 bytes after normalizing
    */
   async runSQL(params: RunSQLParams): Promise<ContractTransaction> {
     return await runSQL(this.config, params);

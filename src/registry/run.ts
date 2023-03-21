@@ -48,5 +48,5 @@ export async function runSQL(
     signer,
     chainId
   );
-  return await contract.runSQL(caller, tableId, statement, overrides);
+  return await contract.writeToTable(caller, tableId, statement, overrides);
 }
