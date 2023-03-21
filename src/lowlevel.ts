@@ -6,7 +6,7 @@ import {
   type ReadConfig,
 } from "./helpers/index.js";
 import { prepareCreateTable, createTable } from "./registry/create.js";
-import { prepareRunSQL, runSQL } from "./registry/run.js";
+import { prepareWriteToTable, writeToTable } from "./registry/run.js";
 import {
   type ExtractedStatement,
   type WaitableTransactionReceipt,
@@ -76,8 +76,8 @@ export async function exec(
     /* c8 ignore next */
     case "acl":
     case "write": {
-      const { prefix, ...prepared } = await prepareRunSQL(_params);
-      const tx = await runSQL(_config, prepared);
+      const { prefix, ...prepared } = await prepareWriteToTable(_params);
+      const tx = await writeToTable(_config, prepared);
       return await wrapTransaction(_config, prefix, tx);
     }
     /* c8 ignore next 2 */

@@ -22,7 +22,7 @@ export interface PrepareParams {
   first: string;
 }
 
-export async function prepareRunSQL({
+export async function prepareWriteToTable({
   statement,
   chainId,
   first,
@@ -32,6 +32,17 @@ export async function prepareRunSQL({
   return { tableId: tableId.toString(), statement, prefix, chainId };
 }
 
+export interface WriteToTableParams extends TableIdentifier {
+  /**
+   * SQL statement string.
+   */
+  statement: string;
+}
+
+/**
+ * @custom deprecated This type will change in the next major version.
+ * Use the `WriteToTableParams` type.
+ */
 export interface RunSQLParams extends TableIdentifier {
   /**
    * SQL statement string.
@@ -39,7 +50,22 @@ export interface RunSQLParams extends TableIdentifier {
   statement: string;
 }
 
-export async function runSQL(
+export interface Runnable {
+  statement: string;
+  tableId: number;
+}
+
+/**
+ * @custom deprecated This is a temporary type that will be removed
+ */
+export interface RunSQLsParams extends TableIdentifier {
+  /**
+   * SQL statement string.
+   */
+  runnables: Runnable[];
+}
+
+export async function writeToTable(
   { signer }: SignerConfig,
   { statement, tableId, chainId }: RunSQLParams
 ): Promise<ContractTransaction> {
@@ -48,5 +74,17 @@ export async function runSQL(
     signer,
     chainId
   );
-  return await contract.runSQL(caller, tableId, statement, overrides);
+  return await contract.writeToTable(caller, tableId, statement, overrides);
+}
+
+export async function runSQL(
+  { signer }: SignerConfig,
+  { runnables, chainId }: RunSQLsParams
+): Promise<ContractTransaction> {
+  const caller = await signer.getAddress();
+  const { contract, overrides } = await getContractAndOverrides(
+    signer,
+    chainId
+  );
+  return await contract.runSQL(caller, runnables, overrides);
 }

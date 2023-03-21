@@ -13,7 +13,7 @@ import {
   lockController,
 } from "./controller.js";
 import { createTable, type CreateTableParams } from "./create.js";
-import { runSQL, type RunSQLParams } from "./run.js";
+import { runSQL, type WriteToTableParams, type Runnable } from "./run.js";
 
 export {
   type Result,
@@ -25,7 +25,9 @@ export {
 export {
   type TableIdentifier,
   type CreateTableParams,
+  type WriteToTableParams,
   type RunSQLParams,
+  type Runnable,
   type TransferParams,
   type SetParams,
 };
@@ -159,9 +161,9 @@ export class Registry {
    * - `msg.sender` must be `caller` or contract owner
    * - `tableId` must exist
    * - `caller` must be authorized by the table controller
-   * - `statement` must be less than or equal to 35000 bytes
+   * - `statement` must be less than or equal to 35000 bytes after normalizing
    */
-  async runSQL(params: RunSQLParams): Promise<ContractTransaction> {
+  async runSQL(params: WriteToTableParams): Promise<ContractTransaction> {
     return await runSQL(this.config, params);
   }
 }

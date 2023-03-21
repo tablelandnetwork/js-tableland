@@ -73,25 +73,68 @@ describe("database", function () {
       });
     });
 
-    test("when batching mutations with a create throws an error", async function () {
+    test("when batching mutations with a create", async function () {
+      const { meta: tableMeta } = await db
+        .prepare(
+          "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
+        )
+        .run();
+      const tableName = tableMeta.txn?.name ?? "";
+
       const stmt = db.prepare(
-        `INSERT INTO wontwork_31337_3 (name, age) VALUES (?1, ?2)`
+        `INSERT INTO ${tableName} (name, age) VALUES (?1, ?2)`
       );
-      // This also demonstates _why_ it would be hard to batch a create with mutations...
-      // We don't know the table name!
-      const batch = db.batch([
-        db.prepare("CREATE TABLE wontwork (name text, age integer);"),
+      // Note: you can't batch a create then mutate on the same table since
+      // we don't know the table name!
+      const batch = await db.batch([
+        db.prepare("CREATE TABLE willwork (name text, age integer);"),
         stmt.bind("Bobby", 5),
         stmt.bind("Tables", 6),
       ]);
-      await rejects(batch, (err: any) => {
-        strictEqual(
-          err.cause.message,
-          "statement error: batch must contain uniform types (e.g., CREATE, INSERT, SELECT, etc)"
-        );
-        return true;
-      });
+console.log(batch);
+      strictEqual(batch.length, 2);
+      const { meta } = batch.pop() ?? {};
+      assert(meta!.duration != null);
+      assert(meta!.txn?.transactionHash != null);
+      match(tableName, /^willwork_31337_\d+$/);
+
+      await meta?.txn?.wait();
+
+      const results = await db.prepare("SELECT * FROM " + tableName).all();
+      strictEqual(results.results.length, 2);
     });
+
+    test("test batching combines statements by tables", async function () {
+      const { meta: tableMeta } = await db
+        .prepare(
+          "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
+        )
+        .run();
+      const tableName2 = tableMeta.txn?.name ?? "";
+
+      const stmt1 = db.prepare(
+        `INSERT INTO ${tableName} (name, age) VALUES (?1, ?2)`
+      );
+      const stmt2 = db.prepare(
+        `INSERT INTO ${tableName2} (name, age) VALUES (?1, ?2)`
+      );
+      // Note: you can't batch a create then mutate on the same table since
+      // we don't know the table name!
+      const batch = await db.batch([
+        db.prepare("create table derp (a int);"),
+        db.prepare(`GRANT DELETE ON ${tableName2} TO '${signer.address}';`),
+        db.prepare(
+          `INSERT INTO ${tableName} (name, age) VALUES ('foo', 2);INSERT INTO ${tableName2} (name, age) VALUES ('bar', 4);`
+        ),
+        stmt1.bind("Bobby", 5),
+        stmt1.bind("Tables", 6),
+        stmt2.bind("Robert", 50),
+        stmt2.bind("Students", 60),
+      ]);
+
+      strictEqual(batch.length, 2);
+      // strictEqual(batch[0].results.transactionHash, batch[1].results.transactionHash);
+    })
 
     test("when batching mutations with reads throws an error", async function () {
       const stmt = db.prepare(
@@ -115,6 +158,13 @@ describe("database", function () {
     });
 
     test("when batching mutations works and adds rows", async function () {
+      const { meta: tableMeta } = await db
+        .prepare(
+          "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
+        )
+        .run();
+      const tableName = tableMeta.txn?.name ?? "";
+
       const stmt = db.prepare(
         `INSERT INTO ${tableName} (name, age) VALUES (?1, ?2)`
       );
@@ -131,6 +181,8 @@ describe("database", function () {
       await meta?.txn?.wait();
 
       const results = await db.prepare("SELECT * FROM " + tableName).all();
+      // TODO: `tableName` table is not reset between tests so the length
+      //       is based on running of other tests
       strictEqual(results.results.length, 2);
     });
 

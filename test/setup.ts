@@ -3,6 +3,7 @@ import { LocalTableland } from "@tableland/local";
 
 const lt = new LocalTableland({
   silent: true,
+  registryDir: "/Users/jwagner/Workspaces/textile/github/evm-tableland",
 });
 
 before(async function () {

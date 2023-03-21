@@ -35,6 +35,7 @@ export {
 } from "./ethers.js";
 export {
   normalize,
+  typeIsMutate,
   validateTableName,
   type NormalizedStatement,
   type StatementType,

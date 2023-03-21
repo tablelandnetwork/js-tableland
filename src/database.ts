@@ -1,4 +1,4 @@
-import { type Result } from "./registry/index.js";
+import { type Result, type Runnable } from "./registry/index.js";
 import {
   type Config,
   type AutoWaitConfig,
@@ -8,6 +8,7 @@ import {
   type Signal,
   type Signer,
   normalize,
+  typeIsMutate,
 } from "./helpers/index.js";
 import { Statement } from "./statement.js";
 import { errorWithCause } from "./lowlevel.js";
@@ -87,25 +88,61 @@ export class Database<D = unknown> {
     opts: Signal = {}
   ): Promise<Array<Result<T>>> {
     try {
+      // each statement in `statements` could potentially be a ; separated set of statements
+      // we need to split them up and then recombine them first as "read" and "mutate", then
+      // for the mutates, combine based on the table they are mutating.  This sets us up to
+      // use the new runSQL method that can affect multiple tables in a single transaction.
       const normalized = await Promise.all(
         statements.map(async (stmt) => await normalize(stmt.toString()))
       );
-      const type: string | null = normalized
+console.log("normalized", normalized);
+      // TODO: combine by tableId when possible, then combine by type.
+      //       we should be able to have all mutation types in the same batch,
+      //       or all read types in the same batch.
+      const compatableTypes: string | null = normalized
         .map((stmt) => stmt.type)
-        .reduce((a, b): any => (a === b ? a : null));
-      if (type == null) {
+        .reduce((a, b): any => {
+          (typeIsMutate(a) === typeIsMutate(b) ? a : null)
+        });
+
+      if (compatableTypes == null) {
         throw new Error(
-          "statement error: batch must contain uniform types (e.g., CREATE, INSERT, SELECT, etc)"
+          "statement error: batch must contain all read statements, or all mutate statements"
         );
       }
-      if (type === "read") {
+      // because of the above check if the first type is "read", then all of them are
+      if (normalized[0].type === "read") {
         return await Promise.all(
           statements.map(async (stmt) => await stmt.all<T>(undefined, opts))
         );
       } else {
-        // Mutating queries are sent as a single query to the smart contract
-        const sql = statements.map((stmt) => stmt.toString()).join(";");
-        const result = await this.prepare(sql).all<T>(undefined, opts);
+        // For mutating queries each table's statements are put into the same Runnable
+
+        // flatten all of the arrays of normalized statements, then group by table name
+        const runnables = (await Promise.all(
+          normalized
+            .flatMap((norm) => norm.statements)
+            .map(async (stmt) => {
+              const reNormed = await normalize(stmt);
+              const table = reNormed.tables[0] ?? "";
+              return { statement: stmt, type: reNormed.type, table };
+            })
+        )).reduce((acc, cur) => {
+          const tableId = cur.type !== "create" ? Number(cur.table.split("_").pop()) : 0;
+          acc.push({
+            tableId,
+            statement: cur.statement
+          });
+
+          return acc;
+        }, [] as Runnable[])
+
+
+
+
+
+        // const sql = statements.map((stmt) => stmt.toString()).join(";");
+        // const result = await this.prepare(sql).all<T>(undefined, opts);
         return [result];
       }
     } catch (cause: any) {
