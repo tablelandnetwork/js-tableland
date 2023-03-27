@@ -199,7 +199,42 @@ describe("registry", function () {
     });
   });
 
-  describe("runSQL()", function () {
+  describe("mutate()", function () {
+    // CREATE TABLE test_exec (id integer primary key, counter integer, info text)
+    let receipt: RegistryReceipt;
+    this.beforeAll(async function () {
+      this.timeout("10s");
+      const tx = await reg.create({
+        chainId: 31337,
+        statement:
+          "create table test_runsql_31337 (id integer primary key, counter integer, info text)",
+      });
+      receipt = await getContractReceipt(tx);
+      notStrictEqual(receipt.tableId, undefined);
+      strictEqual(receipt.chainId, 31337);
+    });
+    test("when insert statement is valid", async function () {
+      const tx = await reg.mutate({
+        ...receipt,
+        statement: `INSERT INTO test_runsql_${receipt.chainId}_${receipt.tableId} (counter, info) VALUES (1, 'Tables');`,
+      });
+      const rec = await tx.wait();
+      strictEqual(typeof rec.transactionHash, "string");
+      strictEqual(rec.transactionHash.length, 66);
+    });
+
+    test("when insert statement is valid", async function () {
+      const tx = await reg.mutate({
+        ...receipt,
+        statement: `UPDATE test_runsql_${receipt.chainId}_${receipt.tableId} SET counter=2`,
+      });
+      const rec = await tx.wait();
+      strictEqual(typeof rec.transactionHash, "string");
+      strictEqual(rec.transactionHash.length, 66);
+    });
+  });
+
+  describe(" *deprecated* runSQL()", function () {
     // CREATE TABLE test_exec (id integer primary key, counter integer, info text)
     let receipt: RegistryReceipt;
     this.beforeAll(async function () {

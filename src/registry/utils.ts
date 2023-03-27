@@ -14,6 +14,13 @@ import {
   getContractReceipt,
 } from "../helpers/ethers.js";
 import { validateTables, type StatementType } from "../helpers/parser.js";
+// import { type Runnable } from "./run.js";
+
+/**
+ * UnnamedWaitableTransactionReceipt represents a TransactionReceipt with a wait method, but no name.
+ */
+export type UnnamedWaitableTransactionReceipt = TransactionReceipt &
+  Wait<TransactionReceipt>;
 
 /**
  * WaitableTransactionReceipt represents a named TransactionReceipt with a wait method.
@@ -152,4 +159,31 @@ export async function wrapTransaction(
     return { ...receipt, name, prefix };
   };
   return { ...params, wait, name, prefix };
+}
+
+export async function wrapBatch(
+  conn: Config,
+  tx: ContractTransaction
+): Promise<UnnamedWaitableTransactionReceipt> {
+  const _params = await getContractReceipt(tx);
+  const chainId =
+    _params.chainId === 0 || _params.chainId == null
+      ? await extractChainId(conn)
+      : _params.chainId;
+  const params = { ..._params, chainId };
+
+  const wait = async (
+    opts: SignalAndInterval = {}
+  ): Promise<TransactionReceipt> => {
+    const receipt = await pollTransactionReceipt(conn, params, opts);
+    if (receipt.error != null) {
+      throw new Error(receipt.error);
+    }
+    console.log("receipt", receipt);
+    // TODO: We are doing a Batch so `name`, `prefix`, or `tableId` only exist for
+    //       each statement in the batch.  Should we map them back to the statements?
+    return receipt;
+  };
+
+  return { ...params, wait };
 }

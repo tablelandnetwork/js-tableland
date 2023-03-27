@@ -91,11 +91,11 @@ describe("database", function () {
         stmt.bind("Bobby", 5),
         stmt.bind("Tables", 6),
       ]);
-console.log(batch);
+      console.log(batch);
       strictEqual(batch.length, 2);
       const { meta } = batch.pop() ?? {};
-      assert(meta!.duration != null);
-      assert(meta!.txn?.transactionHash != null);
+      assert(meta.duration != null);
+      assert(meta.txn?.transactionHash != null);
       match(tableName, /^willwork_31337_\d+$/);
 
       await meta?.txn?.wait();
@@ -134,7 +134,7 @@ console.log(batch);
 
       strictEqual(batch.length, 2);
       // strictEqual(batch[0].results.transactionHash, batch[1].results.transactionHash);
-    })
+    });
 
     test("when batching mutations with reads throws an error", async function () {
       const stmt = db.prepare(
@@ -174,9 +174,9 @@ console.log(batch);
       ]);
       strictEqual(batch.length, 1);
       const { meta } = batch.pop() ?? {};
-      assert(meta!.duration != null);
-      assert(meta!.txn?.transactionHash != null);
-      strictEqual(meta!.txn.name, tableName);
+      assert(meta.duration != null);
+      assert(meta.txn?.transactionHash != null);
+      strictEqual(meta.txn.name, tableName);
 
       await meta?.txn?.wait();
 
@@ -226,11 +226,11 @@ console.log(batch);
       strictEqual(batch.length, 2);
 
       // First one should have at least two rows, second should have 2 fewer rows
-      const [first, second] = batch.map((res) => res.results.length);
+      const [first, second] = batch.map((res: any) => res.results.length);
       assert(first >= 2 && second === first - 2);
       const { meta } = batch.pop() ?? {};
-      assert(meta!.duration != null);
-      strictEqual(meta!.txn, undefined);
+      assert(meta.duration != null);
+      strictEqual(meta.txn, undefined);
     });
 
     test("when using an abort controller to halt a batch of reads", async function () {

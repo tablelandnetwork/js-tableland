@@ -1,4 +1,6 @@
+import { type NormalizedStatement } from "@tableland/sqlparser";
 import { type Result, type Runnable } from "./registry/index.js";
+// import { wrapResult, wrapBatch } from "./registry/utils.js";
 import {
   type Config,
   type AutoWaitConfig,
@@ -8,10 +10,10 @@ import {
   type Signal,
   type Signer,
   normalize,
-  typeIsMutate,
+  validateTableName,
 } from "./helpers/index.js";
 import { Statement } from "./statement.js";
-import { errorWithCause } from "./lowlevel.js";
+import { execMutateMany, execCreateMany, errorWithCause } from "./lowlevel.js";
 
 /**
  * Database is the primary API for accessing the Tabeland network as a database.
@@ -83,68 +85,81 @@ export class Database<D = unknown> {
    * @param opts Additional options to control execution.
    * @returns An array of run results.
    */
-  async batch<T = D>(
-    statements: Statement[],
-    opts: Signal = {}
-  ): Promise<Array<Result<T>>> {
+  async batch<T = D>(statements: Statement[], opts: Signal = {}): Promise<any> {
     try {
       // each statement in `statements` could potentially be a ; separated set of statements
       // we need to split them up and then recombine them first as "read" and "mutate", then
       // for the mutates, combine based on the table they are mutating.  This sets us up to
-      // use the new runSQL method that can affect multiple tables in a single transaction.
+      // use the new mutate method that can affect multiple tables in a single transaction.
       const normalized = await Promise.all(
         statements.map(async (stmt) => await normalize(stmt.toString()))
       );
-console.log("normalized", normalized);
-      // TODO: combine by tableId when possible, then combine by type.
-      //       we should be able to have all mutation types in the same batch,
-      //       or all read types in the same batch.
-      const compatableTypes: string | null = normalized
-        .map((stmt) => stmt.type)
-        .reduce((a, b): any => {
-          (typeIsMutate(a) === typeIsMutate(b) ? a : null)
-        });
 
-      if (compatableTypes == null) {
+      const type: string | null = normalized
+        .map((stmt) => stmt.type)
+        .reduce((a, b): any => (a === b ? a : null));
+      if (type == null) {
         throw new Error(
-          "statement error: batch must contain all read statements, or all mutate statements"
+          "statement error: batch must contain uniform types (e.g., CREATE, INSERT, SELECT, etc)"
         );
       }
-      // because of the above check if the first type is "read", then all of them are
+
+      // because of the above check if the first type is the same as all the others
       if (normalized[0].type === "read") {
         return await Promise.all(
           statements.map(async (stmt) => await stmt.all<T>(undefined, opts))
         );
-      } else {
-        // For mutating queries each table's statements are put into the same Runnable
-
-        // flatten all of the arrays of normalized statements, then group by table name
-        const runnables = (await Promise.all(
-          normalized
-            .flatMap((norm) => norm.statements)
-            .map(async (stmt) => {
-              const reNormed = await normalize(stmt);
-              const table = reNormed.tables[0] ?? "";
-              return { statement: stmt, type: reNormed.type, table };
-            })
-        )).reduce((acc, cur) => {
-          const tableId = cur.type !== "create" ? Number(cur.table.split("_").pop()) : 0;
-          acc.push({
-            tableId,
-            statement: cur.statement
-          });
-
-          return acc;
-        }, [] as Runnable[])
-
-
-
-
-
-        // const sql = statements.map((stmt) => stmt.toString()).join(";");
-        // const result = await this.prepare(sql).all<T>(undefined, opts);
-        return [result];
       }
+
+      if (normalized[0].type === "create") {
+        let receipt = await execCreateMany(
+          this.config,
+          statements.map((stmt) => stmt.toString())
+        );
+        if (this.config.autoWait ?? false) {
+          const waited = await receipt.wait();
+          receipt = { ...receipt, ...waited };
+        }
+
+        // TODO: do we need to map the tableIds back to the original statements?
+        return receipt;
+      }
+
+      if (normalized[0].type === "acl") {
+        // TODO: handle batched acl statements...
+        throw new Error("batch ACL statements not implemented");
+      }
+
+      // if type is not read or create, then we use mutate.
+      // For mutating queries each table's statements are put into the same Runnable.
+      // To do this we will flatten all of the arrays of normalized statements, then group by table name.
+
+      // TOOD: recombining like this might be a bad idea, because of the single statement size limit
+      //    If we let the runnables be 1 to 1 with the caller's statements it gives the caller control
+      //    over how things are done.
+      //    BUT.... someone might try to do something like `insert into tbl1 (1); insert into tbl2 (2);`
+      //    as one of the statement strings, so we do need to do some spliting on a per statement string
+      //    basis.
+      // We can go through each of the normalized entries and see if there is more than one `table`
+      // if so split the statements array into a statement+tableId for each
+
+      const runnables = (
+        await Promise.all(
+          normalized.map(async function (norm) {
+            return await normalizedToRunnables(norm);
+          })
+        )
+      ).flat();
+
+console.log(runnables);
+
+      let receipt = await execMutateMany(this.config, runnables);
+      if (this.config.autoWait ?? false) {
+        const waited = await receipt.wait();
+        receipt = { ...receipt, ...waited };
+      }
+
+      return receipt;
     } catch (cause: any) {
       if (cause.message.startsWith("ALL_ERROR") === true) {
         throw errorWithCause("BATCH_ERROR", cause.cause);
@@ -198,4 +213,35 @@ console.log("normalized", normalized);
   async dump(_opts: Signal = {}): Promise<ArrayBuffer> {
     throw errorWithCause("DUMP_ERROR", new Error("not implemented yet"));
   }
+}
+
+async function normalizedToRunnables(
+  normalized: NormalizedStatement
+): Promise<Runnable[]> {
+  if (normalized.type !== "write") {
+    throw new Error(
+      "converting to runnable is only possible for write statements"
+    );
+  }
+  if (normalized.statements.length > 1) {
+    // if there's more than one statement we need a separate runnable for each
+    return (
+      await Promise.all(
+        normalized.statements.map(async function (statement) {
+          const norm = await normalize(statement);
+          return await normalizedToRunnables(norm);
+        })
+      )
+    ).flat();
+  }
+
+  const { tableId } = await validateTableName(normalized.tables[0]);
+
+  return [
+    {
+      tableId,
+      statement: normalized.statements[0],
+      type: "write",
+    },
+  ];
 }

@@ -27,7 +27,7 @@ export async function prepareCreateTable({
   statement,
   chainId,
   first,
-}: PrepareParams): Promise<CreateTableParams & { prefix: string }> {
+}: PrepareParams): Promise<CreateOneParams & { prefix: string }> {
   const { prefix, name: tableName } = await validateTableName(
     `${first}_${chainId}`,
     true
@@ -43,7 +43,7 @@ export async function prepareCreateTable({
   return { statement: stmt, chainId, prefix };
 }
 
-export interface CreateTableParams {
+export interface CreateOneParams {
   /**
    * SQL statement string.
    */
@@ -54,14 +54,68 @@ export interface CreateTableParams {
   chainId: number;
 }
 
+export interface CreateManyParams {
+  /**
+   * SQL statement string.
+   */
+  statements: string[];
+  /**
+   * The target chain id.
+   */
+  chainId: number;
+}
+
+export type CreateParams = CreateOneParams | CreateManyParams;
+
+/**
+ * @custom deprecated This be removed in the next major version.
+ * Use `create`.
+ */
 export async function createTable(
+  config: SignerConfig,
+  params: CreateOneParams
+): Promise<ContractTransaction> {
+  return await _createOne(config, params);
+}
+
+export async function create(
+  config: SignerConfig,
+  params: CreateParams
+): Promise<ContractTransaction> {
+  if (isCreateOne(params)) {
+    return await _createOne(config, params);
+  }
+  return await _createMany(config, params);
+}
+
+async function _createOne(
   { signer }: SignerConfig,
-  { statement, chainId }: CreateTableParams
+  { statement, chainId }: CreateOneParams
 ): Promise<ContractTransaction> {
   const owner = await signer.getAddress();
   const { contract, overrides } = await getContractAndOverrides(
     signer,
     chainId
   );
-  return await contract.createTable(owner, statement, overrides);
+  return await contract["create(address,string)"](owner, statement, overrides);
 }
+
+async function _createMany(
+  { signer }: SignerConfig,
+  { statements, chainId }: CreateManyParams
+): Promise<ContractTransaction> {
+  const owner = await signer.getAddress();
+  const { contract, overrides } = await getContractAndOverrides(
+    signer,
+    chainId
+  );
+  return await contract["create(address,string[])"](
+    owner,
+    statements,
+    overrides
+  );
+}
+
+const isCreateOne = function (params: CreateParams): params is CreateOneParams {
+  return (params as CreateOneParams).statement !== undefined;
+};

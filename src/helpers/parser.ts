@@ -57,11 +57,3 @@ export async function validateTables({
   }
   return validatedTables;
 }
-
-export function typeIsMutate (t: string) {
-  if (typeof t !== "string") {
-    throw new Error("statement type must be a String");
-  }
-
-  return t.length && t !== "read";
-}

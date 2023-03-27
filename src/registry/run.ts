@@ -22,7 +22,7 @@ export interface PrepareParams {
   first: string;
 }
 
-export async function prepareWriteToTable({
+export async function prepareMutateOne({
   statement,
   chainId,
   first,
@@ -32,18 +32,18 @@ export async function prepareWriteToTable({
   return { tableId: tableId.toString(), statement, prefix, chainId };
 }
 
-export interface WriteToTableParams extends TableIdentifier {
+/**
+ * @custom deprecated This type will change in the next major version.
+ * Use the `MutateOneParams` type.
+ */
+export interface RunSQLParams extends TableIdentifier {
   /**
    * SQL statement string.
    */
   statement: string;
 }
 
-/**
- * @custom deprecated This type will change in the next major version.
- * Use the `WriteToTableParams` type.
- */
-export interface RunSQLParams extends TableIdentifier {
+export interface MutateOneParams extends TableIdentifier {
   /**
    * SQL statement string.
    */
@@ -53,38 +53,66 @@ export interface RunSQLParams extends TableIdentifier {
 export interface Runnable {
   statement: string;
   tableId: number;
+  type: string;
 }
 
-/**
- * @custom deprecated This is a temporary type that will be removed
- */
-export interface RunSQLsParams extends TableIdentifier {
+export interface MutateManyParams {
   /**
-   * SQL statement string.
+   * A list of Runnables.
    */
   runnables: Runnable[];
+  /**
+   * The target chain id.
+   */
+  chainId: number;
 }
 
-export async function writeToTable(
+export type MutateParams = MutateOneParams | MutateManyParams;
+
+export async function mutate(
+  config: SignerConfig,
+  params: MutateParams
+): Promise<ContractTransaction> {
+  if (isMutateOne(params)) {
+    return await _mutateOne(config, params);
+  }
+
+  return await _mutateMany(config, params);
+}
+
+async function _mutateOne(
   { signer }: SignerConfig,
-  { statement, tableId, chainId }: RunSQLParams
+  { statement, tableId, chainId }: MutateOneParams
 ): Promise<ContractTransaction> {
   const caller = await signer.getAddress();
   const { contract, overrides } = await getContractAndOverrides(
     signer,
     chainId
   );
-  return await contract.writeToTable(caller, tableId, statement, overrides);
+  return await contract["mutate(address,uint256,string)"](
+    caller,
+    tableId,
+    statement,
+    overrides
+  );
 }
 
-export async function runSQL(
+async function _mutateMany(
   { signer }: SignerConfig,
-  { runnables, chainId }: RunSQLsParams
+  { runnables, chainId }: MutateManyParams
 ): Promise<ContractTransaction> {
   const caller = await signer.getAddress();
   const { contract, overrides } = await getContractAndOverrides(
     signer,
     chainId
   );
-  return await contract.runSQL(caller, runnables, overrides);
+  return await contract["mutate(address,(uint256,string)[])"](
+    caller,
+    runnables,
+    overrides
+  );
 }
+
+const isMutateOne = function (params: MutateParams): params is MutateOneParams {
+  return (params as MutateOneParams).statement !== undefined;
+};

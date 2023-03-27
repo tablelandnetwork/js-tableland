@@ -3,6 +3,7 @@ import { LocalTableland } from "@tableland/local";
 
 const lt = new LocalTableland({
   silent: true,
+  // TODO: remove the local path once evm publishes the new contract
   registryDir: "/Users/jwagner/Workspaces/textile/github/evm-tableland",
 });
 

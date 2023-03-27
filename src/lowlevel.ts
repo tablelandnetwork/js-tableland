@@ -5,12 +5,24 @@ import {
   type Signal,
   type ReadConfig,
 } from "./helpers/index.js";
-import { prepareCreateTable, createTable } from "./registry/create.js";
-import { prepareWriteToTable, writeToTable } from "./registry/run.js";
+import {
+  prepareCreateTable,
+  createTable,
+  create,
+  type CreateManyParams,
+} from "./registry/create.js";
+import {
+  prepareMutateOne,
+  mutate,
+  type Runnable,
+  type MutateManyParams,
+} from "./registry/run.js";
 import {
   type ExtractedStatement,
   type WaitableTransactionReceipt,
+  type UnnamedWaitableTransactionReceipt,
   wrapTransaction,
+  wrapBatch,
 } from "./registry/utils.js";
 import {
   type ObjectsFormat,
@@ -76,14 +88,44 @@ export async function exec(
     /* c8 ignore next */
     case "acl":
     case "write": {
-      const { prefix, ...prepared } = await prepareWriteToTable(_params);
-      const tx = await writeToTable(_config, prepared);
+      const { prefix, ...prepared } = await prepareMutateOne(_params);
+      const tx = await mutate(_config, prepared);
       return await wrapTransaction(_config, prefix, tx);
     }
     /* c8 ignore next 2 */
     default:
       throw new Error("invalid statement type: read");
   }
+}
+
+export async function execMutateMany(
+  config: Config,
+  runnables: Runnable[]
+): Promise<UnnamedWaitableTransactionReceipt> {
+  const signer = await extractSigner(config);
+  const chainId = await signer.getChainId();
+  const baseUrl = await extractBaseUrl(config, chainId);
+  const _config = { baseUrl, signer };
+  const params: MutateManyParams = { runnables, chainId };
+
+  const tx = await mutate(_config, params);
+
+  return await wrapBatch(_config, tx);
+}
+
+export async function execCreateMany(
+  config: Config,
+  statements: string[]
+): Promise<UnnamedWaitableTransactionReceipt> {
+  const signer = await extractSigner(config);
+  const chainId = await signer.getChainId();
+  const baseUrl = await extractBaseUrl(config, chainId);
+  const _config = { baseUrl, signer };
+  const params: CreateManyParams = { statements, chainId };
+
+  const tx = await create(_config, params);
+
+  return await wrapBatch(_config, tx);
 }
 
 export function errorWithCause(code: string, cause: Error): Error {
