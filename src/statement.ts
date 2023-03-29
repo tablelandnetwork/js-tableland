@@ -25,6 +25,7 @@ import {
   queryRaw,
   exec,
   errorWithCause,
+  errorWithHint,
 } from "./lowlevel.js";
 
 export { type ValuesType, type Parameters, type ValueOf, type BaseType };
@@ -80,7 +81,8 @@ export class Statement<S = unknown> {
     try {
       return bindValues(this.sql, this.parameters);
     } catch (cause: any) {
-      throw errorWithCause("BIND_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("BIND_ERROR", hint);
     }
   }
 
@@ -154,12 +156,14 @@ export class Statement<S = unknown> {
       }
     } catch (cause: any) {
       if (
+        // TODO: this kind of check should be a hint
         cause instanceof Error &&
         cause.message.includes("column not found")
       ) {
         throw errorWithCause("COLUMN_NOTFOUND", cause);
       }
-      throw errorWithCause("ALL_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("ALL_ERROR", hint);
     }
   }
 
@@ -211,12 +215,14 @@ export class Statement<S = unknown> {
       }
     } catch (cause: any) {
       if (
+        // TODO: this kind of conditional should be a hint
         cause instanceof Error &&
         cause.message.includes("column not found")
       ) {
         throw errorWithCause("COLUMN_NOTFOUND", cause);
       }
-      throw errorWithCause("FIRST_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("FIRST_ERROR", hint);
     }
   }
 
@@ -250,7 +256,8 @@ export class Statement<S = unknown> {
         }
       }
     } catch (cause: any) {
-      throw errorWithCause("RUN_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("RUN_ERROR", hint);
     }
   }
 
@@ -280,7 +287,8 @@ export class Statement<S = unknown> {
         }
       }
     } catch (cause: any) {
-      throw errorWithCause("RAW_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("RAW_ERROR", hint);
     }
   }
 }

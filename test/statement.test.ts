@@ -68,7 +68,7 @@ describe("statement", function () {
         (err: any) => {
           strictEqual(
             err.cause.message,
-            "error parsing statement: syntax error at position 36 near 'blurg'"
+            "error parsing statement: syntax error at position 36 near 'blurg'\n  CREATE TABLE test_run (counter blurg⚠);"
           );
           return true;
         }
@@ -169,7 +169,7 @@ describe("statement", function () {
       await rejects(db.prepare("SELECT * FROM 3.14;").all(), (err: any) => {
         strictEqual(
           err.cause.message,
-          "error parsing statement: syntax error at position 18 near '3.14'"
+          "error parsing statement: syntax error at position 18 near '3.14'\n  SELECT * FROM 3.14⚠;"
         );
         return true;
       });
@@ -336,7 +336,7 @@ describe("statement", function () {
       await rejects(db.prepare("SELECT * FROM 3.14;").first(), (err: any) => {
         strictEqual(
           err.cause.message,
-          "error parsing statement: syntax error at position 18 near '3.14'"
+          "error parsing statement: syntax error at position 18 near '3.14'\n  SELECT * FROM 3.14⚠;"
         );
         return true;
       });
@@ -423,7 +423,7 @@ describe("statement", function () {
       await rejects(db.prepare("SELECT * FROM 3.14;").raw(), (err: any) => {
         strictEqual(
           err.cause.message,
-          "error parsing statement: syntax error at position 18 near '3.14'"
+          "error parsing statement: syntax error at position 18 near '3.14'\n  SELECT * FROM 3.14⚠;"
         );
         return true;
       });

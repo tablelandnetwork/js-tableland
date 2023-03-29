@@ -51,6 +51,42 @@ export function errorWithCause(code: string, cause: Error): Error {
   return new Error(`${code}: ${cause.message}`, { cause });
 }
 
+const warningSymbol = String.fromCharCode(0x26a0);
+const hints = [
+  {
+    regexp: /syntax error at position \d+ near/,
+    template: function (statement: string, match: any): string {
+      const location = Number(match.input.slice(match.index).split(" ")[4]);
+      if (isNaN(location)) return "";
+
+      return `${statement.slice(0, location)}${warningSymbol}${statement.slice(
+        location
+      )}`;
+    },
+  },
+];
+
+export function errorWithHint(statement: string, cause: Error): Error {
+  if (cause.message == null || statement == null) return cause;
+
+  let errorMessage = cause.message;
+  try {
+    for (let i = 0; i < hints.length; i++) {
+      const hint = hints[i];
+      const match = errorMessage.match(hint.regexp);
+      if (match == null) continue;
+
+      const hintMessage = hint.template(statement, match);
+      errorMessage += hintMessage !== "" ? `\n  ${hintMessage}` : "";
+      break;
+    }
+
+    return new Error(errorMessage, { cause });
+  } catch (err) {
+    return cause;
+  }
+}
+
 function catchNotFound(err: unknown): [] {
   if (err instanceof ApiError && err.status === 404) {
     return [];
