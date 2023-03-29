@@ -67,6 +67,8 @@ const hints = [
   {
     regexp: /no such column/,
     template: function (statement: string, match: any): string {
+      // note: the error returned from the validator, and the one generated in the client
+      // in the client already include the name of the column.
       return statement;
     },
   },
