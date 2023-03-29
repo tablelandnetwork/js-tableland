@@ -64,6 +64,12 @@ const hints = [
       )}`;
     },
   },
+  {
+    regexp: /no such column/,
+    template: function (statement: string, match: any): string {
+      return statement;
+    },
+  },
 ];
 
 export function errorWithHint(statement: string, cause: Error): Error {
@@ -142,7 +148,7 @@ export function extractColumn<T = unknown, K extends keyof T = keyof T>(
   const array = Array.isArray(values) ? values : [values];
   return array.map((row: T) => {
     if (row[colName] === undefined) {
-      throw new Error(`column not found: ${colName.toString()}`);
+      throw new Error(`no such column: ${colName.toString()}`);
     }
     return row[colName];
   });

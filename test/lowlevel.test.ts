@@ -238,7 +238,7 @@ describe("lowlevel", function () {
             "missing"
           ),
         (err: any) => {
-          strictEqual(err.message, "column not found: missing");
+          strictEqual(err.message, "no such column: missing");
           return true;
         }
       );
@@ -331,7 +331,7 @@ describe("lowlevel", function () {
             "missing"
           ),
         (err: any) => {
-          strictEqual(err.message, "column not found: missing");
+          strictEqual(err.message, "no such column: missing");
           return true;
         }
       );

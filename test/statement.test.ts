@@ -213,15 +213,23 @@ describe("statement", function () {
     });
 
     test("when trying to extract a missing column", async function () {
+      const sql1 = `SELECT * FROM ${tableName};`;
+      const sql2 = `SELECT missing FROM ${tableName};`;
+
       // In the following, if we aren't using generics, typescript would catch that missing isn't valid
       // We use "any" as the type just to test passing invalid colum names
-      await rejects(
-        db.prepare(`SELECT * FROM ${tableName};`).all<any>("missing"),
-        (err: any) => {
-          strictEqual(err.cause.message, "column not found: missing");
-          return true;
-        }
-      );
+      await rejects(db.prepare(sql1).all<any>("missing"), (err: any) => {
+        strictEqual(err.cause.message, `no such column: missing\n  ${sql1}`);
+        return true;
+      });
+
+      await rejects(db.prepare(sql2).all<any>(), (err: any) => {
+        strictEqual(
+          err.cause.message,
+          `running read statement: executing read-query: parsing result to json: executing query: no such column: missing\n  ${sql2}`
+        );
+        return true;
+      });
     });
 
     test("when extracting a column from multiple rows", async function () {
@@ -343,13 +351,11 @@ describe("statement", function () {
     });
 
     test("when trying to extract a missing column", async function () {
-      await rejects(
-        db.prepare(`SELECT * FROM ${tableName};`).first<any>("missing"),
-        (err: any) => {
-          strictEqual(err.cause.message, "column not found: missing");
-          return true;
-        }
-      );
+      const sql = `SELECT * FROM ${tableName};`;
+      await rejects(db.prepare(sql).first<any>("missing"), (err: any) => {
+        strictEqual(err.cause.message, `no such column: missing\n  ${sql}`);
+        return true;
+      });
     });
 
     test("when select statment has a runtime error", async function () {

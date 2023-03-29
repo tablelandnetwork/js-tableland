@@ -155,13 +155,6 @@ export class Statement<S = unknown> {
         }
       }
     } catch (cause: any) {
-      if (
-        // TODO: this kind of check should be a hint
-        cause instanceof Error &&
-        cause.message.includes("column not found")
-      ) {
-        throw errorWithCause("COLUMN_NOTFOUND", cause);
-      }
       const hint = errorWithHint(this.sql, cause);
       throw errorWithCause("ALL_ERROR", hint);
     }
@@ -214,13 +207,6 @@ export class Statement<S = unknown> {
         }
       }
     } catch (cause: any) {
-      if (
-        // TODO: this kind of conditional should be a hint
-        cause instanceof Error &&
-        cause.message.includes("column not found")
-      ) {
-        throw errorWithCause("COLUMN_NOTFOUND", cause);
-      }
       const hint = errorWithHint(this.sql, cause);
       throw errorWithCause("FIRST_ERROR", hint);
     }
