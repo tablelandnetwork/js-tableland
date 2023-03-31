@@ -19,6 +19,35 @@ import {
 } from "./validator/query.js";
 import { ApiError } from "./validator/index.js";
 
+// see `errorWithHint` for usage
+const hints = [
+  {
+    regexp: /syntax error at position \d+ near '.+'/,
+    template: function (statement: string, match: any): string {
+      const location = Number(match.input.slice(match.index).split(" ")[4]);
+      if (isNaN(location)) return "";
+      const term = match.input.match(/(?<=near ').+'/);
+      if (term == null || term.length < 1) return "";
+      // the term match includes the single quote symbol after the term,
+      // so we want to subtract that to get the term's length
+      const termLength = term[0].length - 1;
+      const padding = " ".repeat(location - termLength);
+      const carrots = "^".repeat(termLength);
+
+      return `${statement}
+${padding}${carrots}`;
+    },
+  },
+  {
+    regexp: /no such column/,
+    template: function (statement: string, match: any): string {
+      // note: the error returned from the validator, and the one generated in the client
+      // in the client already include the name of the column.
+      return statement;
+    },
+  },
+];
+
 export async function exec(
   config: Config,
   { type, sql, tables: [first] }: ExtractedStatement
@@ -50,34 +79,6 @@ export async function exec(
 export function errorWithCause(code: string, cause: Error): Error {
   return new Error(`${code}: ${cause.message}`, { cause });
 }
-
-const hints = [
-  {
-    regexp: /syntax error at position \d+ near '.+'/,
-    template: function (statement: string, match: any): string {
-      const location = Number(match.input.slice(match.index).split(" ")[4]);
-      if (isNaN(location)) return "";
-      const term = match.input.match(/(?<=near ').+'/);
-      if (term == null || term.length < 1) return "";
-      // the term match includes the single quote symbol after the term,
-      // so we want to subtract that to get the term's length
-      const termLength = term[0].length - 1;
-      const padding = " ".repeat(location - termLength);
-      const carrots = "^".repeat(termLength);
-
-      return `${statement}
-${padding}${carrots}`;
-    },
-  },
-  {
-    regexp: /no such column/,
-    template: function (statement: string, match: any): string {
-      // note: the error returned from the validator, and the one generated in the client
-      // in the client already include the name of the column.
-      return statement;
-    },
-  },
-];
 
 export function errorWithHint(statement: string, cause: Error): Error {
   if (cause.message == null || statement == null) return cause;
