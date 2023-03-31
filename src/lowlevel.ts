@@ -51,17 +51,22 @@ export function errorWithCause(code: string, cause: Error): Error {
   return new Error(`${code}: ${cause.message}`, { cause });
 }
 
-const warningSymbol = String.fromCharCode(0x26a0);
 const hints = [
   {
-    regexp: /syntax error at position \d+ near/,
+    regexp: /syntax error at position \d+ near '.+'/,
     template: function (statement: string, match: any): string {
       const location = Number(match.input.slice(match.index).split(" ")[4]);
       if (isNaN(location)) return "";
+      const term = match.input.match(/(?<=near ').+'/);
+      if (term == null || term.length < 1) return "";
+      // the term match includes the single quote symbol after the term,
+      // so we want to subtract that to get the term's length
+      const termLength = term[0].length - 1;
+      const padding = " ".repeat(location - termLength);
+      const carrots = "^".repeat(termLength);
 
-      return `${statement.slice(0, location)}${warningSymbol}${statement.slice(
-        location
-      )}`;
+      return `${statement}
+${padding}${carrots}`;
     },
   },
   {
@@ -85,7 +90,7 @@ export function errorWithHint(statement: string, cause: Error): Error {
       if (match == null) continue;
 
       const hintMessage = hint.template(statement, match);
-      errorMessage += hintMessage !== "" ? `\n  ${hintMessage}` : "";
+      errorMessage += hintMessage !== "" ? `\n${hintMessage}` : "";
       break;
     }
 

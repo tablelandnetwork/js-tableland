@@ -68,7 +68,9 @@ describe("statement", function () {
         (err: any) => {
           strictEqual(
             err.cause.message,
-            "error parsing statement: syntax error at position 36 near 'blurg'\n  CREATE TABLE test_run (counter blurg⚠);"
+            `error parsing statement: syntax error at position 36 near 'blurg'
+CREATE TABLE test_run (counter blurg);
+                               ^^^^^`
           );
           return true;
         }
@@ -169,7 +171,9 @@ describe("statement", function () {
       await rejects(db.prepare("SELECT * FROM 3.14;").all(), (err: any) => {
         strictEqual(
           err.cause.message,
-          "error parsing statement: syntax error at position 18 near '3.14'\n  SELECT * FROM 3.14⚠;"
+          `error parsing statement: syntax error at position 18 near '3.14'
+SELECT * FROM 3.14;
+              ^^^^`
         );
         return true;
       });
@@ -219,14 +223,14 @@ describe("statement", function () {
       // In the following, if we aren't using generics, typescript would catch that missing isn't valid
       // We use "any" as the type just to test passing invalid colum names
       await rejects(db.prepare(sql1).all<any>("missing"), (err: any) => {
-        strictEqual(err.cause.message, `no such column: missing\n  ${sql1}`);
+        strictEqual(err.cause.message, `no such column: missing\n${sql1}`);
         return true;
       });
 
       await rejects(db.prepare(sql2).all<any>(), (err: any) => {
         strictEqual(
           err.cause.message,
-          `running read statement: executing read-query: parsing result to json: executing query: no such column: missing\n  ${sql2}`
+          `running read statement: executing read-query: parsing result to json: executing query: no such column: missing\n${sql2}`
         );
         return true;
       });
@@ -340,11 +344,13 @@ describe("statement", function () {
       }
     });
 
-    test("when select statment has a error parsing statement", async function () {
+    test("when select statement has a error parsing statement", async function () {
       await rejects(db.prepare("SELECT * FROM 3.14;").first(), (err: any) => {
         strictEqual(
           err.cause.message,
-          "error parsing statement: syntax error at position 18 near '3.14'\n  SELECT * FROM 3.14⚠;"
+          `error parsing statement: syntax error at position 18 near '3.14'
+SELECT * FROM 3.14;
+              ^^^^`
         );
         return true;
       });
@@ -353,7 +359,7 @@ describe("statement", function () {
     test("when trying to extract a missing column", async function () {
       const sql = `SELECT * FROM ${tableName};`;
       await rejects(db.prepare(sql).first<any>("missing"), (err: any) => {
-        strictEqual(err.cause.message, `no such column: missing\n  ${sql}`);
+        strictEqual(err.cause.message, `no such column: missing\n${sql}`);
         return true;
       });
     });
@@ -429,7 +435,9 @@ describe("statement", function () {
       await rejects(db.prepare("SELECT * FROM 3.14;").raw(), (err: any) => {
         strictEqual(
           err.cause.message,
-          "error parsing statement: syntax error at position 18 near '3.14'\n  SELECT * FROM 3.14⚠;"
+          `error parsing statement: syntax error at position 18 near '3.14'
+SELECT * FROM 3.14;
+              ^^^^`
         );
         return true;
       });
