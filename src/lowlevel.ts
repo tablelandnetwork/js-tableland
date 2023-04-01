@@ -26,13 +26,23 @@ const hints = [
     template: function (statement: string, match: any): string {
       const location = Number(match.input.slice(match.index).split(" ")[4]);
       if (isNaN(location)) return "";
-      const term = match.input.match(/(?<=near ').+'/);
-      if (term == null || term.length < 1) return "";
-      // the term match includes the single quote symbol after the term,
-      // so we want to subtract that to get the term's length
-      const termLength = term[0].length - 1;
-      const padding = " ".repeat(location - termLength);
-      const carrots = "^".repeat(termLength);
+
+      const termMatch = match.input.match(
+        /syntax error at position \d+ (near '.+')/
+      );
+      if (
+        termMatch == null ||
+        termMatch.length < 1 ||
+        termMatch[1].indexOf("near '") !== 0
+      ) {
+        return "";
+      }
+
+      // isolate the term from the matched string
+      const term = termMatch[1].slice(6, -1);
+
+      const padding = " ".repeat(location - term.length);
+      const carrots = "^".repeat(term.length);
 
       return `${statement}
 ${padding}${carrots}`;
