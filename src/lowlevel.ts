@@ -19,6 +19,45 @@ import {
 } from "./validator/query.js";
 import { ApiError } from "./validator/index.js";
 
+// see `errorWithHint` for usage
+const hints = [
+  {
+    regexp: /syntax error at position \d+ near '.+'/,
+    template: function (statement: string, match: any): string {
+      const location = Number(match.input.slice(match.index).split(" ")[4]);
+      if (isNaN(location)) return "";
+
+      const termMatch = match.input.match(
+        /syntax error at position \d+ (near '.+')/
+      );
+      if (
+        termMatch == null ||
+        termMatch.length < 1 ||
+        termMatch[1].indexOf("near '") !== 0
+      ) {
+        return "";
+      }
+
+      // isolate the term from the matched string
+      const term = termMatch[1].slice(6, -1);
+
+      const padding = " ".repeat(location - term.length);
+      const carrots = "^".repeat(term.length);
+
+      return `${statement}
+${padding}${carrots}`;
+    },
+  },
+  {
+    regexp: /no such column/,
+    template: function (statement: string, match: any): string {
+      // note: the error returned from the validator, and the one generated in the client
+      // in the client already include the name of the column.
+      return statement;
+    },
+  },
+];
+
 export async function exec(
   config: Config,
   { type, sql, tables: [first] }: ExtractedStatement
@@ -49,6 +88,27 @@ export async function exec(
 
 export function errorWithCause(code: string, cause: Error): Error {
   return new Error(`${code}: ${cause.message}`, { cause });
+}
+
+export function errorWithHint(statement: string, cause: Error): Error {
+  if (cause.message == null || statement == null) return cause;
+
+  let errorMessage = cause.message;
+  try {
+    for (let i = 0; i < hints.length; i++) {
+      const hint = hints[i];
+      const match = errorMessage.match(hint.regexp);
+      if (match == null) continue;
+
+      const hintMessage = hint.template(statement, match);
+      errorMessage += hintMessage !== "" ? `\n${hintMessage}` : "";
+      break;
+    }
+
+    return new Error(errorMessage, { cause });
+  } catch (err) {
+    return cause;
+  }
 }
 
 function catchNotFound(err: unknown): [] {
@@ -106,7 +166,7 @@ export function extractColumn<T = unknown, K extends keyof T = keyof T>(
   const array = Array.isArray(values) ? values : [values];
   return array.map((row: T) => {
     if (row[colName] === undefined) {
-      throw new Error(`column not found: ${colName.toString()}`);
+      throw new Error(`no such column: ${colName.toString()}`);
     }
     return row[colName];
   });
