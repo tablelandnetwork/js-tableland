@@ -60,6 +60,7 @@ export class Registry {
   /**
    * Create a Registry instance with the specified connection configuration.
    * @param config The connection configuration. This must include an ethersjs
+   * TODO: would it make sense if possible config values were listed here?
    * Signer. If passing the config from a pre-existing Database instance, it
    * must have a non-null signer key defined.
    */

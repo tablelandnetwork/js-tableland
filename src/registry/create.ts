@@ -23,7 +23,7 @@ export interface PrepareParams {
   first: string;
 }
 
-export async function prepareCreateTable({
+export async function prepareCreateOne({
   statement,
   chainId,
   first,

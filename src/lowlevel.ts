@@ -6,7 +6,7 @@ import {
   type ReadConfig,
 } from "./helpers/index.js";
 import {
-  prepareCreateTable,
+  prepareCreateOne,
   createTable,
   create,
   type CreateManyParams,
@@ -20,9 +20,8 @@ import {
 import {
   type ExtractedStatement,
   type WaitableTransactionReceipt,
-  type UnnamedWaitableTransactionReceipt,
   wrapTransaction,
-  wrapBatch,
+  wrapManyTransaction,
 } from "./registry/utils.js";
 import {
   type ObjectsFormat,
@@ -70,6 +69,10 @@ ${padding}${carrots}`;
   },
 ];
 
+// TODO: this only works if the transaction will only be affecting a single table
+//       we might need to rethink this.  I've currently got new versions of this
+//       below called execMutateMany and execCreateMany, but we might be able to
+//       move all of these `exec` functions into one.
 export async function exec(
   config: Config,
   { type, sql, tables: [first] }: ExtractedStatement
@@ -81,7 +84,7 @@ export async function exec(
   const _params = { chainId, first, statement: sql };
   switch (type) {
     case "create": {
-      const { prefix, ...prepared } = await prepareCreateTable(_params);
+      const { prefix, ...prepared } = await prepareCreateOne(_params);
       const tx = await createTable(_config, prepared);
       return await wrapTransaction(_config, prefix, tx);
     }
@@ -101,7 +104,7 @@ export async function exec(
 export async function execMutateMany(
   config: Config,
   runnables: Runnable[]
-): Promise<UnnamedWaitableTransactionReceipt> {
+): Promise<WaitableTransactionReceipt> {
   const signer = await extractSigner(config);
   const chainId = await signer.getChainId();
   const baseUrl = await extractBaseUrl(config, chainId);
@@ -110,13 +113,17 @@ export async function execMutateMany(
 
   const tx = await mutate(_config, params);
 
-  return await wrapBatch(_config, tx);
+  return await wrapManyTransaction(
+    _config,
+    runnables.map((r) => r.statement),
+    tx
+  );
 }
 
 export async function execCreateMany(
   config: Config,
   statements: string[]
-): Promise<UnnamedWaitableTransactionReceipt> {
+): Promise<WaitableTransactionReceipt> {
   const signer = await extractSigner(config);
   const chainId = await signer.getChainId();
   const baseUrl = await extractBaseUrl(config, chainId);
@@ -125,7 +132,8 @@ export async function execCreateMany(
 
   const tx = await create(_config, params);
 
-  return await wrapBatch(_config, tx);
+  // TODO: wrapManyTransaction is going to need to find and add the names to the returned object
+  return await wrapManyTransaction(_config, statements, tx);
 }
 
 export function errorWithCause(code: string, cause: Error): Error {

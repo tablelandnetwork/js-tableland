@@ -73,7 +73,7 @@ describe("database", function () {
       });
     });
 
-    test("when batching mutations with a create", async function () {
+    test("when batching mutations with a create throws an error", async function () {
       const { meta: tableMeta } = await db
         .prepare(
           "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
@@ -84,27 +84,26 @@ describe("database", function () {
       const stmt = db.prepare(
         `INSERT INTO ${tableName} (name, age) VALUES (?1, ?2)`
       );
-      // Note: you can't batch a create then mutate on the same table since
-      // we don't know the table name!
-      const batch = await db.batch([
+      // We don't allow batching with different types.  It adds unneeded complexity and
+      // isn't overly useful since you can't do things like create and insert because the
+      // table ID won't exist until after the transaction is finished, and the inserts must
+      // be included in the transaction.
+      const batch = db.batch([
         db.prepare("CREATE TABLE willwork (name text, age integer);"),
         stmt.bind("Bobby", 5),
         stmt.bind("Tables", 6),
       ]);
-      console.log(batch);
-      strictEqual(batch.length, 2);
-      const { meta } = batch.pop() ?? {};
-      assert(meta.duration != null);
-      assert(meta.txn?.transactionHash != null);
-      match(tableName, /^willwork_31337_\d+$/);
 
-      await meta?.txn?.wait();
-
-      const results = await db.prepare("SELECT * FROM " + tableName).all();
-      strictEqual(results.results.length, 2);
+      await rejects(batch, (err: any) => {
+        strictEqual(
+          err.cause.message,
+          "statement error: batch must contain uniform types (e.g., CREATE, INSERT, SELECT, etc)"
+        );
+        return true;
+      });
     });
 
-    test("test batching combines statements by tables", async function () {
+    test("test batching with a single statement affecting two tables throws an error", async function () {
       const { meta: tableMeta } = await db
         .prepare(
           "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
@@ -112,31 +111,41 @@ describe("database", function () {
         .run();
       const tableName2 = tableMeta.txn?.name ?? "";
 
-      const stmt1 = db.prepare(
-        `INSERT INTO ${tableName} (name, age) VALUES (?1, ?2)`
-      );
-      const stmt2 = db.prepare(
-        `INSERT INTO ${tableName2} (name, age) VALUES (?1, ?2)`
-      );
-      // Note: you can't batch a create then mutate on the same table since
-      // we don't know the table name!
-      const batch = await db.batch([
-        db.prepare("create table derp (a int);"),
-        db.prepare(`GRANT DELETE ON ${tableName2} TO '${signer.address}';`),
+      // since one sql string is touching two tables, it needs to split it into 2 runnables
+      const batch2 = db.batch([
         db.prepare(
           `INSERT INTO ${tableName} (name, age) VALUES ('foo', 2);INSERT INTO ${tableName2} (name, age) VALUES ('bar', 4);`
         ),
-        stmt1.bind("Bobby", 5),
-        stmt1.bind("Tables", 6),
-        stmt2.bind("Robert", 50),
-        stmt2.bind("Students", 60),
       ]);
+      await rejects(batch2, (err: any) => {
+        strictEqual(
+          err.cause.message,
+          "each statement can only touch one table. try batching statements based on the table they mutate."
+        );
+        return true;
+      });
 
-      strictEqual(batch.length, 2);
-      // strictEqual(batch[0].results.transactionHash, batch[1].results.transactionHash);
+      // since the sql string is only touching one table, it can be sent as one runnable
+      const batch1 = await db.batch([
+        db.prepare(
+          `INSERT INTO ${tableName} (name, age) VALUES ('foo', 2);INSERT INTO ${tableName} (name, age) VALUES ('bar', 4);`
+        ),
+      ]);
+      const res = await batch1.meta.txn.wait();
+
+      strictEqual(res.names.length, 1);
     });
 
     test("when batching mutations with reads throws an error", async function () {
+      const { meta: tableMeta } = await db
+        .prepare(
+          "CREATE TABLE test_batch_reads (id integer, name text, age integer, primary key (id));"
+        )
+        .run();
+
+      const tableName = tableMeta.txn?.name ?? "";
+      await tableMeta.txn?.wait();
+
       const stmt = db.prepare(
         `INSERT INTO ${tableName} (name, age) VALUES (?1, ?2)`
       );
@@ -153,6 +162,7 @@ describe("database", function () {
         return true;
       });
 
+      // ensure the table did not have any rows added
       const results = await db.prepare("SELECT * FROM " + tableName).all();
       strictEqual(results.results.length, 0);
     });
@@ -172,17 +182,15 @@ describe("database", function () {
         stmt.bind("Bobby", 5),
         stmt.bind("Tables", 42),
       ]);
-      strictEqual(batch.length, 1);
-      const { meta } = batch.pop() ?? {};
-      assert(meta.duration != null);
-      assert(meta.txn?.transactionHash != null);
-      strictEqual(meta.txn.name, tableName);
 
-      await meta?.txn?.wait();
+      assert(batch.meta.duration != null);
+      assert(batch.meta.txn?.transactionHash != null);
+      strictEqual(batch.meta.txn.name, tableName);
+
+      const res = await batch.meta.txn.wait();
+      strictEqual(res.names.length, 2);
 
       const results = await db.prepare("SELECT * FROM " + tableName).all();
-      // TODO: `tableName` table is not reset between tests so the length
-      //       is based on running of other tests
       strictEqual(results.results.length, 2);
     });
 

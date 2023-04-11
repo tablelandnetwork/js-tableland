@@ -72,7 +72,7 @@ describe("thirdparty", function () {
         email: "bobby-tab@gmail.com",
       });
 
-      const [result] = await users.InsertMany([
+      const res = await users.InsertMany([
         {
           name: "Bobby Tables",
           email: "bob-tables@gmail.com",
@@ -83,7 +83,8 @@ describe("thirdparty", function () {
         },
       ]);
 
-      await result.meta.txn.wait();
+      // TODO: same as above find a nicer way to deal with this...
+      await (res as any).meta.txn.wait();
 
       const { results } = await users.All({
         where: { name: "Bobby Tables" },

@@ -108,6 +108,7 @@ export function getBaseUrl(chainNameOrId: ChainName | number): string {
   return getChainInfo(chainNameOrId).baseUrl;
 }
 
+// TODO: should we add this to the docs somewhere?
 export function overrideDefaults(
   chainNameOrId: ChainName | number,
   values: Record<keyof ChainInfo, number | string>

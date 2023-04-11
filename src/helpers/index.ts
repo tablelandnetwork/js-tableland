@@ -31,6 +31,7 @@ export {
   type ContractTransaction,
   type ContractReceipt,
   type RegistryReceipt,
+  type MultiEventTransactionReceipt,
   getSigner,
 } from "./ethers.js";
 export {

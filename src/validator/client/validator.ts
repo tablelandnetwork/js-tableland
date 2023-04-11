@@ -49,7 +49,7 @@ export interface components {
     readonly Table: {
       /** @example healthbot_5_1 */
       readonly name?: string;
-      /** @example https://testnet.tableland.network/tables/healthbot_5_1 */
+      /** @example https://testnets.tableland.network/api/v1/tables/healthbot_5_1 */
       readonly external_url?: string;
       /** @example https://render.tableland.xyz/anim/?chain=1&id=1 */
       readonly animation_url?: string;
