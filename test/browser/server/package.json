@@ -9,7 +9,7 @@
     "vue": "^3.2.45"
   },
   "devDependencies": {
-    "@tableland/local": "^1.0.0-pre.3",
+    "@tableland/local": "^1.2.0-pre.3",
     "@types/node": "^18.11.12",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/tsconfig": "^0.1.3",
