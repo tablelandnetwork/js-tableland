@@ -86,7 +86,14 @@ export class Database<D = unknown> {
    * @returns An array of run results.
    */
   // TODO: return type is different depending on the type of the Statements.
-  //    Need to replace `any` with those possible types.
+  //    Should we replace `any` with those possible types?
+  //    Note: if we want this package to mirror the D1 package in a way that
+  //    enables compatability with packages built to exend D1, then the return type
+  //    here will potentially affect if/how those pacakges work.
+  //    D1-ORM is a good example: https://github.com/Interactions-as-a-Service/d1-orm/
+  //    See this package's `thirdparty` tests for examples.
+  //    We also have to balance that with the ability of SDK user's to do things like
+  //    wait for the transaction to finish, and get the table name, prefix, etc...
   async batch<T = D>(statements: Statement[], opts: Signal = {}): Promise<any> {
     try {
       const start = performance.now();
@@ -101,8 +108,7 @@ export class Database<D = unknown> {
         .reduce((a, b): any => (a === b ? a : null));
       if (type == null) {
         throw new Error(
-          // TODO: should this say "e.g., create, write, read, acl"?
-          "statement error: batch must contain uniform types (e.g., CREATE, INSERT, SELECT, etc)"
+          "statement error: batch must contain uniform types (i.e. one of: create, write, read, acl)"
         );
       }
 
@@ -120,20 +126,18 @@ export class Database<D = unknown> {
           this.config,
           statements.map((stmt) => stmt.toString())
         );
-
         if (this.config.autoWait ?? false) {
           // wait until validator has materialized tables
           const waited = await receipt.wait();
           receipt = { ...receipt, ...waited };
         }
 
-        // TODO: we need to map the tableIds back to the original statements
         return wrapResult(receipt, performance.now() - start);
       }
 
       // TODO: This is not implemented. I'm not sure if we need to implement it because the
       //    tableland ACL is being refactored and using Grant/Revoke may not make sense as a batch.
-      //    For the time being we can simple leave the current funcationality in place. -JW
+      //    For the time being we can simply leave the current funcationality in place. -JW
       if (type === "acl") {
         return await Promise.all(
           statements.map(async (stmt) => await stmt.all<T>(undefined, opts))
@@ -162,9 +166,6 @@ export class Database<D = unknown> {
         receipt = { ...receipt, ...waited };
       }
 
-      // TODO: Note that this method appears to be the wrong return type for D1-ORM compatability.
-      //    This includes the ability to wait for the transaction to finish, and things like the
-      //    table name and prefix, which are not what D1-ORM expects.
       return wrapResult(receipt, performance.now() - start);
     } catch (cause: any) {
       if (cause.message.startsWith("ALL_ERROR") === true) {
@@ -221,6 +222,12 @@ export class Database<D = unknown> {
   }
 }
 
+/**
+ * Take a normalized statement and convert it to a set of Runnables that can be
+ * used in a call to the registry contract.
+ * @param normalized A normalized statement, e.g. what is returned from the parser's normalize function
+ * @returns An Array of Runnables
+ */
 async function normalizedToRunnables(
   normalized: NormalizedStatement
 ): Promise<Runnable[]> {

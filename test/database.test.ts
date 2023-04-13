@@ -125,7 +125,7 @@ describe("database", function () {
       await rejects(batch, (err: any) => {
         strictEqual(
           err.cause.message,
-          "statement error: batch must contain uniform types (e.g., CREATE, INSERT, SELECT, etc)"
+          "statement error: batch must contain uniform types (i.e. one of: create, write, read, acl)"
         );
         return true;
       });
@@ -185,7 +185,7 @@ describe("database", function () {
       await rejects(batch, (err: any) => {
         strictEqual(
           err.cause.message,
-          "statement error: batch must contain uniform types (e.g., CREATE, INSERT, SELECT, etc)"
+          "statement error: batch must contain uniform types (i.e. one of: create, write, read, acl)"
         );
         return true;
       });

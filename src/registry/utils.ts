@@ -138,21 +138,32 @@ export async function extractReadonly(
   return { baseUrl };
 }
 
-// This function takes config, a table name prefix and the transaction that created a table
-// and returns the actual table name.
-// TODO: this will only work for a transactions that touch a single table, and since a single transaction
-//       can touch multiple tables, we either need a another method for multiple, or rewrite
-//       this to be more general.  NOTE: the ability to touch multiple tables on a singel transaction has existed
-//       for many months, so this is not a new feature
-
-// TODO: this feels complicated enough that we should add comments explaining what it does
+/**
+ * Given a config, a table name prefix, and a transaction that only affects a single table
+ * this will enable waiting for the Validator to materialize the change in the transaction
+ * @param conn A Database config
+ * @param prefix A table name prefix.
+ *  - It must be the prefix of the single table that `tx` is affecting.
+ * @param tx A transaction object that includes a call to the Registry Contract.
+ *  - The transaction must only affect a single table, and the table's prefix must match
+ *    the `prefix` param.
+ * @returns {
+ *    wait: async function that will not return until the validator has processed `tx`
+ *    name: the full table name
+ *    prefix: the table name prefix
+ *    chainId: the chainId of `tx`
+ *    tableId: the tableId of `tx`
+ *    transaction_hash: the transaction hash of `tx`
+ *    block_number: the block number of `tx`
+ *    error: the first error encounntered when the Validator processed `tx`
+ *    error_event_idx: the index of the event that cause the error when the Validator processed `tx`
+ * }
+ */
 export async function wrapTransaction(
   conn: Config,
-  prefix: string, // TODO: we either need another method, or this needs to be a list of prefixes...
+  prefix: string,
   tx: ContractTransaction
 ): Promise<WaitableTransactionReceipt> {
-  // TODO: `getContractReceipt` is ignoring all but the first tableID
-  // tableIds, transactionHash, blockNumber, chainId
   const _params = await getContractReceipt(tx);
   const chainId =
     _params.chainId === 0 || _params.chainId == null
@@ -183,11 +194,15 @@ interface MultiEventTransaction {
  * @param {statements} either the sql statement strings or the nomralized statement objects that were used in the transaction
  * @param {tx} the transaction object
  * @returns {
- *    names: Array of table names the correspond to the statements. Useful for create statements
+ *    names: Array of table names the correspond to the statements. Useful for create statements.
  *    wait: a function that will only return successfully after the conencted validator confirms the tx
- *
- *    TODO: kind of hard to figure out what else should go here because the type is inherited more than many levels deep
- *          but also feels important to have this info in the comments for readability
+ *    prefixes: Array of table name prefixes
+ *    chainId: the chainId of `tx`
+ *    tableId: the tableId of `tx`
+ *    transaction_hash: the transaction hash of `tx`
+ *    block_number: the block number of `tx`
+ *    error: the first error encounntered when the Validator processed `tx`
+ *    error_event_idx: the index of the event that cause the error when the Validator processed `tx`
  * }
  *
  */

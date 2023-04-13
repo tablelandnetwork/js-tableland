@@ -72,7 +72,7 @@ ${padding}${carrots}`;
 // TODO: this only works if the transaction will only be affecting a single table
 //       we might need to rethink this.  I've currently got new versions of this
 //       below called execMutateMany and execCreateMany, but we might be able to
-//       move all of these `exec` functions into one.
+//       combine all of these `exec` functions into one.
 export async function exec(
   config: Config,
   { type, sql, tables: [first] }: ExtractedStatement
@@ -101,6 +101,13 @@ export async function exec(
   }
 }
 
+/**
+ * This is an internal method takes a Database config and set of Runnables, and
+ * uses that with the currently set Validator baseUrl to call the Registry Contract
+ * `mutate` method.
+ * Once the contract call returns this returns the mapping of the contract tx results
+ * to the Runnables argument.
+ */
 export async function execMutateMany(
   config: Config,
   runnables: Runnable[]
@@ -120,6 +127,13 @@ export async function execMutateMany(
   );
 }
 
+/**
+ * This is an internal method that takes a Database config and set of create table sql strings.
+ * Then uses that with the currently set Validator baseUrl to prepare the sql strings to call
+ * the Registry Contract `create` method.
+ * Once the contract call returns, this returns the mapping of the contract tx results to
+ * the original create statement strings.  This enables the caller to get the new table names
+ */
 export async function execCreateMany(
   config: Config,
   statements: string[]
@@ -140,7 +154,6 @@ export async function execCreateMany(
 
   const tx = await create(_config, params);
 
-  // TODO: wrapManyTransaction is going to need to find and add the names to the returned object
   return await wrapManyTransaction(_config, statements, tx);
 }
 

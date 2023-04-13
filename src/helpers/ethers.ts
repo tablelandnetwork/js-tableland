@@ -39,10 +39,19 @@ export async function getOverrides({
   return opts;
 }
 
+/**
+ * RegistryReceipt is based on the TransactionReceipt type which defined by the API spec.
+ * The API v1 has a known but that results in not returning all of the tableIds from a
+ * transaction.
+ */
 export type RegistryReceipt = Required<
   Omit<TransactionReceipt, "error" | "errorEventIdx">
 >;
 
+/**
+ * MultiEventTransactionReceipt represent mapping of response a Validator transaction receipt
+ * to the tableIds that were affected.
+ */
 export interface MultiEventTransactionReceipt {
   tableIds: string[];
   transactionHash: string;
