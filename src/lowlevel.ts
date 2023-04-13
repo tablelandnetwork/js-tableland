@@ -128,7 +128,15 @@ export async function execCreateMany(
   const chainId = await signer.getChainId();
   const baseUrl = await extractBaseUrl(config, chainId);
   const _config = { baseUrl, signer };
-  const params: CreateManyParams = { statements, chainId };
+  const params: CreateManyParams = {
+    statements: await Promise.all(
+      statements.map(async function (statement) {
+        const prepared = await prepareCreateOne({ statement, chainId });
+        return prepared.statement;
+      })
+    ),
+    chainId,
+  };
 
   const tx = await create(_config, params);
 

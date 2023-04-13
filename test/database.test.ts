@@ -60,7 +60,7 @@ describe("database", function () {
       await meta.txn?.wait();
     });
 
-    test("when trying to create a table fails in a batch", async function () {
+    test("when trying to create an invalid table fails in a batch", async function () {
       const batch = db.batch([
         db.prepare(`CREATE TABLE inval!idname! (id INTEGER, name TEXT);`),
       ]);
@@ -71,6 +71,34 @@ describe("database", function () {
         );
         return true;
       });
+    });
+
+    test("when trying to batch create with single statement that creates 2 tables it fails", async function () {
+      const batch = db.batch([
+        db.prepare(
+          `CREATE TABLE my_table_1 (id INTEGER, name TEXT);CREATE TABLE my_table_2 (id INTEGER, name TEXT);`
+        ),
+        db.prepare(`CREATE TABLE my_table_3 (id INTEGER, name TEXT);`),
+      ]);
+      await rejects(batch, (err: any) => {
+        strictEqual(
+          err.cause.message,
+          "error parsing statement: syntax error at position 54 near 'CREATE'"
+        );
+        return true;
+      });
+    });
+
+    test("when creating multiple tables in a batch", async function () {
+      const batch = await db.batch([
+        db.prepare(`CREATE TABLE test_create_1 (id INTEGER, name TEXT);`),
+        db.prepare(`CREATE TABLE test_create_2 (id INTEGER, name TEXT);`),
+      ]);
+
+      const res = await batch.meta.txn.wait();
+
+      match(res.names[0], /^test_create_1_31337_\d+$/);
+      match(res.names[1], /^test_create_2_31337_\d+$/);
     });
 
     test("when batching mutations with a create throws an error", async function () {

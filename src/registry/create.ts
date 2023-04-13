@@ -1,3 +1,4 @@
+import { normalize } from "../helpers/index.js";
 import { type SignerConfig } from "../helpers/config.js";
 import { type ContractTransaction } from "../helpers/ethers.js";
 import { validateTableName } from "../helpers/parser.js";
@@ -20,7 +21,7 @@ export interface PrepareParams {
   /**
    * The first table name in a series of SQL statements.
    */
-  first: string;
+  first?: string;
 }
 
 export async function prepareCreateOne({
@@ -28,6 +29,11 @@ export async function prepareCreateOne({
   chainId,
   first,
 }: PrepareParams): Promise<CreateOneParams & { prefix: string }> {
+  if (first == null) {
+    const normalized = await normalize(statement);
+    first = normalized.tables[0];
+  }
+
   const { prefix, name: tableName } = await validateTableName(
     `${first}_${chainId}`,
     true

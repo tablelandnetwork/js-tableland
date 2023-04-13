@@ -85,13 +85,13 @@ export class Database<D = unknown> {
    * @param opts Additional options to control execution.
    * @returns An array of run results.
    */
+  // TODO: return type is different depending on the type of the Statements.
+  //    Need to replace `any` with those possible types.
   async batch<T = D>(statements: Statement[], opts: Signal = {}): Promise<any> {
     try {
       const start = performance.now();
-      // each statement in `statements` could potentially be a ; separated set of statements
-      // we need to split them up and then recombine them first as "read" and "mutate", then
-      // for the mutates, combine based on the table they are mutating.  This sets us up to
-      // use the new mutate method that can affect multiple tables in a single transaction.
+      // If the statement types is "create" and the statement contains more than one
+      // query (separated by semi-colon) then the sqlparser with throw an Error.
       const normalized = await Promise.all(
         statements.map(async (stmt) => await normalize(stmt.toString()))
       );
@@ -106,12 +106,15 @@ export class Database<D = unknown> {
         );
       }
 
+      // "read" statement types are the simple case, we just do each of the queries
+      // and return an Array of the query results.
       if (type === "read") {
         return await Promise.all(
           statements.map(async (stmt) => await stmt.all<T>(undefined, opts))
         );
       }
 
+      // For "create" statement types, each statement must be a single create sql query
       if (type === "create") {
         let receipt = await execCreateMany(
           this.config,
@@ -128,9 +131,13 @@ export class Database<D = unknown> {
         return wrapResult(receipt, performance.now() - start);
       }
 
+      // TODO: This is not implemented. I'm not sure if we need to implement it because the
+      //    tableland ACL is being refactored and using Grant/Revoke may not make sense as a batch.
+      //    For the time being we can simple leave the current funcationality in place. -JW
       if (type === "acl") {
-        // TODO: handle batched acl statements...
-        throw new Error("batch ACL statements not implemented");
+        return await Promise.all(
+          statements.map(async (stmt) => await stmt.all<T>(undefined, opts))
+        );
       }
 
       if (type !== "write") {
@@ -138,8 +145,9 @@ export class Database<D = unknown> {
         throw new Error("invalid statement type");
       }
 
-      // NOTE: there is a requirement that each statement is only affecting one table.
-      // If a caller wants to affect 2 tables, they can batch 2 statements.
+      // For "write" statement types each Statement object must only affect one table, but
+      // that object can have a sql string that has many sql queries separated by semi-colon.
+      // If a caller wants to affect 2 tables, they can call `batch` with 2 Statements.
       const runnables = (
         await Promise.all(
           normalized.map(async function (norm) {
@@ -156,7 +164,7 @@ export class Database<D = unknown> {
 
       // TODO: Note that this method appears to be the wrong return type for D1-ORM compatability.
       //    This includes the ability to wait for the transaction to finish, and things like the
-      //    table name, which are not what D1-ORM expects.
+      //    table name and prefix, which are not what D1-ORM expects.
       return wrapResult(receipt, performance.now() - start);
     } catch (cause: any) {
       if (cause.message.startsWith("ALL_ERROR") === true) {
