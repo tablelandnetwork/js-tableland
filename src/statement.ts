@@ -9,6 +9,7 @@ import {
   type AutoWaitConfig,
   type Config,
   type Signal,
+  checkWait,
   normalize,
 } from "./helpers/index.js";
 import {
@@ -145,11 +146,10 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          let receipt = await exec(this.config, { type, sql, tables });
-          if (this.config.autoWait ?? false) {
-            const waited = await receipt.wait();
-            receipt = { ...receipt, ...waited };
-          }
+          const receipt = await checkWait(
+            this.config,
+            await exec(this.config, { type, sql, tables })
+          );
 
           return wrapResult(receipt, performance.now() - start);
         }
@@ -200,9 +200,7 @@ export class Statement<S = unknown> {
         default: {
           const receipt = await exec(this.config, { type, sql, tables });
           /* c8 ignore next */
-          if (this.config.autoWait ?? false) {
-            await receipt.wait();
-          }
+          await checkWait(this.config, receipt);
           return null;
         }
       }
@@ -233,11 +231,10 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          let receipt = await exec(this.config, { type, sql, tables });
-          if (this.config.autoWait ?? false) {
-            const waited = await receipt.wait();
-            receipt = { ...receipt, ...waited };
-          }
+          const receipt = await checkWait(
+            this.config,
+            await exec(this.config, { type, sql, tables })
+          );
           return wrapResult(receipt, performance.now() - start);
         }
       }
@@ -266,9 +263,7 @@ export class Statement<S = unknown> {
         default: {
           const receipt = await exec(this.config, { type, sql, tables });
           /* c8 ignore next */
-          if (this.config.autoWait ?? false) {
-            await receipt.wait();
-          }
+          await checkWait(this.config, receipt);
           return [];
         }
       }

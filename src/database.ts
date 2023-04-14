@@ -4,6 +4,7 @@ import { wrapResult } from "./registry/utils.js";
 import {
   type Config,
   type AutoWaitConfig,
+  checkWait,
   extractBaseUrl,
   type ChainName,
   getBaseUrl,
@@ -122,22 +123,19 @@ export class Database<D = unknown> {
 
       // For "create" statement types, each statement must be a single create sql query
       if (type === "create") {
-        let receipt = await execCreateMany(
+        const receipt = await checkWait(
           this.config,
-          statements.map((stmt) => stmt.toString())
+          await execCreateMany(
+            this.config,
+            statements.map((stmt) => stmt.toString())
+          )
         );
-        if (this.config.autoWait ?? false) {
-          // wait until validator has materialized tables
-          const waited = await receipt.wait();
-          receipt = { ...receipt, ...waited };
-        }
 
         return wrapResult(receipt, performance.now() - start);
       }
 
-      // TODO: This is not implemented. I'm not sure if we need to implement it because the
-      //    tableland ACL is being refactored and using Grant/Revoke may not make sense as a batch.
-      //    For the time being we can simply leave the current funcationality in place. -JW
+      // TODO: This is not implemented. I'm not sure if we need to implement it because the tableland
+      //    ACL is being refactored and using Grant/Revoke may not make sense to send as a batch. -JW
       if (type === "acl") {
         return await Promise.all(
           statements.map(async (stmt) => await stmt.all<T>(undefined, opts))
@@ -160,11 +158,10 @@ export class Database<D = unknown> {
         )
       ).flat();
 
-      let receipt = await execMutateMany(this.config, runnables);
-      if (this.config.autoWait ?? false) {
-        const waited = await receipt.wait();
-        receipt = { ...receipt, ...waited };
-      }
+      const receipt = await checkWait(
+        this.config,
+        await execMutateMany(this.config, runnables)
+      );
 
       return wrapResult(receipt, performance.now() - start);
     } catch (cause: any) {

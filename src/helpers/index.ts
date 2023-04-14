@@ -20,6 +20,7 @@ export {
   type SignerConfig,
   type Config,
   type AutoWaitConfig,
+  checkWait,
   extractBaseUrl,
   extractChainId,
   extractSigner,
