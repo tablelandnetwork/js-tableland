@@ -90,7 +90,7 @@ export class Database<D = unknown> {
   //    Should we replace `any` with those possible types?
   //    Note: if we want this package to mirror the D1 package in a way that
   //    enables compatability with packages built to exend D1, then the return type
-  //    here will potentially affect if/how those pacakges work.
+  //    here will potentially affect if/how those packages work.
   //    D1-ORM is a good example: https://github.com/Interactions-as-a-Service/d1-orm/
   //    See this package's `thirdparty` tests for examples.
   //    We also have to balance that with the ability of SDK user's to do things like
@@ -98,7 +98,7 @@ export class Database<D = unknown> {
   async batch<T = D>(statements: Statement[], opts: Signal = {}): Promise<any> {
     try {
       const start = performance.now();
-      // If the statement types is "create" and the statement contains more than one
+      // If the statement types are "create" and the statement contains more than one
       // query (separated by semi-colon) then the sqlparser with throw an Error.
       const normalized = await Promise.all(
         statements.map(async (stmt) => await normalize(stmt.toString()))
@@ -134,20 +134,12 @@ export class Database<D = unknown> {
         return wrapResult(receipt, performance.now() - start);
       }
 
-      // TODO: This is not implemented. I'm not sure if we need to implement it because the tableland
-      //    ACL is being refactored and using Grant/Revoke may not make sense to send as a batch. -JW
-      if (type === "acl") {
-        return await Promise.all(
-          statements.map(async (stmt) => await stmt.all<T>(undefined, opts))
-        );
-      }
-
-      if (type !== "write") {
+      if (type !== "write" && type !== "acl") {
         // this should never be thrown, but check in case of something unexpected
         throw new Error("invalid statement type");
       }
 
-      // For "write" statement types each Statement object must only affect one table, but
+      // For "write" and "acl" statement types each Statement object must only affect one table, but
       // that object can have a sql string that has many sql queries separated by semi-colon.
       // If a caller wants to affect 2 tables, they can call `batch` with 2 Statements.
       const runnables = (
@@ -228,7 +220,7 @@ export class Database<D = unknown> {
 async function normalizedToRunnables(
   normalized: NormalizedStatement
 ): Promise<Runnable[]> {
-  if (normalized.type !== "write") {
+  if (normalized.type !== "write" && normalized.type !== "acl") {
     throw new Error(
       "converting to runnable is only possible for mutate statements"
     );

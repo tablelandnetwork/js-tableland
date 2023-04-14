@@ -8,8 +8,10 @@ import { Statement } from "../src/statement.js";
 
 describe("database", function () {
   this.timeout("10s");
+
+  const accounts = getAccounts();
   // Note that we're using the second account here
-  const [, wallet] = getAccounts();
+  const wallet = accounts[1];
   const provider = getDefaultProvider("http://127.0.0.1:8545");
   const signer = wallet.connect(provider);
   const db = new Database({ signer });
@@ -295,6 +297,160 @@ describe("database", function () {
           return true;
         }
       );
+    });
+
+    describe("grant and revoke statements", function () {
+      // note we are using the third account
+      const wallet = accounts[2];
+      const provider = getDefaultProvider("http://127.0.0.1:8545");
+      const signer = wallet.connect(provider);
+      const db2 = new Database({ signer, autoWait: true });
+
+      test("when doing grant with batch", async function () {
+        // Need to make a lot of changes in this test, increase timeout
+        this.timeout("20s");
+
+        const batch = await db.batch([
+          db.prepare(`CREATE TABLE test_grant_1 (id INTEGER, name TEXT);`),
+          db.prepare(`CREATE TABLE test_grant_2 (id INTEGER, name TEXT);`),
+        ]);
+        // db has autoWait turned off
+        const res = await batch.meta.txn.wait();
+
+        match(res.names[0], /^test_grant_1_31337_\d+$/);
+        match(res.names[1], /^test_grant_2_31337_\d+$/);
+
+        // TODO: batch return types aren't setup, so using `as` to keep linting happy
+        const tableName1 = res.names[0] as string;
+        const tableName2 = res.names[1] as string;
+
+        const noPermission = db2.batch([
+          db2.prepare(
+            `INSERT INTO ${tableName1} (id, name) VALUES (1, 'one');`
+          ),
+          db2.prepare(
+            `INSERT INTO ${tableName2} (id, name) VALUES (2, 'two');`
+          ),
+        ]);
+
+        await rejects(noPermission, function (err: any) {
+          match(
+            err.cause.message,
+            /db query execution failed \(code: ACL, msg: not enough privileges\)/
+          );
+          return true;
+        });
+
+        // test after insert is granted
+        const batchGrant = await db.batch([
+          db.prepare(`GRANT INSERT ON ${tableName1} TO '${wallet.address}';`),
+          db.prepare(`GRANT INSERT ON ${tableName2} TO '${wallet.address}';`),
+        ]);
+        // db has autoWait turned off
+        await batchGrant.meta.txn.wait();
+
+        await db2.batch([
+          db2.prepare(
+            `INSERT INTO ${tableName1} (id, name) VALUES (1, 'one');`
+          ),
+          db2.prepare(
+            `INSERT INTO ${tableName2} (id, name) VALUES (2, 'two');`
+          ),
+        ]);
+
+        const results = await db2.batch([
+          db2.prepare(`SELECT * FROM ${tableName1};`),
+          db2.prepare(`SELECT * FROM ${tableName2};`),
+        ]);
+
+        strictEqual(results.length, 2);
+        strictEqual(results[0].results.length, 1);
+        strictEqual(results[1].results.length, 1);
+
+        const table1 = results[0].results;
+        const table2 = results[1].results;
+        strictEqual(table1[0].id, 1);
+        strictEqual(table1[0].name, "one");
+        strictEqual(table2[0].id, 2);
+        strictEqual(table2[0].name, "two");
+      });
+
+      // test after insert is revoked
+      test("when doing grant with batch", async function () {
+        // Need to make a lot of changes in this test, increase timeout
+        this.timeout("20s");
+
+        const batch = await db.batch([
+          db.prepare(`CREATE TABLE test_revoke_1 (id INTEGER, name TEXT);`),
+          db.prepare(`CREATE TABLE test_revoke_2 (id INTEGER, name TEXT);`),
+        ]);
+        // db has autoWait turned off
+        const res = await batch.meta.txn.wait();
+
+        match(res.names[0], /^test_revoke_1_31337_\d+$/);
+        match(res.names[1], /^test_revoke_2_31337_\d+$/);
+
+        // TODO: batch return types aren't setup, so using `as` to keep linting happy
+        const tableName1 = res.names[0] as string;
+        const tableName2 = res.names[1] as string;
+
+        // test after insert is granted
+        const batchGrant = await db.batch([
+          db.prepare(`GRANT INSERT ON ${tableName1} TO '${wallet.address}';`),
+          db.prepare(`GRANT INSERT ON ${tableName2} TO '${wallet.address}';`),
+        ]);
+        // db has autoWait turned off
+        await batchGrant.meta.txn.wait();
+
+        await db2.batch([
+          db2.prepare(
+            `INSERT INTO ${tableName1} (id, name) VALUES (1, 'one');`
+          ),
+          db2.prepare(
+            `INSERT INTO ${tableName2} (id, name) VALUES (2, 'two');`
+          ),
+        ]);
+
+        const results = await db2.batch([
+          db2.prepare(`SELECT * FROM ${tableName1};`),
+          db2.prepare(`SELECT * FROM ${tableName2};`),
+        ]);
+        const table1 = results[0].results;
+        const table2 = results[1].results;
+        strictEqual(table1[0].id, 1);
+        strictEqual(table1[0].name, "one");
+        strictEqual(table2[0].id, 2);
+        strictEqual(table2[0].name, "two");
+
+        // test after insert is granted
+        const batchRevoke = await db.batch([
+          db.prepare(
+            `REVOKE INSERT ON ${tableName1} FROM '${wallet.address}';`
+          ),
+          db.prepare(
+            `REVOKE INSERT ON ${tableName2} FROM '${wallet.address}';`
+          ),
+        ]);
+        // db has autoWait turned off
+        await batchRevoke.meta.txn.wait();
+
+        const noPermission = db2.batch([
+          db2.prepare(
+            `INSERT INTO ${tableName1} (id, name) VALUES (1, 'one');`
+          ),
+          db2.prepare(
+            `INSERT INTO ${tableName2} (id, name) VALUES (2, 'two');`
+          ),
+        ]);
+
+        await rejects(noPermission, function (err: any) {
+          match(
+            err.cause.message,
+            /db query execution failed \(code: ACL, msg: not enough privileges\)/
+          );
+          return true;
+        });
+      });
     });
   });
 
