@@ -33,7 +33,7 @@ export async function prepareMutateOne({
 }
 
 /**
- * @custom deprecated This type will change in the next major version.
+ * @custom:deprecated This type will change in the next major version.
  * Use the `MutateOneParams` type.
  */
 export interface RunSQLParams extends TableIdentifier {
@@ -53,7 +53,6 @@ export interface MutateOneParams extends TableIdentifier {
 export interface Runnable {
   statement: string;
   tableId: number;
-  type: string;
 }
 
 export interface MutateManyParams {

@@ -92,12 +92,12 @@ describe("database", function () {
     });
 
     test("when creating multiple tables in a batch", async function () {
-      const batch = await db.batch([
+      const [batch] = await db.batch([
         db.prepare(`CREATE TABLE test_create_1 (id INTEGER, name TEXT);`),
         db.prepare(`CREATE TABLE test_create_2 (id INTEGER, name TEXT);`),
       ]);
 
-      const res = await batch.meta.txn.wait();
+      const res = await batch.meta.txn?.wait();
 
       match(res.names[0], /^test_create_1_31337_\d+$/);
       match(res.names[1], /^test_create_2_31337_\d+$/);
@@ -156,7 +156,7 @@ describe("database", function () {
       });
 
       // since the sql string is only touching one table, it can be sent as one runnable
-      const batch1 = await db.batch([
+      const [batch1] = await db.batch([
         db.prepare(
           `INSERT INTO ${tableName} (name, age) VALUES ('foo', 2);INSERT INTO ${tableName} (name, age) VALUES ('bar', 4);`
         ),
@@ -208,7 +208,7 @@ describe("database", function () {
       const stmt = db.prepare(
         `INSERT INTO ${tableName} (name, age) VALUES (?1, ?2)`
       );
-      const batch = await db.batch([
+      const [batch] = await db.batch([
         stmt.bind("Bobby", 5),
         stmt.bind("Tables", 42),
       ]);
@@ -310,12 +310,12 @@ describe("database", function () {
         // Need to make a lot of changes in this test, increase timeout
         this.timeout("20s");
 
-        const batch = await db.batch([
+        const [batch] = await db.batch([
           db.prepare(`CREATE TABLE test_grant_1 (id INTEGER, name TEXT);`),
           db.prepare(`CREATE TABLE test_grant_2 (id INTEGER, name TEXT);`),
         ]);
         // db has autoWait turned off
-        const res = await batch.meta.txn.wait();
+        const res = await batch.meta.txn?.wait();
 
         match(res.names[0], /^test_grant_1_31337_\d+$/);
         match(res.names[1], /^test_grant_2_31337_\d+$/);
@@ -342,12 +342,12 @@ describe("database", function () {
         });
 
         // test after insert is granted
-        const batchGrant = await db.batch([
+        const [batchGrant] = await db.batch([
           db.prepare(`GRANT INSERT ON ${tableName1} TO '${wallet.address}';`),
           db.prepare(`GRANT INSERT ON ${tableName2} TO '${wallet.address}';`),
         ]);
         // db has autoWait turned off
-        await batchGrant.meta.txn.wait();
+        await batchGrant.meta.txn?.wait();
 
         await db2.batch([
           db2.prepare(
@@ -380,12 +380,12 @@ describe("database", function () {
         // Need to make a lot of changes in this test, increase timeout
         this.timeout("20s");
 
-        const batch = await db.batch([
+        const [batch] = await db.batch([
           db.prepare(`CREATE TABLE test_revoke_1 (id INTEGER, name TEXT);`),
           db.prepare(`CREATE TABLE test_revoke_2 (id INTEGER, name TEXT);`),
         ]);
         // db has autoWait turned off
-        const res = await batch.meta.txn.wait();
+        const res = await batch.meta.txn?.wait();
 
         match(res.names[0], /^test_revoke_1_31337_\d+$/);
         match(res.names[1], /^test_revoke_2_31337_\d+$/);
@@ -395,12 +395,12 @@ describe("database", function () {
         const tableName2 = res.names[1] as string;
 
         // test after insert is granted
-        const batchGrant = await db.batch([
+        const [batchGrant] = await db.batch([
           db.prepare(`GRANT INSERT ON ${tableName1} TO '${wallet.address}';`),
           db.prepare(`GRANT INSERT ON ${tableName2} TO '${wallet.address}';`),
         ]);
         // db has autoWait turned off
-        await batchGrant.meta.txn.wait();
+        await batchGrant.meta.txn?.wait();
 
         await db2.batch([
           db2.prepare(
@@ -423,7 +423,7 @@ describe("database", function () {
         strictEqual(table2[0].name, "two");
 
         // test after insert is granted
-        const batchRevoke = await db.batch([
+        const [batchRevoke] = await db.batch([
           db.prepare(
             `REVOKE INSERT ON ${tableName1} FROM '${wallet.address}';`
           ),
@@ -432,7 +432,7 @@ describe("database", function () {
           ),
         ]);
         // db has autoWait turned off
-        await batchRevoke.meta.txn.wait();
+        await batchRevoke.meta.txn?.wait();
 
         const noPermission = db2.batch([
           db2.prepare(

@@ -148,14 +148,14 @@ export async function extractReadonly(
  *  - The transaction must only affect a single table, and the table's prefix must match
  *    the `prefix` param.
  * @returns {
- *    wait: async function that will not return until the validator has processed `tx`
- *    name: the full table name
- *    prefix: the table name prefix
- *    chainId: the chainId of `tx`
- *    tableId: the tableId of `tx`
- *    transaction_hash: the transaction hash of `tx`
- *    block_number: the block number of `tx`
- *    error: the first error encounntered when the Validator processed `tx`
+ *    wait: async function that will not return until the validator has processed `tx`,
+ *    name: the full table name,
+ *    prefix: the table name prefix,
+ *    chainId: the chainId of `tx`,
+ *    tableId: the tableId of `tx`,
+ *    transaction_hash: the transaction hash of `tx`,
+ *    block_number: the block number of `tx`,
+ *    error: the first error encounntered when the Validator processed `tx`,
  *    error_event_idx: the index of the event that cause the error when the Validator processed `tx`
  * }
  */
@@ -194,14 +194,14 @@ interface MultiEventTransaction {
  * @param {statements} either the sql statement strings or the nomralized statement objects that were used in the transaction
  * @param {tx} the transaction object
  * @returns {
- *    names: Array of table names the correspond to the statements. Useful for create statements.
- *    wait: a function that will only return successfully after the conencted validator confirms the tx
- *    prefixes: Array of table name prefixes
- *    chainId: the chainId of `tx`
- *    tableId: the tableId of `tx`
- *    transaction_hash: the transaction hash of `tx`
- *    block_number: the block number of `tx`
- *    error: the first error encounntered when the Validator processed `tx`
+ *    names: Array of table names the correspond to the statements,
+ *    wait: a function that will only return successfully after the conencted validator confirms the tx,
+ *    prefixes: Array of table name prefixes,
+ *    chainId: the chainId of `tx`,
+ *    tableId: the tableId of `tx`,
+ *    transaction_hash: the transaction hash of `tx`,
+ *    block_number: the block number of `tx`,
+ *    error: the first error encounntered when the Validator processed `tx`,
  *    error_event_idx: the index of the event that cause the error when the Validator processed `tx`
  * }
  *
@@ -211,16 +211,11 @@ export async function wrapManyTransaction(
   statements: string[] | Runnable[],
   tx: ContractTransaction
 ): Promise<WaitableTransactionReceipt & MultiEventTransaction> {
-  // TODO: `getContractReceipt` is ignoring all but the first tableID
   const _params = await getContractReceipt(tx);
   const chainId =
     _params.chainId === 0 || _params.chainId == null
       ? await extractChainId(conn)
       : _params.chainId;
-
-  // TODO: this was returning a `name` property, but there is potentiall more than one name.
-  //    We should probably continue to return `name` so we can keep backward compatability,
-  //    but we also should include `names` as a full list of the names for this tx.
 
   // map the transaction events to table names and prefixes then return them to the caller
   const { names, prefixes } = (
@@ -282,7 +277,6 @@ export async function wrapManyTransaction(
   };
 }
 
-// TODO: where should this helper live?
 function isRunnable(statement: string | Runnable): statement is Runnable {
   return (statement as Runnable).tableId !== undefined;
 }

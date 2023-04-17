@@ -41,16 +41,15 @@ export async function getOverrides({
 
 /**
  * RegistryReceipt is based on the TransactionReceipt type which defined by the API spec.
- * The API v1 has a known but that results in not returning all of the tableIds from a
- * transaction.
+ * The API v1 has a known problem where it only returns the first tableId from a transaction.
  */
 export type RegistryReceipt = Required<
   Omit<TransactionReceipt, "error" | "errorEventIdx">
 >;
 
 /**
- * MultiEventTransactionReceipt represent mapping of response a Validator transaction receipt
- * to the tableIds that were affected.
+ * MultiEventTransactionReceipt represents a mapping of a response from a Validator
+ * transaction receipt to the tableIds that were affected.
  */
 export interface MultiEventTransactionReceipt {
   tableIds: string[];
@@ -66,9 +65,9 @@ export interface MultiEventTransactionReceipt {
  * calculate the full table name.
  * @param {tx} a contract transaction
  * @returns {
- *   tableIds: an Array of the tableIds in the sql events
- *   transactionHash: the chain's transaction hash
- *   blockNumber: the chain's block number
+ *   tableIds: an Array of the tableIds in the sql events,
+ *   transactionHash: the chain's transaction hash,
+ *   blockNumber: the chain's block number,
  *   chainId: the ID of the chain
  * }
  *

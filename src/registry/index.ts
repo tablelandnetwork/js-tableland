@@ -60,7 +60,6 @@ export class Registry {
   /**
    * Create a Registry instance with the specified connection configuration.
    * @param config The connection configuration. This must include an ethersjs
-   * TODO: would it make sense if possible config values were listed here?
    * Signer. If passing the config from a pre-existing Database instance, it
    * must have a non-null signer key defined.
    */
@@ -170,9 +169,7 @@ export class Registry {
   }
 
   /**
-   *
    * @custom deprecated Use `create` instead.
-   *
    */
   async createTable(params: CreateOneParams): Promise<ContractTransaction> {
     return await create(this.config, params);
@@ -191,7 +188,7 @@ export class Registry {
    * - `msg.sender` must be `caller`
    * - `tableId` must exist
    * - `caller` must be authorized by the table controller
-   * - `statement` must be less than or equal to 35000 bytes after normalizing
+   * - `statement` must be less than 35000 bytes after normalizing
    */
   async mutate(params: MutateParams): Promise<ContractTransaction> {
     return await mutate(this.config, params);
@@ -199,9 +196,7 @@ export class Registry {
 
   /**
    * Runs a set of SQL statements for `caller` using `runnables`.
-   *
-   * @custom deprecated Using this with a single statement is deprecated. Use `mutate` instead.
-   *
+   * @custom:deprecated Using this with a single statement is deprecated. Use `mutate` instead.
    */
   async runSQL(params: MutateParams): Promise<ContractTransaction> {
     return await mutate(this.config, params);

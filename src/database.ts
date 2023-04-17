@@ -86,8 +86,6 @@ export class Database<D = unknown> {
    * @param opts Additional options to control execution.
    * @returns An array of run results.
    */
-  // TODO: return type is different depending on the type of the Statements.
-  //    Should we replace `any` with those possible types?
   //    Note: if we want this package to mirror the D1 package in a way that
   //    enables compatability with packages built to exend D1, then the return type
   //    here will potentially affect if/how those packages work.
@@ -95,7 +93,16 @@ export class Database<D = unknown> {
   //    See this package's `thirdparty` tests for examples.
   //    We also have to balance that with the ability of SDK user's to do things like
   //    wait for the transaction to finish, and get the table name, prefix, etc...
-  async batch<T = D>(statements: Statement[], opts: Signal = {}): Promise<any> {
+  async batch<T = D>(
+    statements: Statement[],
+    opts: Signal = {}
+    // reads returns an Array, everything else a single result
+    // TODO: In order to work around the Validator API not returning all of the tableIds
+    //       and continuing to work in a backward compatable way, it seems that we have to
+    //       make this type `any` :(
+    //       We should attempt to fix this when the Validator API update happens, or on the
+    //       next major version.
+  ): Promise<any> {
     try {
       const start = performance.now();
       // If the statement types are "create" and the statement contains more than one
@@ -131,7 +138,8 @@ export class Database<D = unknown> {
           )
         );
 
-        return wrapResult(receipt, performance.now() - start);
+        // TODO: wrapping in an Array is required for back compat, consider changing this for next major
+        return [wrapResult(receipt, performance.now() - start)];
       }
 
       if (type !== "write" && type !== "acl") {
@@ -155,7 +163,8 @@ export class Database<D = unknown> {
         await execMutateMany(this.config, runnables)
       );
 
-      return wrapResult(receipt, performance.now() - start);
+      // TODO: wrapping in an Array is required for back compat, consider changing this for next major
+      return [wrapResult(receipt, performance.now() - start)];
     } catch (cause: any) {
       if (cause.message.startsWith("ALL_ERROR") === true) {
         throw errorWithCause("BATCH_ERROR", cause.cause);
@@ -237,9 +246,6 @@ async function normalizedToRunnables(
     {
       tableId,
       statement: normalized.statements.join(";"),
-      // TODO: the type called "write" is indicative of what we are calling "mutate" elsewhere
-      //       it would require a change to the sqlpraser, but maybe we should replace write with mutate?
-      type: "write",
     },
   ];
 }

@@ -69,10 +69,10 @@ ${padding}${carrots}`;
   },
 ];
 
-// TODO: this only works if the transaction will only be affecting a single table
-//       we might need to rethink this.  I've currently got new versions of this
-//       below called execMutateMany and execCreateMany, but we might be able to
-//       combine all of these `exec` functions into one.
+// TODO: this only works if the transaction will only be affecting a single table.
+//       I've currently got new versions of this below called execMutateMany and
+//       execCreateMany, but we might be able to combine all of these `exec` functions
+//       into one when we move to version 5.
 export async function exec(
   config: Config,
   { type, sql, tables: [first] }: ExtractedStatement
@@ -102,10 +102,9 @@ export async function exec(
 }
 
 /**
- * This is an internal method takes a Database config and set of Runnables, and
- * uses that with the currently set Validator baseUrl to call the Registry Contract
- * `mutate` method.
- * Once the contract call returns this returns the mapping of the contract tx results
+ * This is an internal method that will call the Registry Contract `mutate` method
+ * with a set of Runnables.
+ * Once the contract call finishes, this returns the mapping of the contract tx results
  * to the Runnables argument.
  */
 export async function execMutateMany(
@@ -128,11 +127,10 @@ export async function execMutateMany(
 }
 
 /**
- * This is an internal method that takes a Database config and set of create table sql strings.
- * Then uses that with the currently set Validator baseUrl to prepare the sql strings to call
- * the Registry Contract `create` method.
- * Once the contract call returns, this returns the mapping of the contract tx results to
- * the original create statement strings.  This enables the caller to get the new table names
+ * This is an internal method that will call the Registry Contract `create` method with
+ * a set of sql create statements.
+ * Once the contract call finishes, this returns the mapping of the contract tx results to
+ * the create statements.
  */
 export async function execCreateMany(
   config: Config,
