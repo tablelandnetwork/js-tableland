@@ -31,7 +31,6 @@ export {
   type Result,
   type Metadata,
   type WaitableTransactionReceipt,
-  type UnnamedWaitableTransactionReceipt,
   type Named,
 } from "./utils.js";
 

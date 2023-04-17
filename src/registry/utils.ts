@@ -18,12 +18,6 @@ import {
 import { validateTables, type StatementType } from "../helpers/parser.js";
 
 /**
- * UnnamedWaitableTransactionReceipt represents a TransactionReceipt with a wait method, but no name.
- */
-export type UnnamedWaitableTransactionReceipt = TransactionReceipt &
-  Wait<TransactionReceipt>;
-
-/**
  * WaitableTransactionReceipt represents a named TransactionReceipt with a wait method.
  * See the Validator spec in the docs for more details.
  * @typedef {Object} WaitableTransactionReceipt
