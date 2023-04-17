@@ -50,19 +50,26 @@ export interface MutateOneParams extends TableIdentifier {
   statement: string;
 }
 
+/**
+ * Runnable represents an Object the will be used as a Runnable struct in the
+ * call to the contract's `mutate` function.
+ * @typedef {Object} Runnable
+ * @property {string} statement - SQL statement string.
+ * @property {number} chainId - The target chain id.
+ */
 export interface Runnable {
   statement: string;
   tableId: number;
 }
 
+/**
+ * MutateManyParams Represents the parameters Object used to mutate multiple tables in a single tx.
+ * @typedef {Object} MutateManyParams
+ * @property {Runnable[]} runnables - List of Runnables.
+ * @property {number} chainId - The target chain id.
+ */
 export interface MutateManyParams {
-  /**
-   * A list of Runnables.
-   */
   runnables: Runnable[];
-  /**
-   * The target chain id.
-   */
   chainId: number;
 }
 

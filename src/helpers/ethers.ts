@@ -50,6 +50,11 @@ export type RegistryReceipt = Required<
 /**
  * MultiEventTransactionReceipt represents a mapping of a response from a Validator
  * transaction receipt to the tableIds that were affected.
+ * @typedef {Object} MultiEventTransactionReceipt
+ * @property {string[]} tableIds - The list of table ids affected in the transaction
+ * @property {string} transactionHash - The hash of the transaction
+ * @property {number} blockNumber - The block number of the transaction
+ * @property {number} chainId - The chain id of the transaction
  */
 export interface MultiEventTransactionReceipt {
   tableIds: string[];
@@ -64,12 +69,7 @@ export interface MultiEventTransactionReceipt {
  * Especially useful for transactions that create new tables because you need the tableId to
  * calculate the full table name.
  * @param {tx} a contract transaction
- * @returns {
- *   tableIds: an Array of the tableIds in the sql events,
- *   transactionHash: the chain's transaction hash,
- *   blockNumber: the chain's block number,
- *   chainId: the ID of the chain
- * }
+ * @returns {MultiEventTransactionReceipt} tableland receipt
  *
  */
 export async function getContractReceipt(

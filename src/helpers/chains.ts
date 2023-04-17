@@ -109,7 +109,7 @@ export function getBaseUrl(chainNameOrId: ChainName | number): string {
 }
 
 /**
- * Override the internal list of chains and validators that will be used for Contract calls and read queries
+ * Override the internal list of registry addresses and validator urls that will be used for Contract calls and read queries
  * @param chainNameOrId Either the chain name or chainId.  For a list of chain names see the evm-tableland networks file
  * @param values The values you would like to use to override the defaults.
  *  Example: {contractAddress: "0x000deadbeef", baseUrl: "https://my.validator.mydomain.tld"}

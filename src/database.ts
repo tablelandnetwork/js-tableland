@@ -90,13 +90,11 @@ export class Database<D = unknown> {
   //    enables compatability with packages built to exend D1, then the return type
   //    here will potentially affect if/how those packages work.
   //    D1-ORM is a good example: https://github.com/Interactions-as-a-Service/d1-orm/
-  //    See this package's `thirdparty` tests for examples.
-  //    We also have to balance that with the ability of SDK user's to do things like
-  //    wait for the transaction to finish, and get the table name, prefix, etc...
   async batch<T = D>(
     statements: Statement[],
     opts: Signal = {}
-    // reads returns an Array, everything else a single result
+    // reads returns an Array with legnth equal to the number of batched statements,
+    // everything else a single result wrapped in an Array for backward compatability.
     // TODO: In order to work around the Validator API not returning all of the tableIds
     //       and continuing to work in a backward compatable way, it seems that we have to
     //       make this type `any` :(

@@ -49,25 +49,25 @@ export async function prepareCreateOne({
   return { statement: stmt, chainId, prefix };
 }
 
+/**
+ * CreateOneParams Represents the parameters Object used to create a single table.
+ * @typedef {Object} CreateOneParams
+ * @property {string} statement - SQL statement string.
+ * @property {number} chainId - The target chain id.
+ */
 export interface CreateOneParams {
-  /**
-   * SQL statement string.
-   */
   statement: string;
-  /**
-   * The target chain id.
-   */
   chainId: number;
 }
 
+/**
+ * CreateManyParams Represents the parameters Object used to create multiple tables in a single tx.
+ * @typedef {Object} CreateManyParams
+ * @property {string[]} statements - List of create SQL statement strings.
+ * @property {number} chainId - The target chain id.
+ */
 export interface CreateManyParams {
-  /**
-   * SQL statement string.
-   */
   statements: string[];
-  /**
-   * The target chain id.
-   */
   chainId: number;
 }
 

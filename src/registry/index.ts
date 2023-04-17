@@ -37,16 +37,14 @@ export {
 
 export {
   type TableIdentifier,
-  // deprecated
-  type CreateOneParams as CreateTableParams,
+  type CreateOneParams as CreateTableParams, // deprecated
   type CreateOneParams,
   type CreateManyParams,
   type CreateParams,
   type MutateOneParams,
   type MutateManyParams,
   type MutateParams,
-  // deprecated
-  type RunSQLParams,
+  type RunSQLParams, // deprecated
   type Runnable,
   type TransferParams,
   type SetParams,
@@ -169,7 +167,7 @@ export class Registry {
   }
 
   /**
-   * @custom deprecated Use `create` instead.
+   * @custom:deprecated Use `create` instead.
    */
   async createTable(params: CreateOneParams): Promise<ContractTransaction> {
     return await create(this.config, params);

@@ -25,6 +25,17 @@ export type UnnamedWaitableTransactionReceipt = TransactionReceipt &
 
 /**
  * WaitableTransactionReceipt represents a named TransactionReceipt with a wait method.
+ * See the Validator spec in the docs for more details.
+ * @typedef {Object} WaitableTransactionReceipt
+ * @property {function} wait - Async function that will not return until the validator has processed tx.
+ * @property {string} name - The full table name.
+ * @property {string} prefix - The table name prefix.
+ * @property {number} chainId - The chainId of tx.
+ * @property {string} tableId - The tableId of tx.
+ * @property {string} transaction_hash - The transaction hash of tx.
+ * @property {number} block_number - The block number of tx.
+ * @property {Object} error - The first error encounntered when the Validator processed tx.
+ * @property {number} error_event_idx - The index of the event that cause the error when the Validator processed tx.
  */
 export type WaitableTransactionReceipt = TransactionReceipt &
   Wait<TransactionReceipt & Named> &
@@ -141,23 +152,10 @@ export async function extractReadonly(
 /**
  * Given a config, a table name prefix, and a transaction that only affects a single table
  * this will enable waiting for the Validator to materialize the change in the transaction
- * @param conn A Database config
- * @param prefix A table name prefix.
- *  - It must be the prefix of the single table that `tx` is affecting.
- * @param tx A transaction object that includes a call to the Registry Contract.
- *  - The transaction must only affect a single table, and the table's prefix must match
- *    the `prefix` param.
- * @returns {
- *    wait: async function that will not return until the validator has processed `tx`,
- *    name: the full table name,
- *    prefix: the table name prefix,
- *    chainId: the chainId of `tx`,
- *    tableId: the tableId of `tx`,
- *    transaction_hash: the transaction hash of `tx`,
- *    block_number: the block number of `tx`,
- *    error: the first error encounntered when the Validator processed `tx`,
- *    error_event_idx: the index of the event that cause the error when the Validator processed `tx`
- * }
+ * @param {Object} conn - A Database config.
+ * @param {string} prefix - A table name prefix.
+ * @param {Object} tx - A transaction object that includes a call to the Registry Contract.
+ * @returns {WaitableTransactionReceipt}
  */
 export async function wrapTransaction(
   conn: Config,
@@ -193,17 +191,7 @@ interface MultiEventTransaction {
  * @param {conn} a database config object
  * @param {statements} either the sql statement strings or the nomralized statement objects that were used in the transaction
  * @param {tx} the transaction object
- * @returns {
- *    names: Array of table names the correspond to the statements,
- *    wait: a function that will only return successfully after the conencted validator confirms the tx,
- *    prefixes: Array of table name prefixes,
- *    chainId: the chainId of `tx`,
- *    tableId: the tableId of `tx`,
- *    transaction_hash: the transaction hash of `tx`,
- *    block_number: the block number of `tx`,
- *    error: the first error encounntered when the Validator processed `tx`,
- *    error_event_idx: the index of the event that cause the error when the Validator processed `tx`
- * }
+ * @returns {(WaitableTransactionReceipt & MultiEventTransaction)}
  *
  */
 export async function wrapManyTransaction(
