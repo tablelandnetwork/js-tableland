@@ -1,6 +1,6 @@
-# @tableland/client API
+# @tableland/sdk API
 
-> These docs are borrowed extensively from https://developers.cloudflare.com/d1/platform/client-api/
+> These docs are borrowed extensively from the Cloudflare D1 documentation of which Tableland is fully compatible with: https://developers.cloudflare.com/d1/platform/client-api/
 
 ## Prepared and static statements
 
