@@ -10,16 +10,12 @@
 
 > Tableland JavaScript SDK—the essential tool for building web3 apps with Tableland databases.
 
-# Table of Contents
+## Table of Contents
 
-- [@tableland/sdk](#tablelandsdk)
-- [Table of Contents](#table-of-contents)
 - [Background](#background)
 - [Install](#install)
 - [Usage](#usage)
   - [Database](#database)
-    - [Connecting](#connecting)
-    - [Create, write, \& read](#create-write--read)
   - [Validator](#validator)
   - [Registry](#registry)
   - [Build Tools](#build-tools)
@@ -27,11 +23,11 @@
 - [Contributing](#contributing)
 - [License](#license)
 
-# Background
+## Background
 
 The `@tableland/sdk` library provides an easy-to-use interface for integrating Tableland databases into your web3 applications, unlocking decentralized data-driven development with SQL queries (creates, writes, reads) and access control.
 
-# Install
+## Install
 
 You can install via npm/yarn:
 
@@ -46,12 +42,12 @@ Or directly via GitHub:
 npm i tablelandnetwork/js-tableland
 ```
 
-# Usage
+## Usage
 
 Full library documentation is [generated on GitHub](https://tablelandnetwork.github.io/js-tableland/), and
 general docs, examples, and more are [available on our docs site](https://docs.tableland.xyz/sdk/core/).
 
-## Database
+### Database
 
 A `Database` is used to create, write, and read data. To connect to a `Database`, you first must import and instantiate it. There are two key considerations:
 
@@ -60,7 +56,7 @@ A `Database` is used to create, write, and read data. To connect to a `Database`
 
 If you need to set up a signer, libraries like [`ethers`](https://docs.ethers.org/v5/) help provide a way to create one by leveraging a connection with a `provider`. From there, all database creates, writes, and reads go through a single `prepare` method.
 
-### Connecting
+#### Connecting
 
 As noted, creating a table instantiates a `Database` and must connect to it with a signer; this is also true for any table writes. The `ethers` library is used in the example below to create a signer, which comes as part of the `@tableland/sdk` but can also be installed separately.
 
@@ -112,7 +108,7 @@ const db = new Database();
 
 If no `signer` is provided and you try to create or write to tables, the `Database` will default to prompting a browser wallet connection.
 
-### Create, write, & read
+#### Create, write, & read
 
 To create a table, you pass a `CREATE TABLE` statement to the `prepare` method and then execute it.
 
@@ -148,7 +144,7 @@ Notice the `insert.txn.wait()` usage above. Table creates and writes are on-chai
 const { results } = await db.prepare(`SELECT * FROM ${name};`).all();
 ```
 
-## Validator
+### Validator
 
 Aside from the core `Database`, developers can also choose to connect directly to a Tableland `Validator` node. Connecting to a validator is useful when you'd like to directly access other table or validator information as exposed by a [Tableland Gateway API](https://docs.tableland.xyz/gateway-api/).
 
@@ -178,7 +174,7 @@ console.log(isHealthy);
 // true
 ```
 
-## Registry
+### Registry
 
 The SDK is in-part a JavaScript abstraction of the core Tableland registry smart contract. Developers can choose to interact directly with the `Registry` API for table creates and writes, if desired. It also offers a couple of additional features, such as listing all tables owned by an address or transferring table ownership altogether.
 
@@ -211,7 +207,7 @@ const tx = await reg.safeTransferFrom({
 await tx.wait();
 ```
 
-## Build Tools
+### Build Tools
 
 The Tableland SDK uses an optimized WASM build of our SQL parser under the hood. Unfortunately, some build systems such as [Vite](https://vitejs.dev) require an adjustment to their configuration to support this feature. To temporarily work around this issue, simply add `@tableland/sqlparser` to the `excluded` list under `optimizeDeps` in your `vite.config.ts` file:
 
@@ -225,7 +221,7 @@ optimizeDeps: {
 
 See [our own Rigs project](https://github.com/tablelandnetwork/rigs/blob/main/animation_url/vite.config.ts#L17) for an example of using this in production.
 
-# Development
+## Development
 
 Get started by cloning, installing, building, and testing the project:
 
@@ -244,13 +240,13 @@ To run tests in a few of the common browser environments we are using Playwright
 - `cd ../../`
 - `npm run test:browser`
 
-# Contributing
+## Contributing
 
 PRs accepted.
 
 Small note: If editing the README, please conform to the
 [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
-# License
+## License
 
 MIT AND Apache-2.0, © 2021-2022 Tableland Network Contributors
