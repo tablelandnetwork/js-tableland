@@ -3,7 +3,7 @@ import { type ContractTransaction } from "../helpers/ethers.js";
 import { validateTableName } from "../helpers/parser.js";
 import { getContractAndOverrides } from "./contract.js";
 
-// Match _anything_ between create table and schema portion of create statement
+// Match _anything_ between create table and schema portion of create statement (statement must be a single line)
 const firstSearch =
   /(?<create>^CREATE\s+TABLE\s+)(?<name>\S+)(?<schema>\s*\(.*\)[;]?$)/i;
 const escapeChars = /"|'|`|\]|\[/;
@@ -32,14 +32,18 @@ export async function prepareCreateTable({
     `${first}_${chainId}`,
     true
   );
-  const stmt = statement.replace(
-    firstSearch,
-    function (_, create: string, name: string, schema: string) {
-      // If this name has any escape chars, escape the whole thing.
-      const newName = escapeChars.test(name) ? `[${tableName}]` : tableName;
-      return `${create.trim()} ${newName.trim()} ${schema.trim()}`;
-    }
-  );
+  const stmt = statement
+    .replace(/\n/g, "")
+    .replace(/\r/g, "")
+    .replace(
+      firstSearch,
+      function (_, create: string, name: string, schema: string) {
+        // If this name has any escape chars, escape the whole thing.
+        const newName = escapeChars.test(name) ? `[${tableName}]` : tableName;
+        return `${create.trim()} ${newName.trim()} ${schema.trim()}`;
+      }
+    );
+
   return { statement: stmt, chainId, prefix };
 }
 
