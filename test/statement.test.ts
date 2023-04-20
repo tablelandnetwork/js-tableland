@@ -307,6 +307,7 @@ SELECT * FROM 3.14;
       this.beforeAll(() => {
         db.config.autoWait = true;
       });
+
       test("when a mutating query is used", async function () {
         const stmt = db.prepare(
           `INSERT INTO ${tableName} (counter, info) VALUES (1, 'one');`
@@ -316,6 +317,35 @@ SELECT * FROM 3.14;
         assert(meta.duration != null);
         deepStrictEqual(results, []);
       });
+
+      test("when multiline create query is used", async function () {
+        const prefix = "multiline";
+        const { results, meta, error } = await db
+          .prepare(
+            `CREATE TABLE ${prefix} (
+              counter int,
+              info text
+            );`
+          )
+          .all();
+
+        strictEqual(error, undefined);
+        assert(meta.duration != null);
+        deepStrictEqual(results, []);
+        const tableName = meta.txn!.name;
+        match(tableName, /^multiline_31337_\d+$/);
+
+        await db
+          .prepare(
+            `INSERT INTO ${tableName} (counter, info) VALUES (1, 'one');`
+          )
+          .all();
+
+        const res = await db.prepare(`SELECT * FROM ${tableName};`).all();
+
+        deepStrictEqual(res.results, [{ counter: 1, info: "one" }]);
+      });
+
       this.afterAll(() => {
         db.config.autoWait = false;
       });
