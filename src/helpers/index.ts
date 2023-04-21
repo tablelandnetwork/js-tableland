@@ -20,6 +20,7 @@ export {
   type SignerConfig,
   type Config,
   type AutoWaitConfig,
+  checkWait,
   extractBaseUrl,
   extractChainId,
   extractSigner,
@@ -31,6 +32,7 @@ export {
   type ContractTransaction,
   type ContractReceipt,
   type RegistryReceipt,
+  type MultiEventTransactionReceipt,
   getSigner,
 } from "./ethers.js";
 export {
