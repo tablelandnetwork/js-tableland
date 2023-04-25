@@ -4,7 +4,7 @@ import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
 import {
   getDefaultProvider,
-  type RegistryReceipt,
+  type MultiEventTransactionReceipt,
 } from "../src/helpers/index.js";
 import { getContractReceipt } from "../src/helpers/ethers.js";
 import { wrapTransaction } from "../src/registry/utils.js";
@@ -29,14 +29,15 @@ describe("registry", function () {
   });
 
   describe("controller", function () {
-    let receipt: RegistryReceipt;
+    let receipt: MultiEventTransactionReceipt;
     this.beforeAll(async function () {
       const tx = await reg.createTable({
         chainId: 31337,
         statement: "create table test_controller_31337 (id int, name text)",
       });
+
       receipt = await getContractReceipt(tx);
-      notStrictEqual(receipt.tableId, undefined);
+      notStrictEqual(receipt.tableIds[0], undefined);
       strictEqual(receipt.chainId, 31337);
     });
 
@@ -54,7 +55,7 @@ describe("registry", function () {
     test("when setting the controller succeeds", async function () {
       const tx = await reg.setController({
         controller: controller.address,
-        tableName: `test_controller_${receipt.chainId}_${receipt.tableId}`,
+        tableName: `test_controller_${receipt.chainId}_${receipt.tableIds[0]}`,
       });
       const rec = await tx.wait();
       strictEqual(typeof rec.transactionHash, "string");
@@ -80,7 +81,10 @@ describe("registry", function () {
     });
 
     test("when getting the controller succeeds", async function () {
-      const results = await reg.getController(receipt);
+      const results = await reg.getController({
+        chainId: receipt.chainId,
+        tableId: receipt.tableIds[0],
+      });
       strictEqual(results, controller.address);
     });
 
@@ -118,7 +122,10 @@ describe("registry", function () {
     });
 
     test("when locking the controller succeeds", async function () {
-      const tx = await reg.lockController(receipt);
+      const tx = await reg.lockController({
+        chainId: receipt.chainId,
+        tableId: receipt.tableIds[0],
+      });
       const rec = await tx.wait();
       strictEqual(typeof rec.transactionHash, "string");
       strictEqual(rec.transactionHash.length, 66);
@@ -127,7 +134,10 @@ describe("registry", function () {
       await rejects(
         reg.setController({
           controller: wallet.address,
-          tableName: receipt,
+          tableName: {
+            chainId: receipt.chainId,
+            tableId: receipt.tableIds[0],
+          },
         }),
         (err: any) => {
           match(
@@ -143,7 +153,7 @@ describe("registry", function () {
   });
 
   describe("list and transfer", function () {
-    let receipt: RegistryReceipt;
+    let receipt: MultiEventTransactionReceipt;
     this.beforeAll(async function () {
       this.timeout("10s");
       const tx = await reg.createTable({
@@ -151,21 +161,27 @@ describe("registry", function () {
         statement: "create table test_ownership_31337 (id int, name text)",
       });
       receipt = await getContractReceipt(tx);
-      notStrictEqual(receipt.tableId, undefined);
+      notStrictEqual(receipt.tableIds[0], undefined);
       strictEqual(receipt.chainId, 31337);
     });
 
     test("when listing fails", async function () {
       const results = await reg.listTables(controller.address);
       // strictEqual(results.length, 0);
-      strictEqual(results.includes(receipt), false);
+      strictEqual(
+        results.includes({
+          chainId: receipt.chainId,
+          tableId: receipt.tableIds[0],
+        }),
+        false
+      );
     });
 
     test("when listing succeeds", async function () {
       const results = await reg.listTables(/* defaults to wallet.address */);
       strictEqual(results.length > 0, true);
       strictEqual(
-        results.some(({ tableId }) => tableId === receipt.tableId),
+        results.some(({ tableId }) => tableId === receipt.tableIds[0]),
         true
       );
     });
@@ -173,7 +189,10 @@ describe("registry", function () {
     test("when transfer succeeds", async function () {
       const tx = await reg.safeTransferFrom({
         to: controller.address,
-        tableName: receipt,
+        tableName: {
+          chainId: receipt.chainId,
+          tableId: receipt.tableIds[0],
+        },
       });
       const rec = await tx.wait();
       strictEqual(typeof rec.transactionHash, "string");
@@ -184,7 +203,10 @@ describe("registry", function () {
       await rejects(
         reg.safeTransferFrom({
           to: wallet.address,
-          tableName: receipt,
+          tableName: {
+            chainId: receipt.chainId,
+            tableId: receipt.tableIds[0],
+          },
         }),
         (err: any) => {
           match(
@@ -199,9 +221,46 @@ describe("registry", function () {
     });
   });
 
-  describe("runSQL()", function () {
+  describe("mutate()", function () {
     // CREATE TABLE test_exec (id integer primary key, counter integer, info text)
-    let receipt: RegistryReceipt;
+    let receipt: MultiEventTransactionReceipt;
+    this.beforeAll(async function () {
+      this.timeout("10s");
+      const tx = await reg.create({
+        chainId: 31337,
+        statement:
+          "create table test_runsql_31337 (id integer primary key, counter integer, info text)",
+      });
+      receipt = await getContractReceipt(tx);
+      notStrictEqual(receipt.tableIds[0], undefined);
+      strictEqual(receipt.chainId, 31337);
+    });
+    test("when insert statement is valid", async function () {
+      const tx = await reg.mutate({
+        chainId: receipt.chainId,
+        tableId: receipt.tableIds[0],
+        statement: `INSERT INTO test_runsql_${receipt.chainId}_${receipt.tableIds[0]} (counter, info) VALUES (1, 'Tables');`,
+      });
+      const rec = await tx.wait();
+      strictEqual(typeof rec.transactionHash, "string");
+      strictEqual(rec.transactionHash.length, 66);
+    });
+
+    test("when insert statement is valid", async function () {
+      const tx = await reg.mutate({
+        chainId: receipt.chainId,
+        tableId: receipt.tableIds[0],
+        statement: `UPDATE test_runsql_${receipt.chainId}_${receipt.tableIds[0]} SET counter=2`,
+      });
+      const rec = await tx.wait();
+      strictEqual(typeof rec.transactionHash, "string");
+      strictEqual(rec.transactionHash.length, 66);
+    });
+  });
+
+  describe(" *deprecated* runSQL()", function () {
+    // CREATE TABLE test_exec (id integer primary key, counter integer, info text)
+    let receipt: MultiEventTransactionReceipt;
     this.beforeAll(async function () {
       this.timeout("10s");
       const tx = await reg.createTable({
@@ -210,13 +269,14 @@ describe("registry", function () {
           "create table test_runsql_31337 (id integer primary key, counter integer, info text)",
       });
       receipt = await getContractReceipt(tx);
-      notStrictEqual(receipt.tableId, undefined);
+      notStrictEqual(receipt.tableIds[0], undefined);
       strictEqual(receipt.chainId, 31337);
     });
     test("when insert statement is valid", async function () {
       const tx = await reg.runSQL({
-        ...receipt,
-        statement: `INSERT INTO test_runsql_${receipt.chainId}_${receipt.tableId} (counter, info) VALUES (1, 'Tables');`,
+        chainId: receipt.chainId,
+        tableId: receipt.tableIds[0],
+        statement: `INSERT INTO test_runsql_${receipt.chainId}_${receipt.tableIds[0]} (counter, info) VALUES (1, 'Tables');`,
       });
       const rec = await tx.wait();
       strictEqual(typeof rec.transactionHash, "string");
@@ -225,8 +285,9 @@ describe("registry", function () {
 
     test("when insert statement is valid", async function () {
       const tx = await reg.runSQL({
-        ...receipt,
-        statement: `UPDATE test_runsql_${receipt.chainId}_${receipt.tableId} SET counter=2`,
+        chainId: receipt.chainId,
+        tableId: receipt.tableIds[0],
+        statement: `UPDATE test_runsql_${receipt.chainId}_${receipt.tableIds[0]} SET counter=2`,
       });
       const rec = await tx.wait();
       strictEqual(typeof rec.transactionHash, "string");

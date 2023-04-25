@@ -1,3 +1,4 @@
+import { type WaitableTransactionReceipt } from "../registry/utils.js";
 import { type ChainName, getBaseUrl } from "./chains.js";
 import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
 
@@ -14,6 +15,17 @@ export interface AutoWaitConfig {
 }
 
 export type Config = Partial<ReadConfig & SignerConfig>;
+
+export async function checkWait(
+  config: Config & Partial<AutoWaitConfig>,
+  receipt: WaitableTransactionReceipt
+): Promise<WaitableTransactionReceipt> {
+  if (config.autoWait ?? false) {
+    const waited = await receipt.wait();
+    return { ...receipt, ...waited };
+  }
+  return receipt;
+}
 
 export async function extractBaseUrl(
   conn: Config = {},

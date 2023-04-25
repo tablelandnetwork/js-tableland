@@ -39,35 +39,64 @@ export async function getOverrides({
   return opts;
 }
 
+/**
+ * RegistryReceipt is based on the TransactionReceipt type which defined by the API spec.
+ * The API v1 has a known problem where it only returns the first tableId from a transaction.
+ */
 export type RegistryReceipt = Required<
   Omit<TransactionReceipt, "error" | "errorEventIdx">
 >;
 
+/**
+ * MultiEventTransactionReceipt represents a mapping of a response from a Validator
+ * transaction receipt to the tableIds that were affected.
+ * @typedef {Object} MultiEventTransactionReceipt
+ * @property {string[]} tableIds - The list of table ids affected in the transaction
+ * @property {string} transactionHash - The hash of the transaction
+ * @property {number} blockNumber - The block number of the transaction
+ * @property {number} chainId - The chain id of the transaction
+ */
+export interface MultiEventTransactionReceipt {
+  tableIds: string[];
+  transactionHash: string;
+  blockNumber: number;
+  chainId: number;
+}
+
+/**
+ *
+ * Given a transaction, this helper will return the tableIds that were part of the transaction.
+ * Especially useful for transactions that create new tables because you need the tableId to
+ * calculate the full table name.
+ * @param {tx} a contract transaction
+ * @returns {MultiEventTransactionReceipt} tableland receipt
+ *
+ */
 export async function getContractReceipt(
   tx: ContractTransaction
-): Promise<RegistryReceipt> {
+): Promise<MultiEventTransactionReceipt> {
   const receipt = await tx.wait();
+
   /* c8 ignore next */
   const events = receipt.events ?? [];
   const transactionHash = receipt.transactionHash;
   const blockNumber = receipt.blockNumber;
   const chainId = tx.chainId;
-  let tableId: string = "";
+  const tableIds: string[] = [];
   for (const event of events) {
+    const tableId =
+      event.args?.tableId != null && event.args.tableId.toString();
     switch (event.event) {
       case "CreateTable":
       case "RunSQL":
-        tableId = event.args?.tableId.toString();
+        if (tableId != null) tableIds.push(tableId);
+
         break;
       default:
       // Could be a Transfer or other
     }
-    // Break on first case of finding a tableId
-    if (tableId !== "") {
-      break;
-    }
   }
-  return { tableId, transactionHash, blockNumber, chainId };
+  return { tableIds, transactionHash, blockNumber, chainId };
 }
 
 /**

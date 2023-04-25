@@ -49,7 +49,7 @@ export interface components {
     readonly Table: {
       /** @example healthbot_5_1 */
       readonly name?: string;
-      /** @example https://testnet.tableland.network/tables/healthbot_5_1 */
+      /** @example https://testnets.tableland.network/api/v1/tables/healthbot_5_1 */
       readonly external_url?: string;
       /** @example https://render.tableland.xyz/anim/?chain=1&id=1 */
       readonly animation_url?: string;
@@ -149,21 +149,21 @@ export type external = Record<string, never>;
 
 export interface operations {
 
+  /**
+   * Get health status 
+   * @description Returns OK if the validator considers itself healthy.
+   */
   health: {
-    /**
-     * Get health status 
-     * @description Returns OK if the validator considers itself healthy.
-     */
     responses: {
       /** @description The validator is healthy. */
       200: never;
     };
   };
+  /**
+   * Get version information 
+   * @description Returns version information about the validator daemon.
+   */
   version: {
-    /**
-     * Get version information 
-     * @description Returns version information about the validator daemon.
-     */
     responses: {
       /** @description successful operation */
       200: {
@@ -173,27 +173,27 @@ export interface operations {
       };
     };
   };
+  /**
+   * Query the network 
+   * @description Returns the results of a SQL read query against the Tabeland network
+   */
   queryByStatement: {
-    /**
-     * Query the network 
-     * @description Returns the results of a SQL read query against the Tabeland network
-     */
     parameters: {
+      readonly query: {
         /**
          * @description The SQL read query statement 
          * @example select * from healthbot_80001_1
          */
+        statement: string;
         /**
          * @description The requested response format:
          *  * `objects` - Returns the query results as a JSON array of JSON objects.
          *  * `table` - Return the query results as a JSON object with columns and rows properties.
          */
-        /** @description Whether to extract the JSON object from the single property of the surrounding JSON object. */
-        /** @description Whether to unwrap the returned JSON objects from their surrounding array. */
-      readonly query: {
-        statement: string;
         format?: "objects" | "table";
+        /** @description Whether to extract the JSON object from the single property of the surrounding JSON object. */
         extract?: boolean;
+        /** @description Whether to unwrap the returned JSON objects from their surrounding array. */
         unwrap?: boolean;
       };
     };
@@ -212,22 +212,22 @@ export interface operations {
       429: never;
     };
   };
+  /**
+   * Get transaction status 
+   * @description Returns the status of a given transaction receipt by hash
+   */
   receiptByTransactionHash: {
-    /**
-     * Get transaction status 
-     * @description Returns the status of a given transaction receipt by hash
-     */
     parameters: {
+      readonly path: {
         /**
          * @description The parent chain to target 
          * @example 80001
          */
+        chainId: number;
         /**
          * @description The transaction hash to request 
          * @example 0x02f319429b8a7be1cbb492f0bfbf740d2472232a2edadde7df7c16c0b61aa78b
          */
-      readonly path: {
-        chainId: number;
         transactionHash: string;
       };
     };
@@ -246,22 +246,22 @@ export interface operations {
       429: never;
     };
   };
+  /**
+   * Get table information 
+   * @description Returns information about a single table, including schema information
+   */
   getTableById: {
-    /**
-     * Get table information 
-     * @description Returns information about a single table, including schema information
-     */
     parameters: {
+      readonly path: {
         /**
          * @description The parent chain to target 
          * @example 80001
          */
+        chainId: number;
         /**
          * @description Table identifier 
          * @example 1
          */
-      readonly path: {
-        chainId: number;
         tableId: string;
       };
     };
