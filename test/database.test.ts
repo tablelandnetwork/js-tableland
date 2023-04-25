@@ -14,7 +14,7 @@ describe("database", function () {
   const wallet = accounts[1];
   const provider = getDefaultProvider("http://127.0.0.1:8545");
   const signer = wallet.connect(provider);
-  const db = new Database({ signer });
+  const db = new Database({ signer, autoWait: true });
 
   test("when initialized via constructor", async function () {
     const db = new Database({ signer, baseUrl: "baseUrl" });
