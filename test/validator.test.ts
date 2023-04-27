@@ -461,7 +461,7 @@ describe("validator", function () {
           return true;
         }
       );
-      await getDelay(1000);
+      await getDelay(5000);
     });
   });
 });

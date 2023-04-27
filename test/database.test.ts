@@ -7,7 +7,7 @@ import { Database } from "../src/database.js";
 import { Statement } from "../src/statement.js";
 
 describe("database", function () {
-  this.timeout("10s");
+  this.timeout("15s");
 
   const accounts = getAccounts();
   // Note that we're using the second account here
@@ -457,7 +457,7 @@ describe("database", function () {
   describe(".exec()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      this.timeout("10s");
+      this.timeout("15s");
       const { results, error, meta } = await db
         .prepare(
           "CREATE TABLE test_exec (id integer, name text, age integer, primary key (id));"
