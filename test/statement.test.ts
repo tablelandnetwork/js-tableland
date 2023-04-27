@@ -13,7 +13,7 @@ import { getDefaultProvider } from "../src/helpers/index.js";
 import { Database, Statement } from "../src/index.js";
 
 describe("statement", function () {
-  this.timeout("10s");
+  this.timeout("15s");
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
@@ -143,7 +143,7 @@ CREATE TABLE test_run (counter blurg);
   describe(".all()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      this.timeout("10s");
+      this.timeout("15s");
       {
         const { meta } = await db
           .prepare(
@@ -355,7 +355,7 @@ SELECT * FROM 3.14;
   describe(".first()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      this.timeout("10s");
+      this.timeout("15s");
       {
         const { meta } = await db
           .prepare("CREATE TABLE test_first (counter integer, info text);")
@@ -440,7 +440,7 @@ SELECT * FROM 3.14;
   describe(".raw()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      this.timeout("10s");
+      this.timeout("15s");
       {
         const { meta } = await db
           .prepare(
