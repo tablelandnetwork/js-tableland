@@ -81,6 +81,12 @@ export class Validator {
    * @description Returns information about a single table, including schema information
    */
   async getTableById(params: TableParams, opts: Signal = {}): Promise<Table> {
+    if (
+      typeof params.chainId !== "number" ||
+      typeof params.tableId !== "string"
+    ) {
+      throw new Error("cannot get table with invalid chain or table id");
+    }
     return await getTable(this.config, params);
   }
 
