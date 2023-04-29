@@ -103,7 +103,7 @@
     "openapi-typescript": "^6.1.0",
     "prettier": "^2.8.2",
     "ts-node": "^10.9.1",
-    "typedoc": "^0.23.24",
+    "typedoc": "^0.24.6",
     "typescript": "^4.9.4"
   },
   "dependencies": {
