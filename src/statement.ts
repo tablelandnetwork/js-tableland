@@ -9,6 +9,7 @@ import {
   type AutoWaitConfig,
   type Config,
   type Signal,
+  checkWait,
   normalize,
 } from "./helpers/index.js";
 import {
@@ -25,6 +26,7 @@ import {
   queryRaw,
   exec,
   errorWithCause,
+  errorWithHint,
 } from "./lowlevel.js";
 
 export { type ValuesType, type Parameters, type ValueOf, type BaseType };
@@ -80,7 +82,8 @@ export class Statement<S = unknown> {
     try {
       return bindValues(this.sql, this.parameters);
     } catch (cause: any) {
-      throw errorWithCause("BIND_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("BIND_ERROR", hint);
     }
   }
 
@@ -143,23 +146,17 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          let receipt = await exec(this.config, { type, sql, tables });
-          if (this.config.autoWait ?? false) {
-            const waited = await receipt.wait();
-            receipt = { ...receipt, ...waited };
-          }
+          const receipt = await checkWait(
+            this.config,
+            await exec(this.config, { type, sql, tables })
+          );
 
           return wrapResult(receipt, performance.now() - start);
         }
       }
     } catch (cause: any) {
-      if (
-        cause instanceof Error &&
-        cause.message.includes("column not found")
-      ) {
-        throw errorWithCause("COLUMN_NOTFOUND", cause);
-      }
-      throw errorWithCause("ALL_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("ALL_ERROR", hint);
     }
   }
 
@@ -203,20 +200,13 @@ export class Statement<S = unknown> {
         default: {
           const receipt = await exec(this.config, { type, sql, tables });
           /* c8 ignore next */
-          if (this.config.autoWait ?? false) {
-            await receipt.wait();
-          }
+          await checkWait(this.config, receipt);
           return null;
         }
       }
     } catch (cause: any) {
-      if (
-        cause instanceof Error &&
-        cause.message.includes("column not found")
-      ) {
-        throw errorWithCause("COLUMN_NOTFOUND", cause);
-      }
-      throw errorWithCause("FIRST_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("FIRST_ERROR", hint);
     }
   }
 
@@ -241,16 +231,16 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          let receipt = await exec(this.config, { type, sql, tables });
-          if (this.config.autoWait ?? false) {
-            const waited = await receipt.wait();
-            receipt = { ...receipt, ...waited };
-          }
+          const receipt = await checkWait(
+            this.config,
+            await exec(this.config, { type, sql, tables })
+          );
           return wrapResult(receipt, performance.now() - start);
         }
       }
     } catch (cause: any) {
-      throw errorWithCause("RUN_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("RUN_ERROR", hint);
     }
   }
 
@@ -273,14 +263,13 @@ export class Statement<S = unknown> {
         default: {
           const receipt = await exec(this.config, { type, sql, tables });
           /* c8 ignore next */
-          if (this.config.autoWait ?? false) {
-            await receipt.wait();
-          }
+          await checkWait(this.config, receipt);
           return [];
         }
       }
     } catch (cause: any) {
-      throw errorWithCause("RAW_ERROR", cause);
+      const hint = errorWithHint(this.sql, cause);
+      throw errorWithCause("RAW_ERROR", hint);
     }
   }
 }
