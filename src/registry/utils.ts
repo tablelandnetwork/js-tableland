@@ -40,13 +40,21 @@ export type WaitableTransactionReceipt = TransactionReceipt &
  */
 export interface Named {
   /**
-   * Full table name.
+   * @custom:deprecated First table's full name.
    */
   name: string;
   /**
-   * Table name prefix.
+   * @custom:deprecated First table name prefix.
    */
   prefix: string;
+  /**
+   * The full table names
+   */
+  names: string[];
+  /**
+   * The table prefixes
+   */
+  prefixes: string[];
 }
 
 /**
@@ -156,6 +164,7 @@ export async function wrapTransaction(
   prefix: string,
   tx: ContractTransaction
 ): Promise<WaitableTransactionReceipt> {
+  // TODO: next major we should combine this with wrapManyTransaction
   const _params = await getContractReceipt(tx);
   const chainId =
     _params.chainId === 0 || _params.chainId == null
@@ -170,14 +179,9 @@ export async function wrapTransaction(
     if (receipt.error != null) {
       throw new Error(receipt.error);
     }
-    return { ...receipt, name, prefix };
+    return { ...receipt, name, prefix, prefixes: [prefix], names: [name] };
   };
-  return { ...params, wait, name, prefix };
-}
-
-interface MultiEventTransaction {
-  names: string[];
-  prefixes: string[];
+  return { ...params, wait, name, prefix, prefixes: [prefix], names: [name] };
 }
 
 /* A helper function for mapping contract event receipts to table data
@@ -185,14 +189,14 @@ interface MultiEventTransaction {
  * @param {conn} a database config object
  * @param {statements} either the sql statement strings or the nomralized statement objects that were used in the transaction
  * @param {tx} the transaction object
- * @returns {(WaitableTransactionReceipt & MultiEventTransaction)}
+ * @returns {(WaitableTransactionReceipt & Named)}
  *
  */
 export async function wrapManyTransaction(
   conn: Config,
   statements: string[] | Runnable[],
   tx: ContractTransaction
-): Promise<WaitableTransactionReceipt & MultiEventTransaction> {
+): Promise<WaitableTransactionReceipt & Named> {
   const _params = await getContractReceipt(tx);
   const chainId =
     _params.chainId === 0 || _params.chainId == null
@@ -232,7 +236,7 @@ export async function wrapManyTransaction(
   const params = { ..._params, chainId };
   const wait = async (
     opts: SignalAndInterval = {}
-  ): Promise<TransactionReceipt & Named & MultiEventTransaction> => {
+  ): Promise<TransactionReceipt & Named> => {
     const receipt = await pollTransactionReceipt(conn, params, opts);
     if (receipt.error != null) {
       throw new Error(receipt.error);

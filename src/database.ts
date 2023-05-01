@@ -95,12 +95,7 @@ export class Database<D = unknown> {
     opts: Signal = {}
     // reads returns an Array with legnth equal to the number of batched statements,
     // everything else a single result wrapped in an Array for backward compatability.
-    // TODO: In order to work around the Validator API not returning all of the tableIds
-    //       and continuing to work in a backward compatable way, it seems that we have to
-    //       make this type `any` :(
-    //       We should attempt to fix this when the Validator API update happens, or on the
-    //       next major version.
-  ): Promise<any> {
+  ): Promise<Array<Result<T>>> {
     try {
       const start = performance.now();
       // If the statement types are "create" and the statement contains more than one

@@ -51,9 +51,9 @@ export interface components {
       readonly name?: string;
       /** @example https://testnets.tableland.network/api/v1/tables/healthbot_5_1 */
       readonly external_url?: string;
-      /** @example https://render.tableland.xyz/anim/?chain=1&id=1 */
+      /** @example https://tables.tableland.xyz/1/1.html */
       readonly animation_url?: string;
-      /** @example https://render.tableland.xyz/healthbot_5_1 */
+      /** @example https://tables.tableland.xyz/healthbot_5_1 */
       readonly image?: string;
       /**
        * @example {
@@ -73,8 +73,19 @@ export interface components {
       readonly schema?: components["schemas"]["Schema"];
     };
     readonly TransactionReceipt: {
-      /** @example 1 */
+      /**
+       * @deprecated 
+       * @description This field is deprecated 
+       * @example 1
+       */
       readonly table_id?: string;
+      /**
+       * @example [
+       *   "1",
+       *   "2"
+       * ]
+       */
+      readonly table_ids?: readonly (string)[];
       /** @example 0x02f319429b8a7be1cbb492f0bfbf740d2472232a2edadde7df7c16c0b61aa78b */
       readonly transaction_hash?: string;
       /**
