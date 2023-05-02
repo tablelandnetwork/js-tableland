@@ -19,6 +19,7 @@ import { TEST_TIMEOUT_FACTOR } from "./setup";
 
 describe("thirdparty", function () {
   this.timeout(TEST_TIMEOUT_FACTOR * 10000);
+
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");

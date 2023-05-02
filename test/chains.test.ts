@@ -42,7 +42,7 @@ describe("chains", function () {
 
     test("where we make sure a testnet is correctly flagged", function () {
       const testnets: ChainName[] = [
-        "goerli",
+        "sepolia",
         "arbitrum-goerli",
         "maticmum",
         "optimism-goerli",
