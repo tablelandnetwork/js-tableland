@@ -181,7 +181,7 @@ describe("lowlevel", function () {
         (err: any) => {
           strictEqual(
             err.message,
-            "validating query: unable to parse the query: syntax error at position 18 near '3.14'"
+            "validating read query: unable to parse the query: syntax error at position 18 near '3.14'"
           );
           return true;
         }
@@ -315,7 +315,7 @@ describe("lowlevel", function () {
         (err: any) => {
           strictEqual(
             err.message,
-            "validating query: unable to parse the query: syntax error at position 18 near '3.14'"
+            "validating read query: unable to parse the query: syntax error at position 18 near '3.14'"
           );
           return true;
         }
@@ -369,7 +369,7 @@ describe("lowlevel", function () {
         (err: any) => {
           strictEqual(
             err.message,
-            "validating query: the query isn't a read-query"
+            "validating read query: the query isn't a read-query"
           );
           return true;
         }
@@ -413,7 +413,7 @@ describe("lowlevel", function () {
         (err: any) => {
           strictEqual(
             err.message,
-            "validating query: unable to parse the query: syntax error at position 18 near '3.14'"
+            "validating read query: unable to parse the query: syntax error at position 18 near '3.14'"
           );
           return true;
         }
@@ -471,7 +471,7 @@ describe("lowlevel", function () {
         (err: any) => {
           strictEqual(
             err.message,
-            "validating query: the query isn't a read-query"
+            "validating read query: the query isn't a read-query"
           );
           return true;
         }

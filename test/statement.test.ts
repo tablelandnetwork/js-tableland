@@ -230,7 +230,7 @@ SELECT * FROM 3.14;
       await rejects(db.prepare(sql2).all<any>(), (err: any) => {
         strictEqual(
           err.cause.message,
-          `running read statement: executing read-query: parsing result to json: executing query: no such column: missing\n${sql2}`
+          `running read statement: parsing result to json: executing query: no such column: missing\n${sql2}`
         );
         return true;
       });

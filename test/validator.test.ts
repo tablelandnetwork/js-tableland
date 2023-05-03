@@ -216,12 +216,12 @@ describe("validator", function () {
       strictEqual(response.attributes[0].displayType, "date");
       strictEqual(
         response.animationUrl,
-        "https://render.tableland.xyz/?chain=31337&id=1"
+        "https://render.tableland.xyz/31337/1.html"
       );
       // TODO: This is correct, but shouldn't it be updated to the new API endpoints?
       strictEqual(
         response.externalUrl,
-        "http://localhost:8080/chain/31337/tables/1"
+        "http://localhost:8080/api/v1/tables/31337/1"
       );
       strictEqual(
         response.image,
@@ -322,7 +322,7 @@ describe("validator", function () {
         (err: any) => {
           strictEqual(
             err.message,
-            "validating query: unable to parse the query: syntax error at position 14 near 'nothing'"
+            "validating read query: unable to parse the query: syntax error at position 14 near 'nothing'"
           );
           return true;
         }
