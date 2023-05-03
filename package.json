@@ -107,7 +107,7 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
-    "@tableland/evm": "^4.2.0",
+    "@tableland/evm": "^4.2.1",
     "@tableland/sqlparser": "^1.0.5",
     "ethers": "^5.7.2"
   }

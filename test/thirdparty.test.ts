@@ -15,9 +15,10 @@ import { escapeSQLiteIdentifier } from "@databases/escape-identifier";
 import { NonceManager } from "@ethersproject/experimental";
 import { getDefaultProvider } from "../src/helpers/index.js";
 import { Database } from "../src/index.js";
+import { TEST_TIMEOUT_FACTOR } from "./setup";
 
 describe("thirdparty", function () {
-  this.timeout("10s");
+  this.timeout(TEST_TIMEOUT_FACTOR * 10000);
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
@@ -178,7 +179,7 @@ describe("thirdparty", function () {
     let tableName: string;
 
     this.beforeAll(async function () {
-      this.timeout("10s");
+      this.timeout(TEST_TIMEOUT_FACTOR * 10000);
 
       // First, we'll test out using sql identifiers
       const primaryKey = sql.ident("id");

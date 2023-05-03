@@ -49,7 +49,7 @@ jobs:
         run: npm run build
 
       - name: Test/Coverage 🧪
-        run: npm run coverage
+        run: TEST_TIMEOUT_FACTOR=3 npm run coverage
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
