@@ -5,9 +5,10 @@ import { getAccounts } from "@tableland/local";
 import { getDefaultProvider } from "ethers";
 import { Database } from "../src/database.js";
 import { Statement } from "../src/statement.js";
+import { TEST_TIMEOUT_FACTOR } from "./setup";
 
 describe("database", function () {
-  this.timeout("15s");
+  this.timeout(TEST_TIMEOUT_FACTOR * 10000);
 
   const accounts = getAccounts();
   // Note that we're using the second account here
@@ -308,7 +309,7 @@ describe("database", function () {
 
       test("when doing grant with batch", async function () {
         // Need to make a lot of changes in this test, increase timeout
-        this.timeout("20s");
+        this.timeout(TEST_TIMEOUT_FACTOR * 20000);
 
         const [batch] = await db.batch([
           db.prepare(`CREATE TABLE test_grant_1 (id INTEGER, name TEXT);`),
@@ -378,7 +379,7 @@ describe("database", function () {
       // test after insert is revoked
       test("when doing grant with batch", async function () {
         // Need to make a lot of changes in this test, increase timeout
-        this.timeout("20s");
+        this.timeout(TEST_TIMEOUT_FACTOR * 20000);
 
         const [batch] = await db.batch([
           db.prepare(`CREATE TABLE test_revoke_1 (id INTEGER, name TEXT);`),
@@ -457,7 +458,6 @@ describe("database", function () {
   describe(".exec()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      this.timeout("15s");
       const { results, error, meta } = await db
         .prepare(
           "CREATE TABLE test_exec (id integer, name text, age integer, primary key (id));"

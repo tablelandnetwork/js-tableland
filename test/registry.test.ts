@@ -9,9 +9,10 @@ import {
 import { getContractReceipt } from "../src/helpers/ethers.js";
 import { wrapTransaction } from "../src/registry/utils.js";
 import { Registry } from "../src/registry/index.js";
+import { TEST_TIMEOUT_FACTOR } from "./setup";
 
 describe("registry", function () {
-  this.timeout("15s");
+  this.timeout(TEST_TIMEOUT_FACTOR * 10000);
   // Note that we're using the second account here
   const [, wallet, controller] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
@@ -155,7 +156,6 @@ describe("registry", function () {
   describe("list and transfer", function () {
     let receipt: MultiEventTransactionReceipt;
     this.beforeAll(async function () {
-      this.timeout("15s");
       const tx = await reg.createTable({
         chainId: 31337,
         statement: "create table test_ownership_31337 (id int, name text)",
@@ -225,7 +225,6 @@ describe("registry", function () {
     // CREATE TABLE test_exec (id integer primary key, counter integer, info text)
     let receipt: MultiEventTransactionReceipt;
     this.beforeAll(async function () {
-      this.timeout("15s");
       const tx = await reg.create({
         chainId: 31337,
         statement:
@@ -262,7 +261,6 @@ describe("registry", function () {
     // CREATE TABLE test_exec (id integer primary key, counter integer, info text)
     let receipt: MultiEventTransactionReceipt;
     this.beforeAll(async function () {
-      this.timeout("15s");
       const tx = await reg.createTable({
         chainId: 31337,
         statement:
