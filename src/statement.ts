@@ -109,6 +109,17 @@ export class Statement<S = unknown> {
     return { type, sql, tables };
   }
 
+  async #execAndReturn<T = unknown>(
+    params: ExtractedStatement,
+    perfStart: number
+  ): Promise<Result<T>> {
+    const receipt = await checkWait(
+      this.config,
+      await exec(this.config, params)
+    );
+    return wrapResult<T>(receipt, performance.now() - perfStart);
+  }
+
   /**
    * Executes a query and returns all rows and metadata.
    * @param colName If provided, filter results to the provided column.
@@ -146,12 +157,7 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          const receipt = await checkWait(
-            this.config,
-            await exec(this.config, { type, sql, tables })
-          );
-
-          return wrapResult(receipt, performance.now() - start);
+          return await this.#execAndReturn<T>({ type, sql, tables }, start);
         }
       }
     } catch (cause: any) {
@@ -231,11 +237,7 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          const receipt = await checkWait(
-            this.config,
-            await exec(this.config, { type, sql, tables })
-          );
-          return wrapResult(receipt, performance.now() - start);
+          return await this.#execAndReturn({ type, sql, tables }, start);
         }
       }
     } catch (cause: any) {

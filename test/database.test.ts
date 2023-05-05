@@ -54,7 +54,7 @@ describe("database", function () {
         .prepare(
           "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
         )
-        .run();
+        .all();
       tableName = meta.txn?.name ?? "";
       deepStrictEqual(results, []);
       strictEqual(error, undefined);
