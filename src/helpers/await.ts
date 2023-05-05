@@ -41,6 +41,8 @@ export async function getAsyncPoller<T = unknown>(
   interval: number = 1500,
   signal?: AbortSignal
 ): Promise<T> {
+  // in order to set a timeout other than 10 seconds you need to
+  // create and pass in an abort signal with a different timeout
   const abortSignal = getAbortSignal(signal, 10_000);
   const checkCondition = (
     resolve: (value: T) => void,

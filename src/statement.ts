@@ -8,7 +8,7 @@ import {
 import {
   type AutoWaitConfig,
   type Config,
-  type Signal,
+  type SignalAndInterval,
   checkWait,
   normalize,
 } from "./helpers/index.js";
@@ -109,6 +109,17 @@ export class Statement<S = unknown> {
     return { type, sql, tables };
   }
 
+  async #execAndReturn<T = unknown>(
+    params: ExtractedStatement,
+    perfStart: number
+  ): Promise<Result<T>> {
+    const receipt = await checkWait(
+      this.config,
+      await exec(this.config, params)
+    );
+    return wrapResult<T>(receipt, performance.now() - perfStart);
+  }
+
   /**
    * Executes a query and returns all rows and metadata.
    * @param colName If provided, filter results to the provided column.
@@ -117,15 +128,15 @@ export class Statement<S = unknown> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async all<T = S, K extends keyof T = keyof T>(
     colName?: undefined,
-    opts?: Signal
+    opts?: SignalAndInterval
   ): Promise<Result<T>>;
   async all<T = S, K extends keyof T = keyof T>(
     colName: K,
-    opts?: Signal
+    opts?: SignalAndInterval
   ): Promise<Result<T[K]>>;
   async all<T = S, K extends keyof T = keyof T>(
     colName?: K,
-    opts: Signal = {}
+    opts: SignalAndInterval = {}
   ): Promise<Result<T | T[K]>> {
     try {
       const start = performance.now();
@@ -146,12 +157,7 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          const receipt = await checkWait(
-            this.config,
-            await exec(this.config, { type, sql, tables })
-          );
-
-          return wrapResult(receipt, performance.now() - start);
+          return await this.#execAndReturn<T>({ type, sql, tables }, start);
         }
       }
     } catch (cause: any) {
@@ -173,15 +179,15 @@ export class Statement<S = unknown> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async first<T = S, K extends keyof T = keyof T>(
     colName: undefined,
-    opts?: Signal
+    opts?: SignalAndInterval
   ): Promise<T>;
   async first<T = S, K extends keyof T = keyof T>(
     colName: K,
-    opts?: Signal
+    opts?: SignalAndInterval
   ): Promise<T[K] | null>;
   async first<T = S, K extends keyof T = keyof T>(
     colName?: K,
-    opts: Signal = {}
+    opts: SignalAndInterval = {}
   ): Promise<T | T[K] | null> {
     try {
       const { sql, type, tables } = await this.#parseAndExtract();
@@ -198,7 +204,12 @@ export class Statement<S = unknown> {
           return extractColumn(results, colName);
         }
         default: {
-          const receipt = await exec(this.config, { type, sql, tables });
+          const receipt = await exec(this.config, {
+            ...opts,
+            type,
+            sql,
+            tables,
+          });
           /* c8 ignore next */
           await checkWait(this.config, receipt);
           return null;
@@ -217,7 +228,7 @@ export class Statement<S = unknown> {
    * @param opts Additional options to control execution.
    * @returns A results object with metadata only (results are null or an empty array).
    */
-  async run(opts: Signal = {}): Promise<Result<never>> {
+  async run(opts: SignalAndInterval = {}): Promise<Result<never>> {
     try {
       const start = performance.now();
       const { sql, type, tables } = await this.#parseAndExtract();
@@ -231,11 +242,7 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          const receipt = await checkWait(
-            this.config,
-            await exec(this.config, { type, sql, tables })
-          );
-          return wrapResult(receipt, performance.now() - start);
+          return await this.#execAndReturn({ type, sql, tables }, start);
         }
       }
     } catch (cause: any) {
@@ -249,7 +256,7 @@ export class Statement<S = unknown> {
    * @param opts Additional options to control execution.
    * @returns An array of raw query results.
    */
-  async raw<T = S>(opts: Signal = {}): Promise<Array<ValueOf<T>>> {
+  async raw<T = S>(opts: SignalAndInterval = {}): Promise<Array<ValueOf<T>>> {
     try {
       const { sql, type, tables } = await this.#parseAndExtract();
       switch (type) {
