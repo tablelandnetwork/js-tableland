@@ -89,7 +89,11 @@ export async function getContractReceipt(
     switch (event.event) {
       case "CreateTable":
       case "RunSQL":
-        if (tableId != null) tableIds.push(tableId);
+        if (tableId != null) {
+          tableIds.push(tableId);
+        } else {
+          throw new Error("tableId doesn't exist");
+        }
 
         break;
       default:
