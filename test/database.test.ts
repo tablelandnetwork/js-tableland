@@ -5,6 +5,7 @@ import { getAccounts } from "@tableland/local";
 import { getDefaultProvider } from "ethers";
 import { Database } from "../src/database.js";
 import { Statement } from "../src/statement.js";
+import { getAbortSignal } from "../src/helpers/await.js";
 import { TEST_TIMEOUT_FACTOR } from "./setup";
 
 describe("database", function () {
@@ -50,11 +51,18 @@ describe("database", function () {
   describe(".batch()", function () {
     let tableName: string;
     this.beforeAll(async function () {
+      // TODO: it feels a little confusing to setup a create statement that has an extended
+      //    timeout and interval. Need to understand which part of this is a D1 data-source
+      //    compatability requirement, and what we can control.
+      const signalWithLongTimeout = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 10000);
       const { results, error, meta } = await db
         .prepare(
           "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
         )
-        .all();
+        .all(undefined, {
+          interval: 2000,
+          signal: signalWithLongTimeout
+        });
       tableName = meta.txn?.name ?? "";
       deepStrictEqual(results, []);
       strictEqual(error, undefined);

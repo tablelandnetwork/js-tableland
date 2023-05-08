@@ -41,6 +41,7 @@ export async function getAsyncPoller<T = unknown>(
   interval: number = 1500,
   signal?: AbortSignal
 ): Promise<T> {
+  // TODO: the value being hard-coded to 10 seconds seems to be the culprit for the intermittent failing tests.
   const abortSignal = getAbortSignal(signal, 10_000);
   const checkCondition = (
     resolve: (value: T) => void,
