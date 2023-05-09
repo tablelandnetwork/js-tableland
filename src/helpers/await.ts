@@ -29,7 +29,11 @@ export function getAbortSignal(
   if (signal == null) {
     const controller = new AbortController();
     abortSignal = controller.signal;
-    setTimeout(controller.abort.bind(controller), maxTimeout);
+    console.log(`\n\nsetting maxTimeout: ${maxTimeout}\n\n`);
+    setTimeout(function () {
+      console.log(`\n\nAborting with maxTimeout: ${maxTimeout}\n\n`);
+      controller.abort();
+    }, maxTimeout);
   } else {
     abortSignal = signal;
   }
