@@ -1,5 +1,6 @@
+import { Typed } from "ethers";
 import { type SignerConfig } from "../helpers/config.js";
-import { type ContractTransaction } from "../helpers/ethers.js";
+import { type ContractTransactionResponse } from "../helpers/index.js";
 import { validateTableName } from "../helpers/parser.js";
 import {
   getContractAndOverrides,
@@ -30,17 +31,6 @@ export async function prepareMutateOne({
   const { tableId, prefix, chainId: chain } = await validateTableName(first);
   assertChainId(chain, chainId);
   return { tableId: tableId.toString(), statement, prefix, chainId };
-}
-
-/**
- * @custom:deprecated This type will change in the next major version.
- * Use the `MutateOneParams` type.
- */
-export interface RunSQLParams extends TableIdentifier {
-  /**
-   * SQL statement string.
-   */
-  statement: string;
 }
 
 export interface MutateOneParams extends TableIdentifier {
@@ -78,7 +68,7 @@ export type MutateParams = MutateOneParams | MutateManyParams;
 export async function mutate(
   config: SignerConfig,
   params: MutateParams
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   if (isMutateOne(params)) {
     return await _mutateOne(config, params);
   }
@@ -89,16 +79,16 @@ export async function mutate(
 async function _mutateOne(
   { signer }: SignerConfig,
   { statement, tableId, chainId }: MutateOneParams
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const caller = await signer.getAddress();
   const { contract, overrides } = await getContractAndOverrides(
     signer,
     chainId
   );
-  return await contract["mutate(address,uint256,string)"](
-    caller,
-    tableId,
-    statement,
+  return await contract.mutate(
+    Typed.address(caller),
+    Typed.uint256(tableId),
+    Typed.string(statement),
     overrides
   );
 }
@@ -106,15 +96,22 @@ async function _mutateOne(
 async function _mutateMany(
   { signer }: SignerConfig,
   { runnables, chainId }: MutateManyParams
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const caller = await signer.getAddress();
   const { contract, overrides } = await getContractAndOverrides(
     signer,
     chainId
   );
-  return await contract["mutate(address,(uint256,string)[])"](
-    caller,
-    runnables,
+  return await contract.mutate(
+    Typed.address(caller),
+    Typed.array(
+      runnables.map(function (runnable) {
+        return {
+          statement: Typed.string(runnable.statement),
+          tableId: Typed.uint256(runnable.tableId),
+        };
+      })
+    ),
     overrides
   );
 }

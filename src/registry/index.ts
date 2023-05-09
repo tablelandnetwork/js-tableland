@@ -1,7 +1,7 @@
 import {
   type SignerConfig,
   type Signer,
-  type ContractTransaction,
+  type ContractTransactionResponse,
 } from "../helpers/index.js";
 import { type TableIdentifier } from "./contract.js";
 import { listTables } from "./tables.js";
@@ -89,7 +89,9 @@ export class Registry {
    *
    * Requires the msg sender to be the owner, approved, or operator
    */
-  async safeTransferFrom(params: TransferParams): Promise<ContractTransaction> {
+  async safeTransferFrom(
+    params: TransferParams
+  ): Promise<ContractTransactionResponse> {
     return await safeTransferFrom(this.config, params);
   }
 
@@ -117,7 +119,7 @@ export class Registry {
    * - `tableId` must exist
    * - `tableId` controller must not be locked
    */
-  async setController(params: SetParams): Promise<ContractTransaction> {
+  async setController(params: SetParams): Promise<ContractTransactionResponse> {
     return await setController(this.config, params);
   }
 
@@ -138,7 +140,7 @@ export class Registry {
    */
   async lockController(
     table: string | TableIdentifier
-  ): Promise<ContractTransaction> {
+  ): Promise<ContractTransactionResponse> {
     return await lockController(this.config, table);
   }
 
@@ -161,14 +163,7 @@ export class Registry {
    *
    * - contract must be unpaused
    */
-  async create(params: CreateParams): Promise<ContractTransaction> {
-    return await create(this.config, params);
-  }
-
-  /**
-   * @custom:deprecated Use `create` instead.
-   */
-  async createTable(params: CreateOneParams): Promise<ContractTransaction> {
+  async create(params: CreateParams): Promise<ContractTransactionResponse> {
     return await create(this.config, params);
   }
 
@@ -187,15 +182,7 @@ export class Registry {
    * - `caller` must be authorized by the table controller
    * - `statement` must be less than 35000 bytes after normalizing
    */
-  async mutate(params: MutateParams): Promise<ContractTransaction> {
-    return await mutate(this.config, params);
-  }
-
-  /**
-   * Runs a set of SQL statements for `caller` using `runnables`.
-   * @custom:deprecated Using this with a single statement is deprecated. Use `mutate` instead.
-   */
-  async runSQL(params: MutateParams): Promise<ContractTransaction> {
+  async mutate(params: MutateParams): Promise<ContractTransactionResponse> {
     return await mutate(this.config, params);
   }
 }

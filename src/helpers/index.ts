@@ -27,10 +27,10 @@ export {
 } from "./config.js";
 export {
   type Signer,
-  type ExternalProvider,
+  type Eip1193Provider,
   getDefaultProvider,
-  type ContractTransaction,
-  type ContractReceipt,
+  type ContractTransactionResponse,
+  type ContractTransactionReceipt,
   type RegistryReceipt,
   type MultiEventTransactionReceipt,
   getSigner,

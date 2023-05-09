@@ -283,6 +283,36 @@ describe("validator", function () {
           return true;
         }
       );
+
+      await rejects(
+        // @ts-expect-error this is not the function signature
+        api.getTableById(31337, "1"),
+        (err: any) => {
+          strictEqual(
+            err.message,
+            "cannot get table with invalid chain or table id"
+          );
+          return true;
+        }
+      );
+
+      await rejects(
+        // params have wrong types
+        api.getTableById({
+          // @ts-expect-error we want to test that these params are being runtime type checked
+          chainId: "31337",
+          // @ts-expect-error must ensure that tableId is not a number because erc721 tokenId can be
+          // larger then JS max safe int, and string coercion will result in an incorrect value
+          tableId: 1,
+        }),
+        (err: any) => {
+          strictEqual(
+            err.message,
+            "cannot get table with invalid chain or table id"
+          );
+          return true;
+        }
+      );
     });
 
     test("when we call the tables api on a missing table", async function () {
@@ -456,7 +486,7 @@ describe("validator", function () {
   describe("rate limit", function () {
     test("when we make too many calls and get an exception", async function () {
       await rejects(
-        Promise.all(getRange(10).map(async () => await api.health())),
+        Promise.all(getRange(15).map(async () => await api.health())),
         (err: any) => {
           strictEqual(err.message, "Too Many Requests");
           return true;
