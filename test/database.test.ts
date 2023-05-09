@@ -53,7 +53,7 @@ describe("database", function () {
     this.beforeAll(async function () {
       // need to increase the default timeout for the receipt polling
       // abort signal because github action runners are timing out
-      const signal = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 60000);
+      const { signal } = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 60000);
       const { results, error, meta } = await db
         .prepare(
           "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
@@ -465,7 +465,7 @@ describe("database", function () {
   describe(".exec()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      const signal = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 30000);
+      const { signal } = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 30000);
       const { results, error, meta } = await db
         .prepare(
           "CREATE TABLE test_exec (id integer, name text, age integer, primary key (id));"
