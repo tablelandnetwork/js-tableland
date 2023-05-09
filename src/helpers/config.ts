@@ -1,6 +1,6 @@
 import { type WaitableTransactionReceipt } from "../registry/utils.js";
 import { type ChainName, getBaseUrl } from "./chains.js";
-import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
+import { type Signer, type Eip1193Provider, getSigner } from "./ethers.js";
 
 export interface ReadConfig {
   baseUrl: string;
@@ -31,24 +31,23 @@ export async function extractBaseUrl(
   conn: Config = {},
   chainNameOrId?: ChainName | number
 ): Promise<string> {
-  if (conn.baseUrl == null) {
-    if (conn.signer == null) {
-      if (chainNameOrId == null) {
-        throw new Error(
-          "missing connection information: baseUrl, signer, or chainId required"
-        );
-      }
-      return getBaseUrl(chainNameOrId);
-    }
+  if (conn.baseUrl != null) return conn.baseUrl;
+  if (conn.signer != null) {
     const chainId = await conn.signer.getChainId();
     return getBaseUrl(chainId);
   }
-  return conn.baseUrl;
+  if (chainNameOrId != null) {
+    return getBaseUrl(chainNameOrId);
+  }
+
+  throw new Error(
+    "missing connection information: baseUrl, signer, or chainId required"
+  );
 }
 
 export async function extractSigner(
   conn: Config = {},
-  external?: ExternalProvider
+  external?: Eip1193Provider
 ): Promise<Signer> {
   if (conn.signer == null) {
     return await getSigner(external);
@@ -58,14 +57,18 @@ export async function extractSigner(
 
 export async function extractChainId(conn: Config = {}): Promise<number> {
   const signer = await extractSigner(conn);
-  const chainId = await signer.getChainId();
+  const network = await signer.provider?.getNetwork();
 
-  if (chainId === 0 || isNaN(chainId) || chainId == null) {
+  if (
+    network == null ||
+    network.chainId === BigInt("0") ||
+    network.chainId == null
+  ) {
     /* c8 ignore next 4 */
     throw new Error(
       "cannot find chainId: is your signer connected to a network?"
     );
   }
 
-  return chainId;
+  return Number(network.chainId);
 }

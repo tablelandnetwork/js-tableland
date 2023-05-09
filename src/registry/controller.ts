@@ -1,5 +1,6 @@
+import { Typed } from "ethers";
 import { type SignerConfig } from "../helpers/config.js";
-import { type ContractTransaction } from "../helpers/ethers.js";
+import { type ContractTransactionResponse } from "../helpers/ethers.js";
 import { type TableIdentifier, getContractSetup } from "./contract.js";
 
 export interface SetParams {
@@ -16,26 +17,35 @@ export interface SetParams {
 export async function setController(
   { signer }: SignerConfig,
   params: SetParams
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const { contract, overrides, tableId } = await getContractSetup(
     signer,
     params.tableName
   );
   const caller = await signer.getAddress();
   const controller = params.controller;
-  return await contract.setController(caller, tableId, controller, overrides);
+  return await contract.setController(
+    Typed.address(caller),
+    Typed.uint256(tableId),
+    Typed.address(controller),
+    overrides
+  );
 }
 
 export async function lockController(
   { signer }: SignerConfig,
   tableName: string | TableIdentifier
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   const { contract, overrides, tableId } = await getContractSetup(
     signer,
     tableName
   );
   const caller = await signer.getAddress();
-  return await contract.lockController(caller, tableId, overrides);
+  return await contract.lockController(
+    Typed.address(caller),
+    Typed.uint256(tableId),
+    overrides
+  );
 }
 
 export async function getController(
@@ -46,5 +56,5 @@ export async function getController(
     signer,
     tableName
   );
-  return await contract.getController(tableId, overrides);
+  return await contract.getController(Typed.uint256(tableId), overrides);
 }

@@ -1,20 +1,20 @@
 import {
-  providers,
+  getDefaultProvider,
+  BrowserProvider,
+  EventLog,
+  type Eip1193Provider,
+  type ContractTransactionResponse,
+  type ContractTransactionReceipt,
   type Signer,
   type Overrides,
-  type ContractTransaction,
-  type ContractReceipt,
 } from "ethers";
 import { type TransactionReceipt } from "../validator/receipt.js";
 import { type SignerConfig } from "./config.js";
 
-type ExternalProvider = providers.ExternalProvider;
-const { getDefaultProvider, Web3Provider } = providers;
-
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare module globalThis {
   // eslint-disable-next-line no-var
-  var ethereum: ExternalProvider | undefined;
+  var ethereum: Eip1193Provider | undefined;
 }
 
 /**
@@ -29,11 +29,13 @@ export async function getOverrides({
   const opts: Overrides = {};
   const network = await signer.provider?.getNetwork();
   /* c8 ignore next 7 */
-  if (network?.chainId === 137) {
-    const feeData = await signer.getFeeData();
-    if (feeData.gasPrice != null) {
+  if (network?.chainId === BigInt("137")) {
+    const feeData = await signer.provider?.getFeeData();
+    if (feeData?.gasPrice != null) {
       opts.gasPrice =
-        Math.floor(feeData.gasPrice.toNumber() * 1.1) ?? undefined;
+        // NOTE: There's no guarantee `feeData.gasPrice` is a JS safe integer which means
+        // this might not be accurate, but it's just an estimate so this is probably ok
+        Math.floor(Number(feeData.gasPrice) * 1.1) ?? undefined;
     }
   }
   return opts;
@@ -73,20 +75,29 @@ export interface MultiEventTransactionReceipt {
  *
  */
 export async function getContractReceipt(
-  tx: ContractTransaction
+  tx: ContractTransactionResponse
 ): Promise<MultiEventTransactionReceipt> {
   const receipt = await tx.wait();
 
+  if (receipt == null) {
+    throw new Error(
+      `could not get receipt for transaction: ${JSON.stringify(tx, null, 4)}`
+    );
+  }
+
   /* c8 ignore next */
-  const events = receipt.events ?? [];
-  const transactionHash = receipt.transactionHash;
+  const logs = receipt.logs ?? [];
+  const transactionHash = receipt.hash;
   const blockNumber = receipt.blockNumber;
-  const chainId = tx.chainId;
+  // NOTE: chainId is always a JS safe integer
+  const chainId = Number(tx.chainId);
   const tableIds: string[] = [];
-  for (const event of events) {
-    const tableId =
-      event.args?.tableId != null && event.args.tableId.toString();
-    switch (event.event) {
+  for (const log of logs) {
+    if (!(log instanceof EventLog)) continue;
+
+    const tableId = log.args?.tableId != null && log.args.tableId.toString();
+
+    switch (log.eventName) {
       case "CreateTable":
       case "RunSQL":
         if (tableId != null) tableIds.push(tableId);
@@ -105,7 +116,7 @@ export async function getContractReceipt(
  * @returns A promise that resolves to a valid web3 provider/signer
  * @throws If no global ethereum object is available.
  */
-export async function getSigner(external?: ExternalProvider): Promise<Signer> {
+export async function getSigner(external?: Eip1193Provider): Promise<Signer> {
   const provider = external ?? globalThis.ethereum;
   if (provider == null) {
     throw new Error("provider error: missing global ethereum provider");
@@ -116,14 +127,14 @@ export async function getSigner(external?: ExternalProvider): Promise<Signer> {
     );
   }
   await provider.request({ method: "eth_requestAccounts" });
-  const web3Provider = new Web3Provider(provider);
-  return web3Provider.getSigner();
+  const web3Provider = new BrowserProvider(provider);
+  return await web3Provider.getSigner();
 }
 
 export {
-  Signer,
   getDefaultProvider,
-  type ExternalProvider,
-  type ContractTransaction,
-  type ContractReceipt,
+  type Signer,
+  type ContractTransactionResponse,
+  type ContractTransactionReceipt,
+  type Eip1193Provider,
 };

@@ -1,6 +1,7 @@
 import {
   type Config,
   extractBaseUrl,
+  extractChainId,
   extractSigner,
   type Signal,
   type ReadConfig,
@@ -78,7 +79,7 @@ export async function exec(
   { type, sql, tables: [first] }: ExtractedStatement
 ): Promise<WaitableTransactionReceipt> {
   const signer = await extractSigner(config);
-  const chainId = await signer.getChainId();
+  const chainId = await extractChainId(config);
   const baseUrl = await extractBaseUrl(config, chainId);
   const _config = { baseUrl, signer };
   const _params = { chainId, first, statement: sql };
