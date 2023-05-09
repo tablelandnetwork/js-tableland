@@ -51,10 +51,9 @@ describe("database", function () {
   describe(".batch()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      // TODO: it feels a little confusing to setup a create statement that has an extended
-      //    timeout and interval. Need to understand which part of this is a D1 data-source
-      //    compatability requirement, and what we can control.
-      const signal = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 30000);
+      // need to increase the default timeout for the receipt polling
+      // abort signal because github action runners are timing out
+      const signal = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 60000);
       const { results, error, meta } = await db
         .prepare(
           "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"

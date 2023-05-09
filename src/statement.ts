@@ -15,6 +15,7 @@ import {
 import {
   type ExtractedStatement,
   type Result,
+  type WaitableTransactionReceipt,
   extractReadonly,
   wrapResult,
 } from "./registry/utils.js";
@@ -109,15 +110,10 @@ export class Statement<S = unknown> {
     return { type, sql, tables };
   }
 
-  async #execAndReturn<T = unknown>(
-    params: ExtractedStatement,
-    perfStart: number
-  ): Promise<Result<T>> {
-    const receipt = await checkWait(
-      this.config,
-      await exec(this.config, params)
-    );
-    return wrapResult<T>(receipt, performance.now() - perfStart);
+  async #waitExec(
+    params: ExtractedStatement
+  ): Promise<WaitableTransactionReceipt> {
+    return await checkWait(this.config, await exec(this.config, params));
   }
 
   /**
@@ -157,7 +153,10 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          return await this.#execAndReturn<T>({ type, sql, tables }, start);
+          return wrapResult<T>(
+            await this.#waitExec({ ...opts, type, sql, tables }),
+            performance.now() - start
+          );
         }
       }
     } catch (cause: any) {
@@ -204,14 +203,12 @@ export class Statement<S = unknown> {
           return extractColumn(results, colName);
         }
         default: {
-          const receipt = await exec(this.config, {
+          await this.#waitExec({
             ...opts,
             type,
             sql,
             tables,
           });
-          /* c8 ignore next */
-          await checkWait(this.config, receipt);
           return null;
         }
       }
@@ -242,7 +239,10 @@ export class Statement<S = unknown> {
           return wrapResult(results, performance.now() - start);
         }
         default: {
-          return await this.#execAndReturn({ type, sql, tables }, start);
+          return wrapResult(
+            await this.#waitExec({ ...opts, type, sql, tables }),
+            performance.now() - start
+          );
         }
       }
     } catch (cause: any) {
@@ -268,9 +268,12 @@ export class Statement<S = unknown> {
           return await queryRaw<T>(config, sql, opts);
         }
         default: {
-          const receipt = await exec(this.config, { type, sql, tables });
-          /* c8 ignore next */
-          await checkWait(this.config, receipt);
+          await this.#waitExec({
+            ...opts,
+            type,
+            sql,
+            tables,
+          });
           return [];
         }
       }
