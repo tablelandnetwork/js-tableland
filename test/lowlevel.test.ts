@@ -47,7 +47,7 @@ describe("lowlevel", function () {
           tables: ["test_exec"],
         }
       );
-      const signal = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 30000);
+      const { signal } = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 30000);
       await txn.wait({
         signal,
         interval: TEST_TIMEOUT_FACTOR * 1500,

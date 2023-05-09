@@ -56,12 +56,12 @@ describe("await", function () {
   test("getAbortSignal returns a valid signal", async function () {
     const controller = new AbortController();
     const initial = controller.signal;
-    const signal = getAbortSignal(initial, 10);
+    const { signal } = getAbortSignal(initial, 10);
     strictEqual(signal.aborted, false);
     controller.abort();
     strictEqual(signal.aborted, true);
     strictEqual(initial.aborted, true);
-    const third = getAbortSignal(undefined, 10);
+    const { signal: third } = getAbortSignal(undefined, 10);
     strictEqual(third.aborted, false);
     await new Promise<void>(function (resolve) {
       third.addEventListener("abort", function abortListener() {
