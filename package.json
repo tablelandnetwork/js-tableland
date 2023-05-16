@@ -66,7 +66,7 @@
     "coverage": "c8 --exclude src/validator/client/fetcher.ts --exclude test mocha --exit",
     "docs": "typedoc --entryPoints src/index.ts",
     "clean": "rm -rf dist coverage docs",
-    "build:api": "npx openapi-typescript https://raw.githubusercontent.com/tablelandnetwork/docs/45868461a4b268fe6a62913648971cce87d2ffbb/specs/validator/tableland-openapi-spec.yaml --output src/validator/client/validator.ts --immutable-types --path-params-as-types",
+    "build:api": "npx openapi-typescript https://raw.githubusercontent.com/tablelandnetwork/docs/main/specs/validator/tableland-openapi-spec.yaml --output src/validator/client/validator.ts --immutable-types --path-params-as-types",
     "build:esm": "npx tsc",
     "build:cjs": "npx tsc -p tsconfig.cjs.json",
     "build": "npm run build:api && npm run build:esm && npm run build:cjs && ./fixup"
