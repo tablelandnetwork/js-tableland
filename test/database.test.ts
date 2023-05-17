@@ -106,9 +106,10 @@ describe("database", function () {
       ]);
 
       const res = await batch.meta.txn?.wait();
+      const names = res?.names ?? [];
 
-      match(res.names[0], /^test_create_1_31337_\d+$/);
-      match(res.names[1], /^test_create_2_31337_\d+$/);
+      match(names[0], /^test_create_1_31337_\d+$/);
+      match(names[1], /^test_create_2_31337_\d+$/);
     });
 
     test("when batching mutations with a create throws an error", async function () {
@@ -169,9 +170,9 @@ describe("database", function () {
           `INSERT INTO ${tableName} (name, age) VALUES ('foo', 2);INSERT INTO ${tableName} (name, age) VALUES ('bar', 4);`
         ),
       ]);
-      const res = await batch1.meta.txn.wait();
+      const res = await batch1.meta.txn?.wait();
 
-      strictEqual(res.names.length, 1);
+      strictEqual(res?.names.length, 1);
     });
 
     test("when batching mutations with reads throws an error", async function () {
@@ -275,8 +276,8 @@ describe("database", function () {
       const [first, second] = batch.map((res: any) => res.results.length);
       assert(first >= 2 && second === first - 2);
       const { meta } = batch.pop() ?? {};
-      assert(meta.duration != null);
-      strictEqual(meta.txn, undefined);
+      assert(meta?.duration != null);
+      strictEqual(meta?.txn, undefined);
     });
 
     test("when using an abort controller to halt a batch of reads", async function () {
@@ -324,13 +325,13 @@ describe("database", function () {
         ]);
         // db has autoWait turned off
         const res = await batch.meta.txn?.wait();
+        const names = res?.names ?? [];
 
-        match(res.names[0], /^test_grant_1_31337_\d+$/);
-        match(res.names[1], /^test_grant_2_31337_\d+$/);
+        match(names[0], /^test_grant_1_31337_\d+$/);
+        match(names[1], /^test_grant_2_31337_\d+$/);
 
-        // TODO: batch return types aren't setup, so using `as` to keep linting happy
-        const tableName1 = res.names[0] as string;
-        const tableName2 = res.names[1] as string;
+        const tableName1 = names[0] ?? "";
+        const tableName2 = names[1] ?? "";
 
         const noPermission = db2.batch([
           db2.prepare(
@@ -366,7 +367,7 @@ describe("database", function () {
           ),
         ]);
 
-        const results = await db2.batch([
+        const results = await db2.batch<{ id: number; name: string }>([
           db2.prepare(`SELECT * FROM ${tableName1};`),
           db2.prepare(`SELECT * FROM ${tableName2};`),
         ]);
@@ -394,13 +395,13 @@ describe("database", function () {
         ]);
         // db has autoWait turned off
         const res = await batch.meta.txn?.wait();
+        const names = res?.names ?? [];
 
-        match(res.names[0], /^test_revoke_1_31337_\d+$/);
-        match(res.names[1], /^test_revoke_2_31337_\d+$/);
+        match(names[0], /^test_revoke_1_31337_\d+$/);
+        match(names[1], /^test_revoke_2_31337_\d+$/);
 
-        // TODO: batch return types aren't setup, so using `as` to keep linting happy
-        const tableName1 = res.names[0] as string;
-        const tableName2 = res.names[1] as string;
+        const tableName1 = names[0] ?? "";
+        const tableName2 = names[1] ?? "";
 
         // test after insert is granted
         const [batchGrant] = await db.batch([
@@ -419,7 +420,7 @@ describe("database", function () {
           ),
         ]);
 
-        const results = await db2.batch([
+        const results = await db2.batch<{ id: number; name: string }>([
           db2.prepare(`SELECT * FROM ${tableName1};`),
           db2.prepare(`SELECT * FROM ${tableName2};`),
         ]);
