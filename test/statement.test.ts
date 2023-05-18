@@ -78,6 +78,44 @@ CREATE TABLE test_run (counter blurg);
       );
     });
 
+    test("when alter table statement is valid", async function () {
+      {
+        const stmt = db.prepare(`ALTER TABLE ${tableName} ADD COLUMN a int;`);
+        const { results, meta, error } = await stmt.run();
+        deepStrictEqual(results, []);
+        strictEqual(error, undefined);
+        assert(meta.duration != null);
+        assert(meta.txn?.transactionHash != null);
+        strictEqual(meta.txn.name, tableName);
+
+        await meta.txn?.wait();
+      }
+      {
+        const stmt = db.prepare(
+          `ALTER TABLE ${tableName} RENAME COLUMN a to b;`
+        );
+        const { results, meta, error } = await stmt.run();
+        deepStrictEqual(results, []);
+        strictEqual(error, undefined);
+        assert(meta.duration != null);
+        assert(meta.txn?.transactionHash != null);
+        strictEqual(meta.txn.name, tableName);
+
+        await meta.txn?.wait();
+      }
+      {
+        const stmt = db.prepare(`ALTER TABLE ${tableName} DROP COLUMN b;`);
+        const { results, meta, error } = await stmt.run();
+        deepStrictEqual(results, []);
+        strictEqual(error, undefined);
+        assert(meta.duration != null);
+        assert(meta.txn?.transactionHash != null);
+        strictEqual(meta.txn.name, tableName);
+
+        await meta.txn?.wait();
+      }
+    });
+
     test("when insert statement is valid", async function () {
       const stmt = db.prepare(`INSERT INTO ${tableName} VALUES (1);`);
       const { results, meta, error } = await stmt.run();
