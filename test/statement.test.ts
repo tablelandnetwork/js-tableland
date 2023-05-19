@@ -164,7 +164,7 @@ CREATE TABLE test_run (counter blurg);
         // existing column is renamed
         strictEqual(selectResults[0].c, 1);
         strictEqual(selectResults[0].b, 1);
-        // @@ts-expect-error checking result of an http response
+        // @ts-expect-error checking result of an http response
         assert(selectResults[0].a == null);
         // new column exists
         strictEqual(selectResults[1].c, 2);
@@ -192,7 +192,7 @@ CREATE TABLE test_run (counter blurg);
 
         strictEqual(selectResults.length, 1);
         strictEqual(selectResults[0].a, 1);
-        // @@ts-expect-error checking result of an http response
+        // @ts-expect-error checking result of an http response
         assert(selectResults[0].b == null);
       });
 
