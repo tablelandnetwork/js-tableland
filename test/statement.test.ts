@@ -16,7 +16,7 @@ import { TEST_TIMEOUT_FACTOR } from "./setup";
 describe("statement", function () {
   this.timeout(TEST_TIMEOUT_FACTOR * 10000);
   // Note that we're using the second account here
-  const [, wallet] = getAccounts();
+  const [, wallet, wallet2] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
   const signer = wallet.connect(provider);
   const db = new Database({ signer });
@@ -76,6 +76,150 @@ CREATE TABLE test_run (counter blurg);
           return true;
         }
       );
+    });
+
+    describe("alter table statement", function () {
+      let alterTableName: string;
+      // reset the table before each test
+      this.beforeEach(async function () {
+        const { results, error, meta } = await db
+          .prepare("CREATE TABLE test_alter (a integer, b int);")
+          .run();
+
+        deepStrictEqual(results, []);
+        strictEqual(error, undefined);
+        assert(meta.duration != null);
+        match(meta.txn!.name, /^test_alter_31337_\d+$/);
+
+        const { name } = await meta.txn!.wait();
+        alterTableName = name ?? "";
+
+        // insert a row to query during tests
+        const { meta: insertMeta } = await db
+          .prepare(`INSERT INTO ${alterTableName} VALUES (1, 1);`)
+          .run();
+        await insertMeta.txn?.wait();
+
+        const { results: selectResults } = await db
+          .prepare(`SELECT * FROM ${alterTableName};`)
+          .all<{ a: number; b: number }>();
+        strictEqual(selectResults.length, 1);
+        strictEqual(selectResults[0].a, 1);
+        strictEqual(selectResults[0].b, 1);
+      });
+
+      test("when alter table statement adds a column", async function () {
+        const stmt = db.prepare(
+          `ALTER TABLE ${alterTableName} ADD COLUMN c int;`
+        );
+        const { results, meta, error } = await stmt.run();
+        deepStrictEqual(results, []);
+        strictEqual(error, undefined);
+        assert(meta.duration != null);
+        assert(meta.txn?.transactionHash != null);
+        strictEqual(meta.txn.name, alterTableName);
+
+        await meta.txn?.wait();
+
+        // insert a value with new columns
+        const { meta: insertMeta } = await db
+          .prepare(`INSERT INTO ${alterTableName} (a, b, c) VALUES (2, 2, 2);`)
+          .run();
+        await insertMeta.txn?.wait();
+
+        const { results: selectResults } = await db
+          .prepare(`SELECT * FROM ${alterTableName};`)
+          .all<{ a: number; b: number; c: number }>();
+        strictEqual(selectResults.length, 2);
+        strictEqual(selectResults[0].a, 1);
+        assert(selectResults[0].c == null);
+        strictEqual(selectResults[1].a, 2);
+        strictEqual(selectResults[1].b, 2);
+        strictEqual(selectResults[1].c, 2);
+      });
+
+      test("when alter table statement renames a column", async function () {
+        const stmt = db.prepare(
+          `ALTER TABLE ${alterTableName} RENAME COLUMN a to c;`
+        );
+        const { results, meta, error } = await stmt.run();
+        deepStrictEqual(results, []);
+        strictEqual(error, undefined);
+        assert(meta.duration != null);
+        assert(meta.txn?.transactionHash != null);
+        strictEqual(meta.txn.name, alterTableName);
+
+        await meta.txn?.wait();
+
+        // insert a value with new column name
+        const { meta: insertMeta } = await db
+          .prepare(`INSERT INTO ${alterTableName} (c) VALUES (2);`)
+          .run();
+        await insertMeta.txn?.wait();
+
+        const { results: selectResults } = await db
+          .prepare(`SELECT * FROM ${alterTableName};`)
+          .all<{ c: number; b: number }>();
+        strictEqual(selectResults.length, 2);
+        // existing column is renamed
+        strictEqual(selectResults[0].c, 1);
+        strictEqual(selectResults[0].b, 1);
+        // @ts-expect-error checking result of an http response
+        assert(selectResults[0].a == null);
+        // new column exists
+        strictEqual(selectResults[1].c, 2);
+      });
+
+      test("when alter table statement drops a column", async function () {
+        const stmt = db.prepare(`ALTER TABLE ${alterTableName} DROP COLUMN b;`);
+        const { results, meta, error } = await stmt.run();
+        deepStrictEqual(results, []);
+        strictEqual(error, undefined);
+        assert(meta.duration != null);
+        assert(meta.txn?.transactionHash != null);
+        strictEqual(meta.txn.name, alterTableName);
+
+        await meta.txn?.wait();
+
+        const { meta: insertMeta } = await db
+          .prepare(`INSERT INTO ${alterTableName} (a, b) VALUES (2, 2);`)
+          .run();
+        await rejects(insertMeta.txn!.wait(), /has no column named b/i);
+
+        const { results: selectResults } = await db
+          .prepare(`SELECT * FROM ${alterTableName};`)
+          .all<{ a: number }>();
+
+        strictEqual(selectResults.length, 1);
+        strictEqual(selectResults[0].a, 1);
+        // @ts-expect-error checking result of an http response
+        assert(selectResults[0].b == null);
+      });
+
+      test("when non-owner tries to alter table", async function () {
+        const provider = getDefaultProvider("http://127.0.0.1:8545");
+        const signer = wallet2.connect(provider);
+        const db2 = new Database({ signer });
+
+        const [batchGrant] = await db.batch([
+          db.prepare(
+            `GRANT INSERT ON ${alterTableName} TO '${wallet2.address}';`
+          ),
+          db.prepare(
+            `GRANT UPDATE ON ${alterTableName} TO '${wallet2.address}';`
+          ),
+          db.prepare(
+            `GRANT DELETE ON ${alterTableName} TO '${wallet2.address}';`
+          ),
+        ]);
+        // db has autoWait turned off
+        await batchGrant.meta.txn?.wait();
+
+        const { meta } = await db2
+          .prepare(`ALTER TABLE ${alterTableName} DROP COLUMN b;`)
+          .run();
+        await rejects(meta.txn!.wait(), /non owner cannot execute alter stmt/i);
+      });
     });
 
     test("when insert statement is valid", async function () {
