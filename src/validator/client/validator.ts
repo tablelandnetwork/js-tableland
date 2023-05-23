@@ -47,13 +47,13 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     readonly Table: {
-      /** @example healthbot_5_1 */
+      /** @example healthbot_80001_1 */
       readonly name?: string;
-      /** @example https://testnets.tableland.network/api/v1/tables/healthbot_5_1 */
+      /** @example https://testnets.tableland.network/api/v1/tables/80001/1 */
       readonly external_url?: string;
-      /** @example https://render.tableland.xyz/anim/?chain=1&id=1 */
+      /** @example https://tables.testnets.tableland.xyz/80001/1.html */
       readonly animation_url?: string;
-      /** @example https://render.tableland.xyz/healthbot_5_1 */
+      /** @example https://tables.testnets.tableland.xyz/80001/1.svg */
       readonly image?: string;
       /**
        * @example {
@@ -68,13 +68,24 @@ export interface components {
           /** @description The trait type for marketplaces */
           readonly trait_type?: string;
           /** @description The value of the property */
-          readonly value?: string | number | number | boolean | Record<string, never>;
+          readonly value?: string | number | boolean | Record<string, never>;
         })[];
       readonly schema?: components["schemas"]["Schema"];
     };
     readonly TransactionReceipt: {
-      /** @example 1 */
+      /**
+       * @deprecated 
+       * @description This field is deprecated 
+       * @example 1
+       */
       readonly table_id?: string;
+      /**
+       * @example [
+       *   "1",
+       *   "2"
+       * ]
+       */
+      readonly table_ids?: readonly (string)[];
       /** @example 0x02f319429b8a7be1cbb492f0bfbf740d2472232a2edadde7df7c16c0b61aa78b */
       readonly transaction_hash?: string;
       /**
@@ -179,7 +190,7 @@ export interface operations {
    */
   queryByStatement: {
     parameters: {
-      readonly query: {
+      query: {
         /**
          * @description The SQL read query statement 
          * @example select * from healthbot_80001_1
@@ -218,7 +229,7 @@ export interface operations {
    */
   receiptByTransactionHash: {
     parameters: {
-      readonly path: {
+      path: {
         /**
          * @description The parent chain to target 
          * @example 80001
@@ -252,7 +263,7 @@ export interface operations {
    */
   getTableById: {
     parameters: {
-      readonly path: {
+      path: {
         /**
          * @description The parent chain to target 
          * @example 80001

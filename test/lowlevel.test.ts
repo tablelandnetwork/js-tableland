@@ -18,6 +18,7 @@ import {
 } from "../src/lowlevel.js";
 import { extractReadonly } from "../src/registry/utils.js";
 import { getDelay } from "../src/helpers/utils.js";
+import { getAbortSignal } from "../src/helpers/await.js";
 import { TEST_TIMEOUT_FACTOR } from "./setup";
 
 // Just to test out these functions
@@ -46,6 +47,11 @@ describe("lowlevel", function () {
           tables: ["test_exec"],
         }
       );
+      const { signal } = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 30000);
+      await txn.wait({
+        signal,
+        interval: TEST_TIMEOUT_FACTOR * 1500,
+      });
       strictEqual(txn.error, undefined);
       match(txn.name, /^test_exec_31337_\d+$/);
       const { name } = await txn.wait();

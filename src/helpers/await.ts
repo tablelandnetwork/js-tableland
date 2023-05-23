@@ -24,16 +24,23 @@ export type AsyncFunction<T> = () => Awaitable<AsyncData<T>>;
 export function getAbortSignal(
   signal?: AbortSignal,
   maxTimeout: number = 60_000
-): AbortSignal {
+): {
+  signal: AbortSignal;
+  timeoutId: ReturnType<typeof setTimeout> | undefined;
+} {
   let abortSignal: AbortSignal;
+  let timeoutId;
   if (signal == null) {
     const controller = new AbortController();
     abortSignal = controller.signal;
-    setTimeout(controller.abort.bind(controller), maxTimeout);
+    // return the timeoutId so the caller can cleanup
+    timeoutId = setTimeout(function () {
+      controller.abort();
+    }, maxTimeout);
   } else {
     abortSignal = signal;
   }
-  return abortSignal;
+  return { signal: abortSignal, timeoutId };
 }
 
 export async function getAsyncPoller<T = unknown>(
@@ -41,7 +48,9 @@ export async function getAsyncPoller<T = unknown>(
   interval: number = 1500,
   signal?: AbortSignal
 ): Promise<T> {
-  const abortSignal = getAbortSignal(signal, 10_000);
+  // in order to set a timeout other than 10 seconds you need to
+  // create and pass in an abort signal with a different timeout
+  const { signal: abortSignal, timeoutId } = getAbortSignal(signal, 10_000);
   const checkCondition = (
     resolve: (value: T) => void,
     reject: (reason?: any) => void
@@ -49,9 +58,13 @@ export async function getAsyncPoller<T = unknown>(
     Promise.resolve(fn())
       .then((result: AsyncData<T>) => {
         if (result.done && result.data != null) {
+          // We don't want to call `AbortController.abort()` if the call succeeded
+          clearTimeout(timeoutId);
           return resolve(result.data);
         }
         if (abortSignal.aborted) {
+          // We don't want to call `AbortController.abort()` if the call is already aborted
+          clearTimeout(timeoutId);
           return reject(abortSignal.reason);
         } else {
           setTimeout(checkCondition, interval, resolve, reject);
