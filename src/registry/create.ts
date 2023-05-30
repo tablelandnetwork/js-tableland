@@ -109,16 +109,17 @@ async function _createOne(
     signer,
     chainId
   );
-  
-  if(customizeTransaction!==undefined) {
-    return await customizeTransaction(signer, contract.address, "create(address,string)", [owner, statement, overrides]);
+
+  if (customizeTransaction !== undefined) {
+    return await customizeTransaction(
+      signer,
+      contract.address,
+      "create(address,string)",
+      [owner, statement, overrides]
+    );
   }
 
   return await contract["create(address,string)"](owner, statement, overrides);
-}
-
-async function sendWriteQuery({signer}: SignerConfig, {statements, chainId}: CreateManyParams}) {
-
 }
 
 async function _createMany(
@@ -131,12 +132,11 @@ async function _createMany(
     chainId
   );
 
-  
-  if(customizeTransaction!==undefined) {
+  if (customizeTransaction !== undefined) {
     return await customizeTransaction(
-      signer, 
-      contract.address, 
-      "create(address,string[])", 
+      signer,
+      contract.address,
+      "create(address,string[])",
       [owner, statements, overrides]
     );
   }
