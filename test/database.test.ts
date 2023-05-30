@@ -237,6 +237,7 @@ describe("database", function () {
       this.beforeAll(() => {
         db.config.autoWait = true;
       });
+
       test("when batching throws a runtime error", async function () {
         const stmt = db.prepare(
           `INSERT INTO ${tableName} (id, name, age) VALUES (1, ?1, ?2)`
@@ -249,6 +250,23 @@ describe("database", function () {
           }
         );
       });
+
+      test("when creating you get the table names", async function () {
+        const [batch] = await db.batch([
+          db.prepare(
+            `CREATE TABLE batch_wait_create_1 (id INTEGER, name TEXT);`
+          ),
+          db.prepare(
+            `CREATE TABLE batch_wait_create_2 (id INTEGER, name TEXT);`
+          ),
+        ]);
+
+        const names = batch.meta.txn?.names ?? [];
+
+        match(names[0], /^batch_wait_create_1_31337_\d+$/);
+        match(names[1], /^batch_wait_create_2_31337_\d+$/);
+      });
+
       this.afterAll(() => {
         db.config.autoWait = false;
       });
