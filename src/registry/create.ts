@@ -3,8 +3,6 @@ import { type SignerConfig } from "../helpers/config.js";
 import { type ContractTransaction } from "../helpers/ethers.js";
 import { validateTableName } from "../helpers/parser.js";
 import { getContractAndOverrides } from "./contract.js";
-import { ethers } from "ethers";
-import { TablelandDeployments__factory, TablelandTables } from "@tableland/evm";
 
 // Match _anything_ between create table and schema portion of create statement (statement must be a single line)
 const firstSearch =
@@ -101,7 +99,7 @@ export async function create(
 }
 
 async function _createOne(
-  { signer, customizeTransaction }: SignerConfig,
+  { signer, signAndSendOverride }: SignerConfig,
   { statement, chainId }: CreateOneParams
 ): Promise<ContractTransaction> {
   const owner = await signer.getAddress();
@@ -110,20 +108,21 @@ async function _createOne(
     chainId
   );
 
-  if (customizeTransaction !== undefined) {
-    return await customizeTransaction(
+  if (signAndSendOverride !== undefined) {
+    return await signAndSendOverride({
       signer,
-      contract.address,
-      "create(address,string)",
-      [owner, statement, overrides]
-    );
+      contractAddress: contract.address,
+      functionSignature: "create(address,string)",
+      functionArgs: [owner, statement],
+      overrides,
+    });
   }
 
   return await contract["create(address,string)"](owner, statement, overrides);
 }
 
 async function _createMany(
-  { signer, customizeTransaction }: SignerConfig,
+  { signer, signAndSendOverride }: SignerConfig,
   { statements, chainId }: CreateManyParams
 ): Promise<ContractTransaction> {
   const owner = await signer.getAddress();
@@ -132,13 +131,14 @@ async function _createMany(
     chainId
   );
 
-  if (customizeTransaction !== undefined) {
-    return await customizeTransaction(
+  if (signAndSendOverride !== undefined) {
+    return await signAndSendOverride({
       signer,
-      contract.address,
-      "create(address,string[])",
-      [owner, statements, overrides]
-    );
+      contractAddress: contract.address,
+      functionSignature: "create(address,string[])",
+      functionArgs: [owner, statements],
+      overrides,
+    });
   }
 
   return await contract["create(address,string[])"](

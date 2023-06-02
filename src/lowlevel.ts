@@ -80,7 +80,11 @@ export async function exec(
   const signer = await extractSigner(config);
   const chainId = await signer.getChainId();
   const baseUrl = await extractBaseUrl(config, chainId);
-  const _config = { baseUrl, signer };
+  const _config = {
+    baseUrl,
+    signer,
+    signAndSendOverride: config.signAndSendOverride,
+  };
   const _params = { chainId, first, statement: sql };
   switch (type) {
     case "create": {
@@ -114,7 +118,11 @@ export async function execMutateMany(
   const signer = await extractSigner(config);
   const chainId = await signer.getChainId();
   const baseUrl = await extractBaseUrl(config, chainId);
-  const _config = { baseUrl, signer };
+  const _config = {
+    baseUrl,
+    signer,
+    signAndSendOverride: config.signAndSendOverride,
+  };
   const params: MutateManyParams = { runnables, chainId };
 
   const tx = await mutate(_config, params);
@@ -139,7 +147,11 @@ export async function execCreateMany(
   const signer = await extractSigner(config);
   const chainId = await signer.getChainId();
   const baseUrl = await extractBaseUrl(config, chainId);
-  const _config = { baseUrl, signer };
+  const _config = {
+    baseUrl,
+    signer,
+    signAndSendOverride: config.signAndSendOverride,
+  };
   const params: CreateManyParams = {
     statements: await Promise.all(
       statements.map(async function (statement) {

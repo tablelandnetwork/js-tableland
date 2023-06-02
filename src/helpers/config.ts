@@ -1,24 +1,25 @@
+import { type ethers } from "ethers";
 import { type WaitableTransactionReceipt } from "../registry/utils.js";
 import { type ChainName, getBaseUrl } from "./chains.js";
-import {
-  type Signer,
-  type ExternalProvider,
-  type ContractTransaction,
-  getSigner,
-} from "./ethers.js";
+import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
 
 export interface ReadConfig {
   baseUrl: string;
 }
 
+export interface SignAndSendOverride {
+  signer: Signer;
+  contractAddress: string;
+  functionSignature: string;
+  functionArgs: any[];
+  overrides?: any;
+}
+
 export interface SignerConfig {
   signer: Signer;
-  customizeTransaction?: (
-    signer: Signer,
-    contractAddress: string,
-    functionSignature: string,
-    functionArgs: any[]
-  ) => Promise<ContractTransaction>;
+  signAndSendOverride?: (
+    options: SignAndSendOverride
+  ) => Promise<ethers.providers.TransactionResponse>;
 }
 
 export interface AutoWaitConfig {
