@@ -108,7 +108,7 @@
   },
   "dependencies": {
     "@tableland/evm": "^4.3.0",
-    "@tableland/sqlparser": "^1.2.0",
+    "@tableland/sqlparser": "^1.2.1",
     "ethers": "^5.7.2"
   }
 }
