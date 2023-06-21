@@ -9,7 +9,7 @@ import assert, {
 import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
 import { getDelay } from "../src/helpers/utils.js";
-import { getDefaultProvider } from "../src/helpers/index.js";
+import { getDefaultProvider, type NameMapping } from "../src/helpers/index.js";
 import { Database, Statement } from "../src/index.js";
 import { TEST_TIMEOUT_FACTOR } from "./setup";
 
@@ -493,6 +493,67 @@ SELECT * FROM 3.14;
       this.afterAll(() => {
         db.config.autoWait = false;
       });
+    });
+
+    describe("with project tables config", function () {
+      // keeping name mappings in memory during these tests
+      const nameMap: NameMapping = {};
+      this.beforeAll(function () {
+        db.config.project = {
+          read: async function () {
+            return nameMap;
+          },
+          write: async function (names) {
+            for (const uuTableName in names) {
+              nameMap[uuTableName] = names[uuTableName];
+            }
+          },
+        };
+      });
+
+      this.afterAll(function () {
+        delete db.config.project;
+      });
+
+      test("running create statement adds name to project", async function () {
+        const tablePrefix = "project_table";
+        const stmt = db.prepare(
+          `CREATE TABLE ${tablePrefix} (counter int, info text);`
+        );
+        const { meta } = await stmt.all();
+        const uuTableName = meta.txn?.name ?? "";
+
+        strictEqual(nameMap[tablePrefix], uuTableName);
+      });
+
+      test("insert and select uses project table name mappings", async function () {
+        await db
+          .prepare("CREATE TABLE students (first_name text, last_name text);")
+          .first();
+
+        const { meta } = await db
+          .prepare(
+            "INSERT INTO students (first_name, last_name) VALUES ('Bobby', 'Tables');"
+          )
+          .run();
+
+        await meta.txn?.wait();
+
+        const { results } = await db
+          .prepare(`SELECT * FROM students;`)
+          .all<{ first_name: string; last_name: string }>();
+        strictEqual(results.length, 1);
+        strictEqual(results[0].first_name, "Bobby");
+        strictEqual(results[0].last_name, "Tables");
+      });
+
+      test.skip("batch create uses project table name mappings", async function () {});
+
+      test.skip("batch mutate uses project table name mappings", async function () {});
+
+      test.skip("batch select uses project table name mappings", async function () {});
+
+      test.skip("project name map that does not have name works", async function () {});
     });
   });
 

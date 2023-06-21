@@ -2,12 +2,13 @@ import {
   type Config,
   extractBaseUrl,
   extractSigner,
+  normalize,
   type Signal,
   type ReadConfig,
+  type NameMapping,
 } from "./helpers/index.js";
 import {
   prepareCreateOne,
-  createTable,
   create,
   type CreateManyParams,
 } from "./registry/create.js";
@@ -85,12 +86,30 @@ export async function exec(
   switch (type) {
     case "create": {
       const { prefix, ...prepared } = await prepareCreateOne(_params);
-      const tx = await createTable(_config, prepared);
-      return await wrapTransaction(_config, prefix, tx);
+      const tx = await create(_config, prepared);
+      const wrappedTx = await wrapTransaction(_config, prefix, tx);
+
+      if (typeof config.project?.write === "function") {
+        const uuTableName = wrappedTx.name;
+        const nameMap: NameMapping = {};
+        nameMap[first] = uuTableName;
+
+        await config.project.write(nameMap);
+      }
+
+      return wrappedTx;
     }
     /* c8 ignore next */
     case "acl":
     case "write": {
+      if (typeof config.project?.read === "function") {
+        const nameMap = await config.project.read();
+        const norm = await normalize(_params.statement, nameMap);
+
+        _params.statement = norm.statements[0];
+        _params.first = nameMap[first] != null ? nameMap[first] : first;
+      }
+
       const { prefix, ...prepared } = await prepareMutateOne(_params);
       const tx = await mutate(_config, prepared);
       return await wrapTransaction(_config, prefix, tx);
@@ -116,6 +135,19 @@ export async function execMutateMany(
   const baseUrl = await extractBaseUrl(config, chainId);
   const _config = { baseUrl, signer };
   const params: MutateManyParams = { runnables, chainId };
+
+  if (typeof config.project?.read === "function") {
+    const nameMap = await config.project.read();
+
+    params.runnables = await Promise.all(
+      params.runnables.map(async function (runnable) {
+        const norm = await normalize(runnable.statement, nameMap);
+        runnable.statement = norm.statements[0];
+
+        return runnable;
+      })
+    );
+  }
 
   const tx = await mutate(_config, params);
 
@@ -151,8 +183,26 @@ export async function execCreateMany(
   };
 
   const tx = await create(_config, params);
+  const wrappedTx = await wrapManyTransaction(_config, statements, tx);
 
-  return await wrapManyTransaction(_config, statements, tx);
+  if (typeof config.project?.write === "function") {
+    const projectTableNames = await Promise.all(
+      params.statements.map(async function (statement) {
+        const norm = await normalize(statement);
+        return norm.tables[0];
+      })
+    );
+
+    // TODO: is `wrappedTx.names` right?
+    const uuTableNames = wrappedTx.names;
+    const nameMap: NameMapping = {};
+    for (let i = 0; i < projectTableNames.length; i++) {
+      nameMap[projectTableNames[i]] = uuTableNames[i];
+    }
+
+    await config.project.write(nameMap);
+  }
+  return wrappedTx;
 }
 
 export function errorWithCause(code: string, cause: Error): Error {

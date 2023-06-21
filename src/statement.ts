@@ -101,12 +101,21 @@ export class Statement<S = unknown> {
 
   async #parseAndExtract(): Promise<ExtractedStatement> {
     const statementWithBindings = this.toString();
-    const { type, statements, tables } = await normalize(statementWithBindings);
+    const nameMap =
+      typeof this.config.project?.read === "function"
+        ? await this.config.project.read()
+        : undefined;
+    const { type, statements, tables } = await normalize(
+      statementWithBindings,
+      nameMap
+    );
+
     // Stick with original if a create statement, otherwise, use the parsed version
     // This is because the parser injects keywords that are not spec compliant
     // See https://github.com/tablelandnetwork/go-sqlparser/issues/41
     const sql =
       type === "create" ? statementWithBindings : statements.join(";");
+
     return { type, sql, tables };
   }
 

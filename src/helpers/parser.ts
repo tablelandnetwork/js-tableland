@@ -6,10 +6,14 @@ import {
   type StatementType,
 } from "@tableland/sqlparser";
 import { isTestnet } from "./chains.js";
+import { type NameMapping } from "./config.js";
 
 export type { NormalizedStatement, StatementType };
 
-export async function normalize(sql: string): Promise<NormalizedStatement> {
+export async function normalize(
+  sql: string,
+  nameMap?: NameMapping
+): Promise<NormalizedStatement> {
   if (typeof sql !== "string") {
     throw new Error("SQL statement must be a String");
   }
@@ -17,7 +21,7 @@ export async function normalize(sql: string): Promise<NormalizedStatement> {
   if (__wasm == null) {
     await init();
   }
-  return await sqlparser.normalize(sql);
+  return await sqlparser.normalize(sql, nameMap);
 }
 
 export async function validateTableName(

@@ -4,6 +4,7 @@ import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
 
 export interface ReadConfig {
   baseUrl: string;
+  project?: ProjectNameMap;
 }
 
 export interface SignerConfig {
@@ -15,6 +16,13 @@ export interface AutoWaitConfig {
 }
 
 export type Config = Partial<ReadConfig & SignerConfig>;
+
+export type NameMapping = Record<string, string>;
+
+export interface ProjectNameMap {
+  read: () => Promise<NameMapping>;
+  write: (map: NameMapping) => Promise<void>;
+}
 
 export async function checkWait(
   config: Config & Partial<AutoWaitConfig>,
