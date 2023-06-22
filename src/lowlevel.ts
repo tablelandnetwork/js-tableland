@@ -186,14 +186,14 @@ export async function execCreateMany(
   const wrappedTx = await wrapManyTransaction(_config, statements, tx);
 
   if (typeof config.project?.write === "function") {
+    // Collect the user provided table names to add to the project.
     const projectTableNames = await Promise.all(
-      params.statements.map(async function (statement) {
+      statements.map(async function (statement) {
         const norm = await normalize(statement);
         return norm.tables[0];
       })
     );
 
-    // TODO: is `wrappedTx.names` right?
     const uuTableNames = wrappedTx.names;
     const nameMap: NameMapping = {};
     for (let i = 0; i < projectTableNames.length; i++) {
