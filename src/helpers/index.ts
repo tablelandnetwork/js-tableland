@@ -26,6 +26,7 @@ export {
   extractBaseUrl,
   extractChainId,
   extractSigner,
+  jsonFileProject,
 } from "./config.js";
 export {
   type Signer,

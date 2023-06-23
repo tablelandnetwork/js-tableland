@@ -85,6 +85,13 @@ export async function exec(
   const _params = { chainId, first, statement: sql };
   switch (type) {
     case "create": {
+      if (typeof config.project?.read === "function") {
+        const currentProject = await config.project.read();
+        if (currentProject[first] != null) {
+          throw new Error("table name already exists in project");
+        }
+      }
+
       const { prefix, ...prepared } = await prepareCreateOne(_params);
       const tx = await create(_config, prepared);
       const wrappedTx = await wrapTransaction(_config, prefix, tx);
@@ -186,10 +193,15 @@ export async function execCreateMany(
   const wrappedTx = await wrapManyTransaction(_config, statements, tx);
 
   if (typeof config.project?.write === "function") {
+    const currentProject = await config.project.read();
+
     // Collect the user provided table names to add to the project.
     const projectTableNames = await Promise.all(
       statements.map(async function (statement) {
         const norm = await normalize(statement);
+        if (currentProject[norm.tables[0]] != null) {
+          throw new Error("table name already exists in project");
+        }
         return norm.tables[0];
       })
     );

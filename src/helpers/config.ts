@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { type WaitableTransactionReceipt } from "../registry/utils.js";
 import { type ChainName, getBaseUrl } from "./chains.js";
 import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
@@ -76,4 +77,19 @@ export async function extractChainId(conn: Config = {}): Promise<number> {
   }
 
   return chainId;
+}
+
+export function jsonFileProject(filepath: string): ProjectNameMap {
+  return {
+    // TODO: using the Sync methods to ensure that race conditions don't arise
+    //     between reads and writes.  We could use some kind of lock, or just
+    //     leave it up to the SDK user to avoid allowing this kind of problem?
+    read: async function (): Promise<NameMapping> {
+      const jsonBuf = fs.readFileSync(filepath);
+      return JSON.parse(jsonBuf.toString());
+    },
+    write: async function (nameMap: NameMapping) {
+      fs.writeFileSync(filepath, JSON.stringify(nameMap));
+    },
+  };
 }
