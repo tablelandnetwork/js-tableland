@@ -114,45 +114,44 @@ describe("validator", function () {
     });
 
     describe("without autoWait", function () {
-      let transactionHash: string = "";
-      this.beforeEach(async () => {
+      this.beforeAll(async () => {
         db.config.autoWait = false;
-        try {
-          const { meta } = await db
-            .prepare(`INSERT INTO ${txn.name}(name) VALUES(NULL);`)
-            .run();
-          transactionHash = meta.txn!.transactionHash!;
-          // This will throw
-          await meta.txn?.wait();
-        } catch (err) {
-          // no op
-        }
       });
+
+      this.afterEach(() => {
+        db.config.autoWait = true;
+      });
+
       test("when we call the receipt api and it returns an error", async function () {
+        const { meta } = await db
+          .prepare(`INSERT INTO ${txn.name} (name) VALUES(NULL);`)
+          .run();
+
+        const transactionHash = meta.txn!.transactionHash!;
+        // This will throw since not null has been violated, but we
+        // want to wait until the Validator has processed the txn
+        try {
+          await meta.txn?.wait();
+        } catch (e) {}
+
         const receipt = await api.receiptByTransactionHash({
           chainId,
           transactionHash,
         });
         match(receipt.error!, /.*msg: NOT NULL constraint failed:.*/);
       });
-      this.afterEach(() => {
-        db.config.autoWait = true;
-      });
-    });
 
-    describe("without autoWait", function () {
-      let localTransaction: WaitableTransactionReceipt;
-      this.beforeEach(async () => {
+      test("when we poll for a transaction receipt and it succeeds", async function () {
         db.config.autoWait = false;
         const {
           meta: { txn: localTxn },
         } = await db
           .prepare(`INSERT INTO ${txn.name}(name) VALUES('Lucas');`)
           .run();
-        localTransaction = localTxn!;
-      });
-      test("when we poll for a transaction receipt and it succeeds", async function () {
-        const { chainId, transactionHash } = localTransaction;
+
+        const localTransaction = localTxn;
+
+        const { chainId, transactionHash } = localTransaction!;
 
         const response = await api.pollForReceiptByTransactionHash({
           chainId,
@@ -161,47 +160,8 @@ describe("validator", function () {
         strictEqual(response.transactionHash, transactionHash);
         strictEqual(response.chainId, chainId);
         strictEqual(response.error, undefined);
-        strictEqual(response.tableId, localTransaction.tableId);
-        strictEqual(response.blockNumber, localTransaction.blockNumber);
-      });
-      this.afterEach(() => {
-        db.config.autoWait = true;
-      });
-    });
-
-    describe("without autoWait", function () {
-      let transactionHash: string = "";
-      this.beforeEach(async () => {
-        db.config.autoWait = false;
-        try {
-          const { meta } = await db
-            .prepare(`INSERT INTO ${txn.name}(name) VALUES(NULL);`)
-            .run();
-          transactionHash = meta.txn!.transactionHash;
-          // This will throw
-          await meta.txn?.wait();
-        } catch (err) {
-          // no op
-        }
-      });
-      test("when we poll for a transaction receipt and it fails", async function () {
-        try {
-          const { meta } = await db
-            .prepare(`INSERT INTO ${txn.name}(name) VALUES(NULL);`)
-            .run();
-          transactionHash = meta.txn!.transactionHash;
-        } catch (err) {
-          /* c8 ignore next 2 */
-        }
-
-        const receipt = await api.pollForReceiptByTransactionHash({
-          chainId,
-          transactionHash,
-        });
-        match(receipt.error!, /.*msg: NOT NULL constraint failed:.*/);
-      });
-      this.afterEach(() => {
-        db.config.autoWait = true;
+        strictEqual(response.tableId, localTransaction!.tableId);
+        strictEqual(response.blockNumber, localTransaction!.blockNumber);
       });
     });
   });
