@@ -34,17 +34,13 @@ type ListenerMap = Record<
     chainId: number;
     tableId: string;
     emitter: EventEmitter;
-    contractListener: {
-      chainId: number;
-      listeners: ContractEventListener[];
-    };
+    contractListeners: ContractEventListener[];
   }
 >;
 
 /**
  * List of the Registry Contract events that will be emitted from the TableEventBus.
  */
-// TODO: this is an awkward way to keep track of the index of the Events' tableId index
 const contractEvents: ContractEventTableIdMap = {
   RunSQL: {
     tableIdIndex: 2,
@@ -95,7 +91,7 @@ export class TableEventBus {
    * @param tableName The full name of table that you want to listen for
    * changes to.
    */
-  async addTableListener(tableName: string): Promise<EventEmitter> {
+  async addListener(tableName: string): Promise<EventEmitter> {
     if (tableName == null) {
       throw new Error("table name is required to add listener");
     }
@@ -114,28 +110,24 @@ export class TableEventBus {
       listenerId,
       emitter
     );
-    const contractListener = {
-      chainId: tableIdentifier.chainId,
-      listeners: contractEventListeners,
-    };
 
     this.listeners[listenerId] = {
       ...tableIdentifier,
       emitter,
-      contractListener,
+      contractListeners: contractEventListeners,
     };
 
     return emitter;
   }
 
   /**
-   * A simple wrapper around `addTableListener` that returns an async iterable
+   * A simple wrapper around `addListener` that returns an async iterable
    * which can be used with the for await ... of pattern.
    * @param tableName The full name of table that you want to listen for
    * changes to.
    */
   async addTableIterator<T>(tableName: string): Promise<AsyncIterable<T>> {
-    const emmiter = await this.addTableListener(tableName);
+    const emmiter = await this.addListener(tableName);
     return fromEmitter(emmiter, {
       onNext: "change",
       onError: "error",
@@ -165,7 +157,7 @@ export class TableEventBus {
   }
 
   // stop listening to the contract and remove all listeners
-  removeAllTableListeners(): void {
+  removeAllListeners(): void {
     // Need to remove the contract listener first because removing
     // the table listener will delete the listeners object
     for (const chainId in this.contracts) {
@@ -178,12 +170,8 @@ export class TableEventBus {
           // the chainId of the contract and the Listener Object are the same
           // then we want to dig into the Listener Object and for each event that
           // the contract is listening to we call contract.off(eventName, eventListenerFunctionInstance)
-          for (
-            let i = 0;
-            i < listenerObj.contractListener.listeners.length;
-            i++
-          ) {
-            const listenerEventFunc = listenerObj.contractListener.listeners[i];
+          for (let i = 0; i < listenerObj.contractListeners.length; i++) {
+            const listenerEventFunc = listenerObj.contractListeners[i];
             contract.off(
               listenerEventFunc.eventName,
               listenerEventFunc.eventListener

@@ -18,7 +18,7 @@ describe("subscribe", function () {
   describe("TableEventBus", function () {
     const eventBus = new TableEventBus(db.config);
 
-    test("addTableListener() can be used to listen for changes to a table", function (done) {
+    test("addListener() can be used to listen for changes to a table", function (done) {
       const go = async function (): Promise<void> {
         const { meta } = await db
           .prepare("CREATE TABLE test_table_subscribe (id integer, name text);")
@@ -26,7 +26,7 @@ describe("subscribe", function () {
         const tableName = meta.txn?.name ?? "";
         await meta.txn?.wait();
 
-        const bus = await eventBus.addTableListener(`${tableName}`);
+        const bus = await eventBus.addListener(`${tableName}`);
         bus.on("change", function (eve: any) {
           strictEqual(eve.error, undefined);
           match(eve.tableId, /^\d+$/);
@@ -36,7 +36,7 @@ describe("subscribe", function () {
           match(eve.transactionHash, /^0x[0-9a-f]+$/);
           strictEqual(eve.chainId, 31337);
 
-          eventBus.removeAllTableListeners();
+          eventBus.removeAllListeners();
           done();
         });
 
@@ -70,7 +70,7 @@ describe("subscribe", function () {
           strictEqual((eve as any).chainId, 31337);
 
           // break after first event and end the test
-          eventBus.removeAllTableListeners();
+          eventBus.removeAllListeners();
           done();
         }
       };
