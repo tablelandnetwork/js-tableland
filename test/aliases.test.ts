@@ -9,7 +9,7 @@ import { getAccounts } from "@tableland/local";
 import {
   type NameMapping,
   getDefaultProvider,
-  jsonFileProject,
+  jsonFileAliases,
 } from "../src/helpers/index.js";
 import { Database } from "../src/index.js";
 import { TEST_TIMEOUT_FACTOR } from "./setup";
@@ -17,22 +17,22 @@ import { TEST_TIMEOUT_FACTOR } from "./setup";
 /* eslint-disable @typescript-eslint/naming-convention */
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
-describe("project", function () {
+describe("aliases", function () {
   this.timeout(TEST_TIMEOUT_FACTOR * 10000);
   // Note that we're using the second account here
   const [, wallet] = getAccounts();
   const provider = getDefaultProvider("http://127.0.0.1:8545");
   const signer = wallet.connect(provider);
 
-  describe("in memory project", function () {
+  describe("in memory aliases", function () {
     // keeping name mappings in memory during these tests, but in practice
-    // this map needs to be persisted for the entire life of the project
+    // this map needs to be persisted for the entire life of the aliases
     const nameMap: NameMapping = {};
 
     const db = new Database({
       signer,
-      // this parameter is the core of the project feature
-      project: {
+      // this parameter is the core of the aliases feature
+      aliases: {
         read: async function () {
           return nameMap;
         },
@@ -44,8 +44,8 @@ describe("project", function () {
       },
     });
 
-    test("running create statement adds name to project", async function () {
-      const tablePrefix = "project_table";
+    test("running create statement adds name to aliases", async function () {
+      const tablePrefix = "aliases_table";
       const { meta } = await db
         .prepare(`CREATE TABLE ${tablePrefix} (counter int, info text);`)
         .all();
@@ -54,7 +54,7 @@ describe("project", function () {
       strictEqual(nameMap[tablePrefix], uuTableName);
     });
 
-    test("insert and select uses project table name mappings", async function () {
+    test("insert and select uses aliases table name mappings", async function () {
       await db
         .prepare(
           "CREATE TABLE students (first_name text, last_name text);"
@@ -84,7 +84,7 @@ describe("project", function () {
       strictEqual(results[0].last_name, "Tables");
     });
 
-    test("batch create uses project table name mappings", async function () {
+    test("batch create uses aliases table name mappings", async function () {
       const prefixes = ["batch_table1", "batch_table2", "batch_table3"];
 
       const [{ meta }] = await db.batch([
@@ -100,7 +100,7 @@ describe("project", function () {
       strictEqual(nameMap[prefixes[2]], uuNames[2]);
     });
 
-    test("batch mutate uses project table name mappings", async function () {
+    test("batch mutate uses aliases table name mappings", async function () {
       await db.prepare("CREATE TABLE mutate_test (k text, val text);").first();
 
       const [{ meta }] = await db.batch([
@@ -130,7 +130,7 @@ describe("project", function () {
       strictEqual(results[2].val, "zxcvbn");
     });
 
-    test("batch select uses project table name mappings", async function () {
+    test("batch select uses aliases table name mappings", async function () {
       const prefixes = ["batch_select1", "batch_select2", "batch_select3"];
 
       await db.batch([
@@ -162,7 +162,7 @@ describe("project", function () {
       strictEqual(results[2].results[0].counter, 3);
     });
 
-    test("using universal unique table name works with project", async function () {
+    test("using universal unique table name works with aliases", async function () {
       const { meta } = await db
         .prepare("CREATE TABLE uu_name (counter int);")
         .all();
@@ -192,41 +192,41 @@ describe("project", function () {
         db
           .prepare(`CREATE TABLE ${tablePrefix} (counter int, info text);`)
           .all(),
-        "table name already exists in project"
+        "table name already exists in aliases"
       );
     });
   });
 
-  describe("json file project", function () {
-    const projectDir = path.join(__dirname, "project");
-    const projectFile = path.join(projectDir, "json-file-project.json");
+  describe("json file aliases", function () {
+    const aliasesDir = path.join(__dirname, "aliases");
+    const aliasesFile = path.join(aliasesDir, "json-file-aliases.json");
     try {
-      fs.mkdirSync(projectDir);
+      fs.mkdirSync(aliasesDir);
     } catch (err) {}
     try {
-      fs.writeFileSync(projectFile, "{}" + EOL);
+      fs.writeFileSync(aliasesFile, "{}" + EOL);
     } catch (err) {}
 
     const db = new Database({
       signer,
-      // use the built-in SDK helper to setup and manage json project files
-      project: jsonFileProject(projectFile),
+      // use the built-in SDK helper to setup and manage json aliases files
+      aliases: jsonFileAliases(aliasesFile),
     });
 
     this.afterAll(function () {
       try {
-        fs.writeFileSync(projectFile, "{}" + EOL);
+        fs.writeFileSync(aliasesFile, "{}" + EOL);
       } catch (err) {}
     });
 
-    test("running create statement adds name to project", async function () {
-      const tablePrefix = "json_project_table";
+    test("running create statement adds name to aliases", async function () {
+      const tablePrefix = "json_aliases_table";
       const { meta } = await db
         .prepare(`CREATE TABLE ${tablePrefix} (counter int, info text);`)
         .all();
 
       const uuTableName = meta.txn?.name ?? "";
-      const nameMap = (await db.config.project?.read()) ?? {};
+      const nameMap = (await db.config.aliases?.read()) ?? {};
 
       strictEqual(nameMap[tablePrefix], uuTableName);
     });

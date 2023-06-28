@@ -85,10 +85,10 @@ export async function exec(
   const _params = { chainId, first, statement: sql };
   switch (type) {
     case "create": {
-      if (typeof config.project?.read === "function") {
-        const currentProject = await config.project.read();
-        if (currentProject[first] != null) {
-          throw new Error("table name already exists in project");
+      if (typeof config.aliases?.read === "function") {
+        const currentAliases = await config.aliases.read();
+        if (currentAliases[first] != null) {
+          throw new Error("table name already exists in aliases");
         }
       }
 
@@ -96,12 +96,12 @@ export async function exec(
       const tx = await create(_config, prepared);
       const wrappedTx = await wrapTransaction(_config, prefix, tx);
 
-      if (typeof config.project?.write === "function") {
+      if (typeof config.aliases?.write === "function") {
         const uuTableName = wrappedTx.name;
         const nameMap: NameMapping = {};
         nameMap[first] = uuTableName;
 
-        await config.project.write(nameMap);
+        await config.aliases.write(nameMap);
       }
 
       return wrappedTx;
@@ -109,8 +109,8 @@ export async function exec(
     /* c8 ignore next */
     case "acl":
     case "write": {
-      if (typeof config.project?.read === "function") {
-        const nameMap = await config.project.read();
+      if (typeof config.aliases?.read === "function") {
+        const nameMap = await config.aliases.read();
         const norm = await normalize(_params.statement, nameMap);
 
         _params.statement = norm.statements[0];
@@ -143,8 +143,8 @@ export async function execMutateMany(
   const _config = { baseUrl, signer };
   const params: MutateManyParams = { runnables, chainId };
 
-  if (typeof config.project?.read === "function") {
-    const nameMap = await config.project.read();
+  if (typeof config.aliases?.read === "function") {
+    const nameMap = await config.aliases.read();
 
     params.runnables = await Promise.all(
       params.runnables.map(async function (runnable) {
@@ -192,15 +192,15 @@ export async function execCreateMany(
   const tx = await create(_config, params);
   const wrappedTx = await wrapManyTransaction(_config, statements, tx);
 
-  if (typeof config.project?.write === "function") {
-    const currentProject = await config.project.read();
+  if (typeof config.aliases?.write === "function") {
+    const currentAliases = await config.aliases.read();
 
-    // Collect the user provided table names to add to the project.
-    const projectTableNames = await Promise.all(
+    // Collect the user provided table names to add to the aliases.
+    const aliasesTableNames = await Promise.all(
       statements.map(async function (statement) {
         const norm = await normalize(statement);
-        if (currentProject[norm.tables[0]] != null) {
-          throw new Error("table name already exists in project");
+        if (currentAliases[norm.tables[0]] != null) {
+          throw new Error("table name already exists in aliases");
         }
         return norm.tables[0];
       })
@@ -208,11 +208,11 @@ export async function execCreateMany(
 
     const uuTableNames = wrappedTx.names;
     const nameMap: NameMapping = {};
-    for (let i = 0; i < projectTableNames.length; i++) {
-      nameMap[projectTableNames[i]] = uuTableNames[i];
+    for (let i = 0; i < aliasesTableNames.length; i++) {
+      nameMap[aliasesTableNames[i]] = uuTableNames[i];
     }
 
-    await config.project.write(nameMap);
+    await config.aliases.write(nameMap);
   }
   return wrappedTx;
 }

@@ -5,7 +5,7 @@ import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
 
 export interface ReadConfig {
   baseUrl: string;
-  project?: ProjectNameMap;
+  aliases?: AliasesNameMap;
 }
 
 export interface SignerConfig {
@@ -20,7 +20,7 @@ export type Config = Partial<ReadConfig & SignerConfig>;
 
 export type NameMapping = Record<string, string>;
 
-export interface ProjectNameMap {
+export interface AliasesNameMap {
   read: () => Promise<NameMapping>;
   write: (map: NameMapping) => Promise<void>;
 }
@@ -79,7 +79,7 @@ export async function extractChainId(conn: Config = {}): Promise<number> {
   return chainId;
 }
 
-export function jsonFileProject(filepath: string): ProjectNameMap {
+export function jsonFileAliases(filepath: string): AliasesNameMap {
   return {
     // TODO: using the Sync methods to ensure that race conditions don't arise
     //     between reads and writes.  We could use some kind of lock, or just

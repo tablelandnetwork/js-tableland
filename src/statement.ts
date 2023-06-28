@@ -102,8 +102,8 @@ export class Statement<S = unknown> {
   async #parseAndExtract(): Promise<ExtractedStatement> {
     const statementWithBindings = this.toString();
     const nameMap =
-      typeof this.config.project?.read === "function"
-        ? await this.config.project.read()
+      typeof this.config.aliases?.read === "function"
+        ? await this.config.aliases.read()
         : undefined;
     const { type, statements, tables } = await normalize(
       statementWithBindings,
@@ -117,7 +117,7 @@ export class Statement<S = unknown> {
       const { tables } = await normalize(statementWithBindings);
       // if the table prefix already exists throw an error
       if (tables.find((table) => table in nameMap) != null) {
-        throw new Error("table name already exists in project");
+        throw new Error("table name already exists in aliases");
       }
     }
 

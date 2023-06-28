@@ -20,13 +20,13 @@ export {
   type SignerConfig,
   type Config,
   type AutoWaitConfig,
-  type ProjectNameMap,
+  type AliasesNameMap,
   type NameMapping,
   checkWait,
   extractBaseUrl,
   extractChainId,
   extractSigner,
-  jsonFileProject,
+  jsonFileAliases,
 } from "./config.js";
 export {
   type Signer,

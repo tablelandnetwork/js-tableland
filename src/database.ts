@@ -99,8 +99,8 @@ export class Database<D = unknown> {
     try {
       const start = performance.now();
       const nameMap =
-        typeof this.config.project?.read === "function"
-          ? await this.config.project?.read()
+        typeof this.config.aliases?.read === "function"
+          ? await this.config.aliases?.read()
           : undefined;
 
       // If the statement types are "create" and the statement contains more than one
