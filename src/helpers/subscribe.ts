@@ -12,14 +12,6 @@ import { extractBaseUrl, type Config } from "../helpers/index.js";
 // @ts-expect-error Seems like this package isn't setup to work with modern esm + ts
 const fromEmitter = asyncGenFromEmit.default;
 
-type ContractEventTableIdMap = Record<
-  string,
-  {
-    tableIdIndex: number;
-    emit: string;
-  }
->;
-
 type ContractMap = Record<number, TablelandTables>;
 
 interface ContractEventListener {
@@ -35,6 +27,17 @@ type ListenerMap = Record<
     tableId: string;
     emitter: EventEmitter;
     contractListeners: ContractEventListener[];
+  }
+>;
+
+type ContractEventTableIdMap = Record<
+  // the key is the event name in the Solidity contract
+  string,
+  {
+    // `tableIdIndex` is the index of the event's argument that contains the tableId
+    tableIdIndex: number;
+    // `emit` is the name of the event that will be emitted by the TableEventBus instance
+    emit: string;
   }
 >;
 
@@ -139,7 +142,7 @@ export class TableEventBus {
    * Remove a listener (or iterator) based on chain and tableId
    * @param params A TableIdentifier Object. Must have `chainId` and `tableId` keys.
    */
-  removeTableListener(params: TableIdentifier): void {
+  removeListener(params: TableIdentifier): void {
     if (params == null) {
       throw new Error("must provide chainId and tableId to remove a listener");
     }
@@ -167,9 +170,9 @@ export class TableEventBus {
         const listenerObjChainId = listenerObj.chainId.toString();
 
         if (listenerObjChainId === chainId) {
-          // the chainId of the contract and the Listener Object are the same
+          // If the chainId of the contract and the Listener Object are the same
           // then we want to dig into the Listener Object and for each event that
-          // the contract is listening to we call contract.off(eventName, eventListenerFunctionInstance)
+          // the contract is listening to we remove the listener
           for (let i = 0; i < listenerObj.contractListeners.length; i++) {
             const listenerEventFunc = listenerObj.contractListeners[i];
             contract.off(
@@ -185,7 +188,7 @@ export class TableEventBus {
     // the emitter listeners and delete the entries
     for (const listener in this.listeners) {
       const l = this.listeners[listener];
-      this.removeTableListener({
+      this.removeListener({
         chainId: l.chainId,
         tableId: l.tableId,
       });
@@ -195,6 +198,7 @@ export class TableEventBus {
   async _getContract(chainId: number): Promise<TablelandTables> {
     if (this.contracts[chainId] != null) return this.contracts[chainId];
     if (this.config.signer == null) {
+      /* c8 ignore next 2 */
       throw new Error("signer information is required to get contract");
     }
 
@@ -229,7 +233,6 @@ export class TableEventBus {
       const eve = contractEvents[key];
       // put the listener function in memory so we can remove it if needed
       const listener = (...args: any[]): void => {
-        // TODO: revist the arguments usage and potentially clean up
         const _tableId = args[eve.tableIdIndex].toString();
         if (_tableId !== tableId) return;
         if (key !== "RunSQL") {
@@ -252,6 +255,7 @@ export class TableEventBus {
           emitter.emit("change", res);
         };
         poll().catch((err) => {
+          /* c8 ignore next 1 */
           emitter.emit("error", { error: err, hash: transactionHash });
         });
       };
