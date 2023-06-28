@@ -107,6 +107,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@async-generators/from-emitter": "^0.3.0",
     "@tableland/evm": "^4.3.0",
     "@tableland/sqlparser": "^1.2.1",
     "ethers": "^5.7.2"
