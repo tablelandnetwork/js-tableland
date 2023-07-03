@@ -1,7 +1,6 @@
 import url from "node:url";
 import path from "node:path";
 import fs from "node:fs";
-import { EOL } from "node:os";
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { strictEqual, rejects } from "assert";
 import { describe, test } from "mocha";
@@ -203,8 +202,10 @@ describe("aliases", function () {
     try {
       fs.mkdirSync(aliasesDir);
     } catch (err) {}
+    // reset the aliases file, and ensure the helper
+    // creates the file if it doesn't exist
     try {
-      fs.writeFileSync(aliasesFile, "{}" + EOL);
+      fs.unlinkSync(aliasesFile);
     } catch (err) {}
 
     const db = new Database({
@@ -215,7 +216,7 @@ describe("aliases", function () {
 
     this.afterAll(function () {
       try {
-        fs.writeFileSync(aliasesFile, "{}" + EOL);
+        fs.unlinkSync(aliasesFile);
       } catch (err) {}
     });
 
