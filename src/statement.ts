@@ -101,12 +101,32 @@ export class Statement<S = unknown> {
 
   async #parseAndExtract(): Promise<ExtractedStatement> {
     const statementWithBindings = this.toString();
-    const { type, statements, tables } = await normalize(statementWithBindings);
+    const nameMap =
+      typeof this.config.aliases?.read === "function"
+        ? await this.config.aliases.read()
+        : undefined;
+    const { type, statements, tables } = await normalize(
+      statementWithBindings,
+      nameMap
+    );
+
+    // TODO: this feels wrong, but we have to use the normalize function to determine the type,
+    //    then use it again if the type is create to ensure that a new table isn't created with
+    //    an existing prefix.
+    if (type === "create" && nameMap != null) {
+      const { tables } = await normalize(statementWithBindings);
+      // if the table prefix already exists throw an error
+      if (tables.find((table) => table in nameMap) != null) {
+        throw new Error("table name already exists in aliases");
+      }
+    }
+
     // Stick with original if a create statement, otherwise, use the parsed version
     // This is because the parser injects keywords that are not spec compliant
     // See https://github.com/tablelandnetwork/go-sqlparser/issues/41
     const sql =
       type === "create" ? statementWithBindings : statements.join(";");
+
     return { type, sql, tables };
   }
 

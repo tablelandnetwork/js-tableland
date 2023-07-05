@@ -98,10 +98,17 @@ export class Database<D = unknown> {
   ): Promise<Array<Result<T>>> {
     try {
       const start = performance.now();
+      const nameMap =
+        typeof this.config.aliases?.read === "function"
+          ? await this.config.aliases?.read()
+          : undefined;
+
       // If the statement types are "create" and the statement contains more than one
       // query (separated by semi-colon) then the sqlparser with throw an Error.
       const normalized = await Promise.all(
-        statements.map(async (stmt) => await normalize(stmt.toString()))
+        statements.map(
+          async (stmt) => await normalize(stmt.toString(), nameMap)
+        )
       );
 
       const type: string | null = normalized

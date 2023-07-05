@@ -234,6 +234,15 @@ export async function wrapManyTransaction(
   );
 
   const params = { ..._params, chainId };
+  // TODO: including `name`, `prefix`, and `tableId` for back compat, will be removed next major
+  const tableMeta = {
+    names,
+    name: names[0],
+    tableId: _params.tableIds[0],
+    prefixes,
+    prefix: prefixes[0],
+  };
+
   const wait = async (
     opts: SignalAndInterval = {}
   ): Promise<TransactionReceipt & Named> => {
@@ -241,25 +250,17 @@ export async function wrapManyTransaction(
     if (receipt.error != null) {
       throw new Error(receipt.error);
     }
-    // TODO: including `name`, `prefix`, and `tableId` for back compat, will be removed next major
+
     return {
       ...receipt,
-      names,
-      name: names[0],
-      tableId: _params.tableIds[0],
-      prefixes,
-      prefix: prefixes[0],
+      ...tableMeta,
     };
   };
-  // TODO: including `name`, `prefix`, and `tableId` for back compat, will be removed next major
+
   return {
     ...params,
     wait,
-    names,
-    name: names[0],
-    tableId: _params.tableIds[0],
-    prefixes,
-    prefix: prefixes[0],
+    ...tableMeta,
   };
 }
 

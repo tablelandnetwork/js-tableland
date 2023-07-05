@@ -1,9 +1,11 @@
+import fs from "node:fs";
 import { type WaitableTransactionReceipt } from "../registry/utils.js";
 import { type ChainName, getBaseUrl } from "./chains.js";
 import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
 
 export interface ReadConfig {
   baseUrl: string;
+  aliases?: AliasesNameMap;
 }
 
 export interface SignerConfig {
@@ -15,6 +17,13 @@ export interface AutoWaitConfig {
 }
 
 export type Config = Partial<ReadConfig & SignerConfig>;
+
+export type NameMapping = Record<string, string>;
+
+export interface AliasesNameMap {
+  read: () => Promise<NameMapping>;
+  write: (map: NameMapping) => Promise<void>;
+}
 
 export async function checkWait(
   config: Config & Partial<AutoWaitConfig>,
@@ -68,4 +77,24 @@ export async function extractChainId(conn: Config = {}): Promise<number> {
   }
 
   return chainId;
+}
+
+const findOrCreateFile = function (filepath: string): Buffer {
+  if (!fs.existsSync(filepath)) {
+    fs.writeFileSync(filepath, JSON.stringify({}));
+  }
+
+  return fs.readFileSync(filepath);
+};
+
+export function jsonFileAliases(filepath: string): AliasesNameMap {
+  return {
+    read: async function (): Promise<NameMapping> {
+      const jsonBuf = findOrCreateFile(filepath);
+      return JSON.parse(jsonBuf.toString());
+    },
+    write: async function (nameMap: NameMapping) {
+      fs.writeFileSync(filepath, JSON.stringify(nameMap));
+    },
+  };
 }
