@@ -37,6 +37,7 @@ export {
   type RegistryReceipt,
   type MultiEventTransactionReceipt,
   getSigner,
+  getContractReceipt,
 } from "./ethers.js";
 export {
   normalize,
