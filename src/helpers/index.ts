@@ -44,3 +44,4 @@ export {
   type NormalizedStatement,
   type StatementType,
 } from "./parser.js";
+export { TableEventBus } from "./subscribe.js";
