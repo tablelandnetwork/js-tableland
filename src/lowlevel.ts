@@ -2,12 +2,13 @@ import {
   type Config,
   extractBaseUrl,
   extractSigner,
+  normalize,
   type Signal,
   type ReadConfig,
+  type NameMapping,
 } from "./helpers/index.js";
 import {
   prepareCreateOne,
-  createTable,
   create,
   type CreateManyParams,
 } from "./registry/create.js";
@@ -84,13 +85,38 @@ export async function exec(
   const _params = { chainId, first, statement: sql };
   switch (type) {
     case "create": {
+      if (typeof config.aliases?.read === "function") {
+        const currentAliases = await config.aliases.read();
+        if (currentAliases[first] != null) {
+          throw new Error("table name already exists in aliases");
+        }
+      }
+
       const { prefix, ...prepared } = await prepareCreateOne(_params);
-      const tx = await createTable(_config, prepared);
-      return await wrapTransaction(_config, prefix, tx);
+      const tx = await create(_config, prepared);
+      const wrappedTx = await wrapTransaction(_config, prefix, tx);
+
+      if (typeof config.aliases?.write === "function") {
+        const uuTableName = wrappedTx.name;
+        const nameMap: NameMapping = {};
+        nameMap[first] = uuTableName;
+
+        await config.aliases.write(nameMap);
+      }
+
+      return wrappedTx;
     }
     /* c8 ignore next */
     case "acl":
     case "write": {
+      if (typeof config.aliases?.read === "function") {
+        const nameMap = await config.aliases.read();
+        const norm = await normalize(_params.statement, nameMap);
+
+        _params.statement = norm.statements[0];
+        _params.first = nameMap[first] != null ? nameMap[first] : first;
+      }
+
       const { prefix, ...prepared } = await prepareMutateOne(_params);
       const tx = await mutate(_config, prepared);
       return await wrapTransaction(_config, prefix, tx);
@@ -116,6 +142,19 @@ export async function execMutateMany(
   const baseUrl = await extractBaseUrl(config, chainId);
   const _config = { baseUrl, signer };
   const params: MutateManyParams = { runnables, chainId };
+
+  if (typeof config.aliases?.read === "function") {
+    const nameMap = await config.aliases.read();
+
+    params.runnables = await Promise.all(
+      params.runnables.map(async function (runnable) {
+        const norm = await normalize(runnable.statement, nameMap);
+        runnable.statement = norm.statements[0];
+
+        return runnable;
+      })
+    );
+  }
 
   const tx = await mutate(_config, params);
 
@@ -151,8 +190,31 @@ export async function execCreateMany(
   };
 
   const tx = await create(_config, params);
+  const wrappedTx = await wrapManyTransaction(_config, statements, tx);
 
-  return await wrapManyTransaction(_config, statements, tx);
+  if (typeof config.aliases?.write === "function") {
+    const currentAliases = await config.aliases.read();
+
+    // Collect the user provided table names to add to the aliases.
+    const aliasesTableNames = await Promise.all(
+      statements.map(async function (statement) {
+        const norm = await normalize(statement);
+        if (currentAliases[norm.tables[0]] != null) {
+          throw new Error("table name already exists in aliases");
+        }
+        return norm.tables[0];
+      })
+    );
+
+    const uuTableNames = wrappedTx.names;
+    const nameMap: NameMapping = {};
+    for (let i = 0; i < aliasesTableNames.length; i++) {
+      nameMap[aliasesTableNames[i]] = uuTableNames[i];
+    }
+
+    await config.aliases.write(nameMap);
+  }
+  return wrappedTx;
 }
 
 export function errorWithCause(code: string, cause: Error): Error {
