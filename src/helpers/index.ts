@@ -37,6 +37,7 @@ export {
   type RegistryReceipt,
   type MultiEventTransactionReceipt,
   getSigner,
+  getContractReceipt,
 } from "./ethers.js";
 export {
   normalize,
@@ -44,3 +45,4 @@ export {
   type NormalizedStatement,
   type StatementType,
 } from "./parser.js";
+export { TableEventBus } from "./subscribe.js";
