@@ -142,7 +142,7 @@ describe("database", function () {
       });
     });
 
-    test("test batching with a single statement affecting two tables throws an error", async function () {
+    test("when batching with a single statement affecting two tables throws an error", async function () {
       const { meta: tableMeta } = await db
         .prepare(
           "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
@@ -173,6 +173,42 @@ describe("database", function () {
       const res = await batch1.meta.txn?.wait();
 
       strictEqual(res?.names.length, 1);
+    });
+
+    test("when batching single statement, including subselect, affecting two tables throws an error", async function () {
+      // create a "main" (mutable target) table and an "admin" (subselect
+      // target) table
+      const [batchCreate] = await db.batch([
+        db.prepare(`CREATE TABLE main (id INTEGER PRIMARY KEY, data TEXT);`),
+        db.prepare(
+          `CREATE TABLE admin (id INTEGER PRIMARy KEY, address TEXT);`
+        ),
+      ]);
+      const res = await batchCreate.meta.txn?.wait();
+      const names = res?.names ?? [];
+      const tableToMutate = names[0];
+      const tableToSubselect = names[1];
+
+      // try to insert into both the "main" and "admin" tables in a statement
+      const stmt = db.prepare(
+        `insert into ${tableToSubselect} (address) values (?1);insert into ${tableToMutate} (data) select ?2 from ${tableToSubselect} where address=?1;`
+      );
+      const batch = db.batch([stmt.bind(signer.address, "test")]);
+
+      // expect an error due to the individual statements touching two tables
+      await rejects(batch, (err: any) => {
+        strictEqual(
+          err.cause.message,
+          `parsing query: queries are referencing two distinct tables: ${tableToSubselect} ${tableToMutate}`
+        );
+        return true;
+      });
+
+      // ensure the table did not have any rows added
+      const { results } = await db
+        .prepare("SELECT * FROM " + tableToMutate)
+        .all();
+      strictEqual(results.length, 0);
     });
 
     test("when batching mutations with reads throws an error", async function () {
@@ -231,6 +267,49 @@ describe("database", function () {
 
       const results = await db.prepare("SELECT * FROM " + tableName).all();
       strictEqual(results.results.length, 2);
+    });
+
+    test("when batching mutations works with a subselect", async function () {
+      // create a "main" (mutable target) table and an "admin" (subselect target) table
+      const [batchCreate] = await db.batch([
+        db.prepare(`CREATE TABLE main (id INTEGER PRIMARY KEY, data TEXT);`),
+        db.prepare(
+          `CREATE TABLE admin (id INTEGER PRIMARy KEY, address TEXT);`
+        ),
+      ]);
+      let res = await batchCreate.meta.txn?.wait();
+      const names = res?.names ?? [];
+      const tableToMutate = names[0];
+      const tableToSubselect = names[1];
+
+      // seed the target subselect table with data
+      const { meta: writeMeta } = await db
+        .prepare(`insert into ${tableToSubselect} (address) values (?1);`)
+        .bind(signer.address)
+        .run();
+      await writeMeta.txn?.wait();
+
+      // insert into the "main" table using a subquery to the "admin" table
+      const val = "test";
+      const stmt = db.prepare(
+        `insert into ${tableToMutate} (data) select ?1 from ${tableToSubselect} where address=?2;`
+      );
+      const [batch] = await db.batch([stmt.bind(val, signer.address)]);
+
+      assert(batch.meta.duration != null);
+      assert(batch.meta.txn?.transactionHash != null);
+      strictEqual(batch.meta.txn.name, tableToMutate);
+
+      res = await batch.meta.txn?.wait();
+      strictEqual(res.names.length, 1);
+
+      // verify the data was inserted, including the auto-incremented `id`
+      const { results } = await db
+        .prepare("SELECT * FROM " + tableToMutate)
+        .all<{ id: number; data: string }>();
+      strictEqual(results.length, 1);
+      strictEqual(results[0].id, 1);
+      strictEqual(results[0].data, val);
     });
 
     describe("with autoWait turned on", function () {
