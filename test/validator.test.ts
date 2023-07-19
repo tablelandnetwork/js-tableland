@@ -290,17 +290,12 @@ describe("validator", function () {
   });
   describe("query", function () {
     test("where we get no rows back from a query", async function () {
-      // The remote API returns 404 here, but downstream (in the sdk) we catch it
-      await rejects(
-        api.queryByStatement<{ counter: number }>({
-          statement: `select * from ${txn.name} where id=-1;`,
-          format: "objects",
-        }),
-        (err: any) => {
-          strictEqual(err.message, "Row not found");
-          return true;
-        }
-      );
+      const res = await api.queryByStatement<{ counter: number }>({
+        statement: `select * from ${txn.name} where id=-1;`,
+        format: "objects",
+      });
+
+      deepStrictEqual(res, []);
     });
 
     test("where query is called with an invalid statement", async function () {
