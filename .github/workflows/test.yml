@@ -27,20 +27,26 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Cache 📦
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+      # these are unneeded locally
+      # - name: Cache 📦
+      #   uses: actions/cache@v1
+      #   with:
+      #     path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-build-${{ env.cache-name }}-
+      #       ${{ runner.os }}-build-
+      #       ${{ runner.os }}-
 
       - name: Setup ⬢
         uses: actions/setup-node@v2-beta
         with:
           node-version: ${{ matrix.nodejs }}
+
+      - name: Install lsof # used to log port 8545 usage in `portcheck.js`
+        run: |
+          sudo apt-get update
+          sudo apt-get install lsof
 
       - name: Install 🔧
         run: npm install
@@ -49,14 +55,4 @@ jobs:
         run: npm run build
 
       - name: Test/Coverage 🧪
-        run: TEST_TIMEOUT_FACTOR=3 npm run coverage
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Test/Browser 🧪
-        run: |
-          cd test/browser/server
-          npm install
-          cd ../../
-          npm run test:browser
+        run: TEST_TIMEOUT_FACTOR=3 npm run test:port # or run `test` to not log port 8545 usage

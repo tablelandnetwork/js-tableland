@@ -22,5 +22,6 @@
     "/docs/",
     "/src/validator/client/",
     "*.d.ts"
-  ]
+  ],
+  "include": ["portcheck.js"]
 }

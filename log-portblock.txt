@@ -1,0 +1,239 @@
+# logged from `npx local-tableland` while port 8545 is already in use via portblock
+
+[[1m[36mRegistry[0m[0m] Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Accounts
+[[1m[36mRegistry[0m[0m] ========
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] WARNING: These accounts, and their private keys, are publicly known.
+[[1m[36mRegistry[0m[0m] Any funds sent to them on Mainnet or any other live network WILL BE LOST.
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #0: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #1: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #2: 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #3: 0x90F79bf6EB2c4f870365E785982E1f101E93b906 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #4: 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #5: 0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #6: 0x976EA74026E726554dB657fA54763abd0C3a0aa9 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #7: 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #8: 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #9: 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #10: 0xBcd4042DE499D14e55001CcbB24a551F3b954096 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0xf214f2b2cd398c806f84e317254e0f0b801d0643303237d97a22a48e01628897
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #11: 0x71bE63f3384f5fb98995898A86B02Fb2426c5788 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #12: 0xFABB0ac9d68B0B445fB7357272Ff202C5651694a (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0xa267530f49f8280200edf313ee7af6b827f2a8bce2897751d06a843f644967b1
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #13: 0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x47c99abed3324a2707c28affff1267e45918ec8c3f20b8aa892e8b065d2942dd
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #14: 0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0xc526ee95bf44d8fc405a158bb884d9d1238d99f0612e9f33d006bb0789009aaa
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #15: 0xcd3B766CCDd6AE721141F452C550Ca635964ce71 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x8166f546bab6da521a8369cab06c5d2b9e46670292d85c875ee9ec20e84ffb61
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #16: 0x2546BcD3c84621e976D8185a91A922aE77ECEc30 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0xea6c44ac03bff858b476bba40716402b03e41b8e97e276d1baec7c37d42484a0
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #17: 0xbDA5747bFD65F08deb54cb465eB87D40e51B197E (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0x689af8efa8c651a91ad287602527f3af2fe9f6501a7ac4b061667b5a93e037fd
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #18: 0xdD2FD4581271e230360230F9337D5c0430Bf44C0 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0xde9be858da4a475276426320d5e9262ecfc3ba460bfac56360bfa6c4c28b4ee0
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Account #19: 0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199 (10000 ETH)
+[[1m[36mRegistry[0m[0m] Private Key: 0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] WARNING: These accounts, and their private keys, are publicly known.
+[[1m[36mRegistry[0m[0m] Any funds sent to them on Mainnet or any other live network WILL BE LOST.
+[[1m[36mRegistry[0m[0m] 
+Error
+    at LocalTableland._LocalTableland__start (file:///Users/dtb/tbl/js-tableland/node_modules/@tableland/local/dist/esm/main.js:118:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async LocalTableland.start (file:///Users/dtb/tbl/js-tableland/node_modules/@tableland/local/dist/esm/main.js:41:9)
+    at async go (file:///Users/dtb/tbl/js-tableland/node_modules/@tableland/local/dist/esm/up.js:54:5)
+[[1m[35mContract Deploy[0m[0m] Importing the deploy script
+[[1m[35mContract Deploy[0m[0m] 
+[[1m[35mContract Deploy[0m[0m] Deploying new proxy to 'localhost'...
+[[1m[35mContract Deploy[0m[0m] Imported the deploy script
+[[1m[35mContract Deploy[0m[0m] Using base URI 'http://localhost:8080/api/v1/tables/31337/'
+[[1m[35mContract Deploy[0m[0m] New proxy address: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+[[1m[35mContract Deploy[0m[0m] New implementation address: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+[[1m[35mContract Deploy[0m[0m] Healthbot table created as: healthbot_31337_1
+[[1m[35mContract Deploy[0m[0m] Healthbot table updated with: insert into healthbot_31337_1 values (1);
+[[1m[35mContract Deploy[0m[0m] 
+[[1m[35mContract Deploy[0m[0m] Save 'proxies.localhost: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"' in 'network.ts'!
+[[1m[35mContract Deploy[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_accounts
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_accounts
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_chainId (2)
+[[1m[36mRegistry[0m[0m] eth_getTransactionByHash
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_blockNumber
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_chainId (2)
+[[1m[36mRegistry[0m[0m] eth_estimateGas
+[[1m[36mRegistry[0m[0m] eth_feeHistory
+[[1m[36mRegistry[0m[0m] eth_sendTransaction
+[[1m[36mRegistry[0m[0m] Contract deployment: TablelandTables
+[[1m[36mRegistry[0m[0m] Contract address:    0x5fbdb2315678afecb367f032d93f642f64180aa3
+[[1m[36mRegistry[0m[0m] Transaction:         0x41efb15ea194bad92f0d272b6d1d1c6d1c1411360ad89dec74930321b99ba256
+[[1m[36mRegistry[0m[0m] From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+[[1m[36mRegistry[0m[0m] Value:               0 ETH
+[[1m[36mRegistry[0m[0m] Gas used:            4530893 of 4530893
+[[1m[36mRegistry[0m[0m] Block #2:            0xe5976dfacd9443565f1bad09a529b5df05a915155d65948112fde7025b92657c
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_getTransactionByHash
+[[1m[36mRegistry[0m[0m] eth_getTransactionReceipt
+[[1m[36mRegistry[0m[0m] eth_getCode
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_estimateGas
+[[1m[36mRegistry[0m[0m] eth_feeHistory
+[[1m[36mRegistry[0m[0m] eth_sendTransaction
+[[1m[36mRegistry[0m[0m] Contract deployment: <UnrecognizedContract>
+[[1m[36mRegistry[0m[0m] Contract address:    0xe7f1725e7734ce288f8367e1bb143e90bb3f0512
+[[1m[36mRegistry[0m[0m] Transaction:         0x2a4a4e63ad0ac1a5eeed511f39bd3cb2c622c5a2a18e7bc8846f54ccfd3f40fa
+[[1m[36mRegistry[0m[0m] From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+[[1m[36mRegistry[0m[0m] Value:               0 ETH
+[[1m[36mRegistry[0m[0m] Gas used:            480695 of 480695
+[[1m[36mRegistry[0m[0m] Block #3:            0x38e256698fa6b769b84820ae8ed54f89cd77bd3a64f22845beeddcefb67e4f91
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_getTransactionByHash
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_getTransactionReceipt
+[[1m[36mRegistry[0m[0m] eth_getStorageAt
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_chainId (2)
+[[1m[36mRegistry[0m[0m] eth_estimateGas
+[[1m[36mRegistry[0m[0m] eth_feeHistory
+[[1m[36mRegistry[0m[0m] eth_sendTransaction
+[[1m[36mRegistry[0m[0m] Contract call:       <UnrecognizedContract>
+[[1m[36mRegistry[0m[0m] Transaction:         0x45eab43bb3545eddd649727fca950942a74c8c8cb1014e5d38ed9539920ae498
+[[1m[36mRegistry[0m[0m] From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+[[1m[36mRegistry[0m[0m] To:                  0xe7f1725e7734ce288f8367e1bb143e90bb3f0512
+[[1m[36mRegistry[0m[0m] Value:               0 ETH
+[[1m[36mRegistry[0m[0m] Gas used:            84755 of 85748
+[[1m[36mRegistry[0m[0m] Block #4:            0x0f182605c3ed68afa81f105f86c212d3ca4ef174adab1f17b9d161c0960c58cb
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_getTransactionByHash
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_getTransactionReceipt
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_estimateGas
+[[1m[36mRegistry[0m[0m] eth_feeHistory
+[[1m[36mRegistry[0m[0m] eth_sendTransaction
+[[1m[36mRegistry[0m[0m] Contract call:       <UnrecognizedContract>
+[[1m[36mRegistry[0m[0m] Transaction:         0x1fe812d4bdfef7a23276b224d14d0ab2375246ee0cd385e5bc69957ec4841e74
+[[1m[36mRegistry[0m[0m] From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+[[1m[36mRegistry[0m[0m] To:                  0xe7f1725e7734ce288f8367e1bb143e90bb3f0512
+[[1m[36mRegistry[0m[0m] Value:               0 ETH
+[[1m[36mRegistry[0m[0m] Gas used:            49119 of 54490
+[[1m[36mRegistry[0m[0m] Block #5:            0xfd7ee78633028eca510ed5cc5ab96d62dfb9332a5bfc638ce0724c2781e5f231
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_getTransactionByHash
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] eth_getTransactionReceipt
+[[1m[36mRegistry[0m[0m] 
+[[1m[33mValidator[0m[0m] [90m1:21PM[0m [32mINF[0m database migration executed [36mcomponent=[0mdb [36mdbVersion=[0m5 [36mdirty=[0mfalse [36mgoversion=[0mgo1.19.9 [36mseverity=[0mInfo [36mversion=[0mn/a
+[[1m[33mValidator[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId (2)
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId (3)
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId (4)
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_gasPrice
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_getTransactionCount
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_estimateGas
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_blockNumber
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_sendRawTransaction
+[[1m[36mRegistry[0m[0m] Contract call:       <UnrecognizedContract>
+[[1m[36mRegistry[0m[0m] Transaction:         0xa5ff416333744fb8017310914b4b6a6c15ba5b093b2f1dc123f6c81b5627dfee
+[[1m[36mRegistry[0m[0m] From:                0x70997970c51812dc3a010c7d01b50e0d17dc79c8
+[[1m[36mRegistry[0m[0m] To:                  0xe7f1725e7734ce288f8367e1bb143e90bb3f0512
+[[1m[36mRegistry[0m[0m] Value:               0 ETH
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] Gas used:            84587 of 85577
+[[1m[36mRegistry[0m[0m] Block #21:           0xe85a28a810c18c6754531ca3ce1d54087e3304b808e8dcfe9286d97e51a888ec
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_chainId
+[[1m[36mRegistry[0m[0m] 
+[[1m[36mRegistry[0m[0m] eth_getTransactionReceipt
+[[1m[36mRegistry[0m[0m] 
+
+# logged when trying to create a table (using CLI) while LT didn't start properly due to port taken
+
+fetch failed
+Error: ALL_ERROR: fetch failed
+    at errorWithCause (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/lowlevel.js:148:12)
+    at Statement.all (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/statement.js:90:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async fireFullQuery (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/dist/commands/shell.js:47:26)
+    at async shellYeah (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/dist/commands/shell.js:112:17) {
+  [cause]: Error: fetch failed
+      at errorWithHint (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/lowlevel.js:164:16)
+      at Statement.all (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/statement.js:89:26)
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at async fireFullQuery (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/dist/commands/shell.js:47:26)
+      at async shellYeah (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/dist/commands/shell.js:112:17) {
+    [cause]: TypeError: fetch failed
+        at Object.fetch (node:internal/deps/undici/undici:11118:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+        at async fetchJson (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/validator/client/fetcher.js:111:22)
+        at async handler (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/validator/client/fetcher.js:129:20)
+        at async Object.fetch (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/validator/client/fetcher.js:134:33)
+        at async fetchUrl (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/validator/client/fetcher.js:138:22)
+        at async file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/validator/client/fetcher.js:182:80
+        at async fun (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/validator/client/fetcher.js:144:20)
+        at async fn (file:///Users/dtb/.nvm/versions/node/v18.12.1/lib/node_modules/@tableland/cli/node_modules/@tableland/sdk/dist/esm/validator/receipt.js:35:35) {
+      cause: [Error]
+    }
+  }
+}
