@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import { type WaitableTransactionReceipt } from "../registry/utils.js";
 import { type ChainName, getBaseUrl } from "./chains.js";
 import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
@@ -79,7 +78,9 @@ export async function extractChainId(conn: Config = {}): Promise<number> {
   return chainId;
 }
 
-const findOrCreateFile = function (filepath: string): Buffer {
+const findOrCreateFile = async function (filepath: string): Promise<Buffer> {
+  const fs = await getFsModule();
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!fs.existsSync(filepath)) {
     fs.writeFileSync(filepath, JSON.stringify({}));
   }
@@ -87,13 +88,27 @@ const findOrCreateFile = function (filepath: string): Buffer {
   return fs.readFileSync(filepath);
 };
 
+// TODO: next major we should remove the jsonFileAliases helper and expose it
+//    in a different package since it doesn't work in the browser.
+const getFsModule = (function () {
+  let fs: any;
+  return async function () {
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (fs) return fs;
+
+    fs = await import(/* webpackIgnore: true */ "fs");
+    return fs;
+  };
+})();
+
 export function jsonFileAliases(filepath: string): AliasesNameMap {
   return {
     read: async function (): Promise<NameMapping> {
-      const jsonBuf = findOrCreateFile(filepath);
+      const jsonBuf = await findOrCreateFile(filepath);
       return JSON.parse(jsonBuf.toString());
     },
     write: async function (nameMap: NameMapping) {
+      const fs = await getFsModule();
       fs.writeFileSync(filepath, JSON.stringify(nameMap));
     },
   };
