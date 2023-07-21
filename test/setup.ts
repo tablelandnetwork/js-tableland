@@ -12,7 +12,8 @@ const getTimeoutFactor = function (): number {
 export const TEST_TIMEOUT_FACTOR = getTimeoutFactor();
 
 const lt = new LocalTableland({
-  silent: true,
+  silent: false,
+  verbose: true,
 });
 
 before(async function () {

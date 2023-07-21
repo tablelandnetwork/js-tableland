@@ -45,7 +45,7 @@ npm i tablelandnetwork/js-tableland
 ## Usage
 
 Full library documentation is [generated on GitHub](https://tablelandnetwork.github.io/js-tableland/), and
-general docs, examples, and more are [available on our docs site](https://docs.tableland.xyz/sdk/core/).
+general docs, examples, and more are [available on our docs site](https://docs.tableland.xyz/sdk/).
 
 ### Database
 

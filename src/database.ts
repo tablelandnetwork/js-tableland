@@ -98,10 +98,17 @@ export class Database<D = unknown> {
   ): Promise<Array<Result<T>>> {
     try {
       const start = performance.now();
+      const nameMap =
+        typeof this.config.aliases?.read === "function"
+          ? await this.config.aliases?.read()
+          : undefined;
+
       // If the statement types are "create" and the statement contains more than one
       // query (separated by semi-colon) then the sqlparser with throw an Error.
       const normalized = await Promise.all(
-        statements.map(async (stmt) => await normalize(stmt.toString()))
+        statements.map(
+          async (stmt) => await normalize(stmt.toString(), nameMap)
+        )
       );
 
       const type: string | null = normalized
@@ -228,9 +235,31 @@ async function normalizedToRunnables(
     );
   }
   if (normalized.tables.length > 1) {
-    throw new Error(
-      "each statement can only touch one table. try batching statements based on the table they mutate."
-    );
+    let isMutatingMultiple = true;
+    for (const stmt of normalized.statements) {
+      // re-normalize so we can be sure we've isolated each statement and its tableId
+      const norm = await normalize(stmt);
+
+      if (norm.tables.length > 1) {
+        // check if one of the tables is *not* mutating but from a subselect
+        // look for "select", find "from", and get the table name
+        const regex = /select\s+.*?\s+from\s+(\w+)/gi;
+        const tableNames = [...stmt.matchAll(regex)].map((match) => match[1]);
+        // check if these tables are in the normalized table names
+        // if so, filter them out (i.e., they are not being mutated)
+        const filteredTables = norm.tables.filter(
+          (tableName) => !tableNames.includes(tableName)
+        );
+        // if the filtered tables are greater than 1, then there are two
+        // tables being mutated in a single statement, which is not allowed
+        isMutatingMultiple = filteredTables.length > 1;
+      }
+    }
+    if (isMutatingMultiple) {
+      throw new Error(
+        "each statement can only touch one table. try batching statements based on the table they mutate."
+      );
+    }
   }
 
   const { tableId } = await validateTableName(normalized.tables[0]);

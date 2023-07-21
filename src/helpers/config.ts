@@ -5,6 +5,7 @@ import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
 
 export interface ReadConfig {
   baseUrl: string;
+  aliases?: AliasesNameMap;
 }
 
 export interface SignAndSendOverride {
@@ -27,6 +28,13 @@ export interface AutoWaitConfig {
 }
 
 export type Config = Partial<ReadConfig & SignerConfig>;
+
+export type NameMapping = Record<string, string>;
+
+export interface AliasesNameMap {
+  read: () => Promise<NameMapping>;
+  write: (map: NameMapping) => Promise<void>;
+}
 
 export async function checkWait(
   config: Config & Partial<AutoWaitConfig>,
@@ -80,4 +88,40 @@ export async function extractChainId(conn: Config = {}): Promise<number> {
   }
 
   return chainId;
+}
+
+const findOrCreateFile = async function (filepath: string): Promise<Buffer> {
+  const fs = await getFsModule();
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  if (!fs.existsSync(filepath)) {
+    fs.writeFileSync(filepath, JSON.stringify({}));
+  }
+
+  return fs.readFileSync(filepath);
+};
+
+// TODO: next major we should remove the jsonFileAliases helper and expose it
+//    in a different package since it doesn't work in the browser.
+const getFsModule = (function () {
+  let fs: any;
+  return async function () {
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (fs) return fs;
+
+    fs = await import(/* webpackIgnore: true */ "fs");
+    return fs;
+  };
+})();
+
+export function jsonFileAliases(filepath: string): AliasesNameMap {
+  return {
+    read: async function (): Promise<NameMapping> {
+      const jsonBuf = await findOrCreateFile(filepath);
+      return JSON.parse(jsonBuf.toString());
+    },
+    write: async function (nameMap: NameMapping) {
+      const fs = await getFsModule();
+      fs.writeFileSync(filepath, JSON.stringify(nameMap));
+    },
+  };
 }
