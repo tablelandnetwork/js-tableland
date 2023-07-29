@@ -27,23 +27,23 @@ export type Params<T extends Format> = BaseParams & { format?: T };
 export async function getQuery<T = unknown>(
   config: FetchConfig,
   params: Params<"objects" | undefined>,
-  opts?: Signal
+  signal?: Signal
 ): Promise<ObjectsFormat<T>>;
 export async function getQuery<T = unknown>(
   config: FetchConfig,
   params: Params<"table">,
-  opts?: Signal
+  signal?: Signal
 ): Promise<TableFormat<T>>;
 export async function getQuery<T = unknown>(
   config: FetchConfig,
   params: Params<Format>,
-  opts: Signal = {}
+  signal?: Signal
 ): Promise<ObjectsFormat<T> | TableFormat<T>> {
   const queryByStatement = getFetcher(config)
     .path("/query")
     .method("get")
     .create();
-  const { data } = await queryByStatement(params, opts).catch(hoistApiError);
+  const { data } = await queryByStatement(params, signal).catch(hoistApiError);
   switch (params.format) {
     case "table":
       return data as any;

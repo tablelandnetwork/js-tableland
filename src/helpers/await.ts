@@ -1,17 +1,19 @@
 export type Awaitable<T> = T | PromiseLike<T>;
 
 export interface Signal {
-  signal?: AbortSignal;
+  signal: AbortSignal;
+  abort: () => void;
 }
 
 export interface Interval {
-  interval?: number;
+  interval: number;
+  cancel: () => void;
 }
 
-export type SignalAndInterval = Signal & Interval;
+export type PollingController = Signal & Interval;
 
 export interface Wait<T = unknown> {
-  wait: (opts?: SignalAndInterval) => Promise<T>;
+  wait: (controller?: PollingController) => Promise<T>;
 }
 
 export interface AsyncData<T> {
@@ -21,36 +23,41 @@ export interface AsyncData<T> {
 
 export type AsyncFunction<T> = () => Awaitable<AsyncData<T>>;
 
-export function getAbortSignal(
-  signal?: AbortSignal,
-  maxTimeout: number = 60_000
-): {
-  signal: AbortSignal;
-  timeoutId: ReturnType<typeof setTimeout> | undefined;
-} {
-  let abortSignal: AbortSignal;
-  let timeoutId;
-  if (signal == null) {
-    const controller = new AbortController();
-    abortSignal = controller.signal;
-    // return the timeoutId so the caller can cleanup
-    timeoutId = setTimeout(function () {
+export function createSignal(): Signal {
+  const controller = new AbortController();
+  return {
+    signal: controller.signal,
+    abort: () => {
       controller.abort();
-    }, maxTimeout);
-  } else {
-    abortSignal = signal;
-  }
-  return { signal: abortSignal, timeoutId };
+    },
+  };
+}
+
+export function createPollingController(
+  timeout: number = 60_000,
+  pollingInterval: number = 1500
+): PollingController {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(function () {
+    controller.abort();
+  }, timeout);
+  return {
+    signal: controller.signal,
+    abort: () => {
+      controller.abort();
+    },
+    interval: pollingInterval,
+    cancel: () => {
+      clearTimeout(timeoutId);
+    },
+  };
 }
 
 export async function getAsyncPoller<T = unknown>(
   fn: AsyncFunction<T>,
-  interval: number = 1500,
-  signal?: AbortSignal
+  controller?: PollingController
 ): Promise<T> {
-  // in order to set a timeout other than 10 seconds you need to
-  // create and pass in an abort signal with a different timeout
-  const { signal: abortSignal, timeoutId } = getAbortSignal(signal, 10_000);
+  const control = controller ?? createPollingController();
   const checkCondition = (
     resolve: (value: T) => void,
     reject: (reason?: any) => void
@@ -59,15 +66,15 @@ export async function getAsyncPoller<T = unknown>(
       .then((result: AsyncData<T>) => {
         if (result.done && result.data != null) {
           // We don't want to call `AbortController.abort()` if the call succeeded
-          clearTimeout(timeoutId);
+          control.cancel();
           return resolve(result.data);
         }
-        if (abortSignal.aborted) {
+        if (control.signal.aborted) {
           // We don't want to call `AbortController.abort()` if the call is already aborted
-          clearTimeout(timeoutId);
-          return reject(abortSignal.reason);
+          control.cancel();
+          return reject(control.signal.reason);
         } else {
-          setTimeout(checkCondition, interval, resolve, reject);
+          setTimeout(checkCondition, control.interval, resolve, reject);
         }
       })
       .catch((err) => {

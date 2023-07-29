@@ -252,10 +252,10 @@ function catchNotFound(err: unknown): [] {
 export async function queryRaw<T = unknown>(
   config: ReadConfig,
   statement: string,
-  opts: Signal = {}
+  signal?: Signal
 ): Promise<Array<ValueOf<T>>> {
   const params = { statement, format: "table" } as const;
-  const response = await getQuery<T>(config, params, opts)
+  const response = await getQuery<T>(config, params, signal)
     .then((res) => res.rows)
     .catch(catchNotFound);
   return response;
@@ -264,19 +264,21 @@ export async function queryRaw<T = unknown>(
 export async function queryAll<T = unknown>(
   config: ReadConfig,
   statement: string,
-  opts: Signal = {}
+  signal?: Signal
 ): Promise<ObjectsFormat<T>> {
   const params = { statement, format: "objects" } as const;
-  const response = await getQuery<T>(config, params, opts).catch(catchNotFound);
+  const response = await getQuery<T>(config, params, signal).catch(
+    catchNotFound
+  );
   return response;
 }
 
 export async function queryFirst<T = unknown>(
   config: ReadConfig,
   statement: string,
-  opts: Signal = {}
+  signal?: Signal
 ): Promise<T | null> {
-  const response = await queryAll<T>(config, statement, opts).catch(
+  const response = await queryAll<T>(config, statement, signal).catch(
     catchNotFound
   );
   return response.shift() ?? null;

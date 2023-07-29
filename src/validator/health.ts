@@ -3,9 +3,9 @@ import { type FetchConfig, getFetcher } from "./client/index.js";
 
 export async function getHealth(
   config: FetchConfig,
-  opts: Signal = {}
+  signal?: Signal
 ): Promise<boolean> {
   const health = getFetcher(config).path("/health").method("get").create();
-  const { ok } = await health({}, opts);
+  const { ok } = await health({}, signal);
   return ok;
 }

@@ -8,7 +8,7 @@ import {
 import {
   type AutoWaitConfig,
   type Config,
-  type SignalAndInterval,
+  type PollingController,
   checkWait,
   normalize,
 } from "./helpers/index.js";
@@ -131,28 +131,33 @@ export class Statement<S = unknown> {
   }
 
   async #waitExec(
-    params: ExtractedStatement
+    params: ExtractedStatement,
+    controller?: PollingController
   ): Promise<WaitableTransactionReceipt> {
-    return await checkWait(this.config, await exec(this.config, params));
+    return await checkWait(
+      this.config,
+      await exec(this.config, params),
+      controller
+    );
   }
 
   /**
    * Executes a query and returns all rows and metadata.
    * @param colName If provided, filter results to the provided column.
-   * @param opts Additional options to control execution.
+   * @param controller An optional object used to control receipt polling behavior.
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async all<T = S, K extends keyof T = keyof T>(
     colName?: undefined,
-    opts?: SignalAndInterval
+    controller?: PollingController
   ): Promise<Result<T>>;
   async all<T = S, K extends keyof T = keyof T>(
     colName: K,
-    opts?: SignalAndInterval
+    controller?: PollingController
   ): Promise<Result<T[K]>>;
   async all<T = S, K extends keyof T = keyof T>(
     colName?: K,
-    opts: SignalAndInterval = {}
+    controller?: PollingController
   ): Promise<Result<T | T[K]>> {
     try {
       const start = performance.now();
@@ -163,7 +168,7 @@ export class Statement<S = unknown> {
             type,
             tables,
           });
-          const results = await queryAll<T>(config, sql, opts);
+          const results = await queryAll<T>(config, sql, controller);
           if (colName != null) {
             return wrapResult(
               extractColumn(results, colName),
@@ -174,7 +179,7 @@ export class Statement<S = unknown> {
         }
         default: {
           return wrapResult<T>(
-            await this.#waitExec({ ...opts, type, sql, tables }),
+            await this.#waitExec({ type, sql, tables }, controller),
             performance.now() - start
           );
         }
@@ -191,22 +196,22 @@ export class Statement<S = unknown> {
    * Instead it returns the object directly. If the query returns no
    * rows, then first() will return null.
    * @param colName If provided, filter results to the provided column.
-   * @param opts Additional options to control execution.
+   * @param controller An optional object used to control receipt polling behavior.
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async first<T = S, K extends keyof T = keyof T>(): Promise<T>;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async first<T = S, K extends keyof T = keyof T>(
     colName: undefined,
-    opts?: SignalAndInterval
+    controller?: PollingController
   ): Promise<T>;
   async first<T = S, K extends keyof T = keyof T>(
     colName: K,
-    opts?: SignalAndInterval
+    controller?: PollingController
   ): Promise<T[K] | null>;
   async first<T = S, K extends keyof T = keyof T>(
     colName?: K,
-    opts: SignalAndInterval = {}
+    controller?: PollingController
   ): Promise<T | T[K] | null> {
     try {
       const { sql, type, tables } = await this.#parseAndExtract();
@@ -216,19 +221,21 @@ export class Statement<S = unknown> {
             type,
             tables,
           });
-          const results = await queryFirst<T>(config, sql, opts);
+          const results = await queryFirst<T>(config, sql, controller);
           if (results == null || colName == null) {
             return results;
           }
           return extractColumn(results, colName);
         }
         default: {
-          await this.#waitExec({
-            ...opts,
-            type,
-            sql,
-            tables,
-          });
+          await this.#waitExec(
+            {
+              type,
+              sql,
+              tables,
+            },
+            controller
+          );
           return null;
         }
       }
@@ -242,10 +249,10 @@ export class Statement<S = unknown> {
    * Runs the query/queries, but returns no results. Instead, run()
    * returns the metrics only. Useful for write operations like
    * UPDATE, DELETE or INSERT.
-   * @param opts Additional options to control execution.
+   * @param controller An optional object used to control receipt polling behavior.
    * @returns A results object with metadata only (results are null or an empty array).
    */
-  async run(opts: SignalAndInterval = {}): Promise<Result<never>> {
+  async run(controller?: PollingController): Promise<Result<never>> {
     try {
       const start = performance.now();
       const { sql, type, tables } = await this.#parseAndExtract();
@@ -255,12 +262,12 @@ export class Statement<S = unknown> {
             type,
             tables,
           });
-          const results = await queryAll<never>(config, sql, opts);
+          const results = await queryAll<never>(config, sql, controller);
           return wrapResult(results, performance.now() - start);
         }
         default: {
           return wrapResult(
-            await this.#waitExec({ ...opts, type, sql, tables }),
+            await this.#waitExec({ type, sql, tables }, controller),
             performance.now() - start
           );
         }
@@ -273,10 +280,10 @@ export class Statement<S = unknown> {
 
   /**
    * Same as stmt.all(), but returns an array of rows instead of objects.
-   * @param opts Additional options to control execution.
+   * @param controller An optional object used to control receipt polling behavior.
    * @returns An array of raw query results.
    */
-  async raw<T = S>(opts: SignalAndInterval = {}): Promise<Array<ValueOf<T>>> {
+  async raw<T = S>(controller?: PollingController): Promise<Array<ValueOf<T>>> {
     try {
       const { sql, type, tables } = await this.#parseAndExtract();
       switch (type) {
@@ -285,15 +292,17 @@ export class Statement<S = unknown> {
             type,
             tables,
           });
-          return await queryRaw<T>(config, sql, opts);
+          return await queryRaw<T>(config, sql, controller);
         }
         default: {
-          await this.#waitExec({
-            ...opts,
-            type,
-            sql,
-            tables,
-          });
+          await this.#waitExec(
+            {
+              type,
+              sql,
+              tables,
+            },
+            controller
+          );
           return [];
         }
       }

@@ -1,4 +1,5 @@
 import { type WaitableTransactionReceipt } from "../registry/utils.js";
+import { type PollingController } from "./await.js";
 import { type ChainName, getBaseUrl } from "./chains.js";
 import { type Signer, type ExternalProvider, getSigner } from "./ethers.js";
 
@@ -26,10 +27,11 @@ export interface AliasesNameMap {
 
 export async function checkWait(
   config: Config & Partial<AutoWaitConfig>,
-  receipt: WaitableTransactionReceipt
+  receipt: WaitableTransactionReceipt,
+  controller?: PollingController
 ): Promise<WaitableTransactionReceipt> {
   if (config.autoWait ?? false) {
-    const waited = await receipt.wait();
+    const waited = await receipt.wait(controller);
     return { ...receipt, ...waited };
   }
   return receipt;
