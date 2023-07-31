@@ -32,6 +32,11 @@ import {
 
 export { type ValuesType, type Parameters, type ValueOf, type BaseType };
 
+export interface Options<T, K extends keyof T = keyof T> {
+  colName?: undefined | K;
+  controller?: PollingController;
+}
+
 /**
  * Statement defines a single SQL statement.
  * Both static and prepared statements are supported. In the current
@@ -148,16 +153,13 @@ export class Statement<S = unknown> {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async all<T = S, K extends keyof T = keyof T>(
-    colName?: undefined,
-    controller?: PollingController
+    opts?: Options<T, K>
   ): Promise<Result<T>>;
   async all<T = S, K extends keyof T = keyof T>(
-    colName: K,
-    controller?: PollingController
+    opts?: Options<T, K>
   ): Promise<Result<T[K]>>;
   async all<T = S, K extends keyof T = keyof T>(
-    colName?: K,
-    controller?: PollingController
+    opts?: Options<T, K>
   ): Promise<Result<T | T[K]>> {
     try {
       const start = performance.now();
@@ -168,10 +170,10 @@ export class Statement<S = unknown> {
             type,
             tables,
           });
-          const results = await queryAll<T>(config, sql, controller);
-          if (colName != null) {
+          const results = await queryAll<T>(config, sql, opts?.controller);
+          if (opts?.colName != null) {
             return wrapResult(
-              extractColumn(results, colName),
+              extractColumn(results, opts?.colName),
               performance.now() - start
             );
           }
@@ -179,7 +181,7 @@ export class Statement<S = unknown> {
         }
         default: {
           return wrapResult<T>(
-            await this.#waitExec({ type, sql, tables }, controller),
+            await this.#waitExec({ type, sql, tables }, opts?.controller),
             performance.now() - start
           );
         }
