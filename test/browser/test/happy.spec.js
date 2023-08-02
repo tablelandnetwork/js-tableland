@@ -32,6 +32,8 @@ test.describe("browser tests", function () {
     await page.goto("http://localhost:5173/");
 
     const success = "data was inserted";
+    // TODO: potentially convert to typescript, but until then we need to ignore ts specific linting rules
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     await page.type("input[name=statement]", `INSERT INTO ${tableName} (k, v, num) VALUES ('name', 'number', 1);`);
     await page.type("input[name=success]", success);
     await page.click("input[name=submit-sql]");
@@ -43,6 +45,8 @@ test.describe("browser tests", function () {
     await page.goto("http://localhost:5173/");
 
     const success = "table was updated";
+    // TODO: potentially convert to typescript, but until then we need to ignore ts specific linting rules
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     await page.type("input[name=statement]", `UPDATE ${tableName} SET num = 2 WHERE num = 1;`);
     await page.type("input[name=success]", success);
     await page.click("input[name=submit-sql]");
@@ -54,6 +58,8 @@ test.describe("browser tests", function () {
     await page.goto("http://localhost:5173/");
 
     const success = "table was read";
+    // TODO: potentially convert to typescript, but until then we need to ignore ts specific linting rules
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     await page.type("input[name=statement]", `SELECT * FROM ${tableName};`);
     await page.type("input[name=success]", success);
     await page.click("input[name=submit-sql]");
@@ -75,6 +81,8 @@ test.describe("browser tests", function () {
     await page.goto("http://localhost:5173/");
 
     const success = "data was deleted";
+    // TODO: potentially convert to typescript, but until then we need to ignore ts specific linting rules
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     await page.type("input[name=statement]", `DELETE FROM ${tableName} WHERE num = 2;`);
     await page.type("input[name=success]", success);
     await page.click("input[name=submit-sql]");
