@@ -6,6 +6,8 @@
 //    Which means tests can not use typescript.
 import { LocalTableland } from "../server/node_modules/@tableland/local/dist/esm/main.js";
 
+// TODO: potentially convert to typescript, but until then we need to ignore ts specific linting rules
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default async function () {
   const lt = new LocalTableland({
     silent: true
