@@ -1,5 +1,7 @@
 # @tableland/sdk
 
+**NOTICE**: Development has moved to: https://github.com/tablelandnetwork/tableland-js/
+
 [![Review](https://github.com/tablelandnetwork/js-tableland/actions/workflows/review.yml/badge.svg)](https://github.com/tablelandnetwork/js-tableland/actions/workflows/review.yml)
 [![Test](https://github.com/tablelandnetwork/js-tableland/actions/workflows/test.yml/badge.svg)](https://github.com/tablelandnetwork/js-tableland/actions/workflows/test.yml)
 [![Publish](https://github.com/tablelandnetwork/js-tableland/actions/workflows/publish.yml/badge.svg)](https://github.com/tablelandnetwork/js-tableland/actions/workflows/publish.yml)
