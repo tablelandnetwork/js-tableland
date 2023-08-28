@@ -1,8 +1,10 @@
 export {
   type Signal,
   type Wait,
-  type SignalAndInterval,
+  type PollingController,
   type Interval,
+  createSignal,
+  createPollingController,
 } from "./await.js";
 export {
   type ChainName,

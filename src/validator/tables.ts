@@ -54,13 +54,13 @@ function transformResponse(obj: Response): Table {
 export async function getTable(
   config: FetchConfig,
   params: Params,
-  opts: Signal = {}
+  signal?: Signal
 ): Promise<Table> {
   const getTableById = getFetcher(config)
     .path("/tables/{chainId}/{tableId}")
     .method("get")
     .create();
-  const { data } = await getTableById(params, opts).catch(hoistApiError);
+  const { data } = await getTableById(params, signal).catch(hoistApiError);
   const transformed = transformResponse(data);
   return transformed;
 }

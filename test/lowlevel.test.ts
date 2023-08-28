@@ -18,7 +18,7 @@ import {
 } from "../src/lowlevel.js";
 import { extractReadonly } from "../src/registry/utils.js";
 import { getDelay } from "../src/helpers/utils.js";
-import { getAbortSignal } from "../src/helpers/await.js";
+import { createPollingController } from "../src/helpers/await.js";
 import { TEST_TIMEOUT_FACTOR } from "./setup";
 
 // Just to test out these functions
@@ -47,11 +47,7 @@ describe("lowlevel", function () {
           tables: ["test_exec"],
         }
       );
-      const { signal } = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 30000);
-      await txn.wait({
-        signal,
-        interval: TEST_TIMEOUT_FACTOR * 1500,
-      });
+      await txn.wait(createPollingController(TEST_TIMEOUT_FACTOR * 30000));
       strictEqual(txn.error, undefined);
       match(txn.name, /^test_exec_31337_\d+$/);
       const { name } = await txn.wait();
@@ -162,9 +158,9 @@ describe("lowlevel", function () {
         tableName = txn.name ?? "";
         // For testing purposes, we abort the wait before we even start
         // This is ok, because we'll await the next transaction
-        const controller = new AbortController();
+        const controller = createPollingController();
         controller.abort();
-        await txn.wait({ signal: controller.signal }).catch(() => {});
+        await txn.wait(controller).catch(() => {});
       }
       {
         const txn = await exec(
@@ -218,14 +214,13 @@ describe("lowlevel", function () {
     });
 
     test("when using an abort controller to halt a query", async function () {
-      const controller = new AbortController();
-      const signal = controller.signal;
+      const controller = createPollingController();
       controller.abort();
       await rejects(
         queryAll(
           { baseUrl },
           `SELECT name, age FROM ${tableName} WHERE name='Bobby'`,
-          { signal }
+          controller
         ),
         (err: any) => {
           match(err.message, /Th(e|is) operation was aborted/);

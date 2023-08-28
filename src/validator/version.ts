@@ -25,10 +25,10 @@ function transformResponse(obj: Response): Version {
 
 export async function getVersion(
   config: FetchConfig,
-  opts: Signal = {}
+  signal?: Signal
 ): Promise<Version> {
   const version = getFetcher(config).path("/version").method("get").create();
-  const { data } = await version({}, opts).catch(hoistApiError);
+  const { data } = await version({}, signal).catch(hoistApiError);
   const transformed = transformResponse(data);
   return transformed;
 }

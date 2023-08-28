@@ -9,7 +9,10 @@ import assert, {
 import { describe, test } from "mocha";
 import { getAccounts } from "@tableland/local";
 import { getDelay } from "../src/helpers/utils.js";
-import { getDefaultProvider } from "../src/helpers/index.js";
+import {
+  createPollingController,
+  getDefaultProvider,
+} from "../src/helpers/index.js";
 import { Database, Statement } from "../src/index.js";
 import { TEST_TIMEOUT_FACTOR } from "./setup";
 
@@ -296,9 +299,9 @@ CREATE TABLE test_run (counter blurg);
           .run();
         tableName = meta.txn?.name ?? "";
         // For testing purposes, we abort the wait before we even start
-        const controller = new AbortController();
+        const controller = createPollingController();
         controller.abort();
-        await meta.txn?.wait({ signal: controller.signal }).catch(() => {});
+        await meta.txn?.wait(controller).catch(() => {});
       }
       {
         const { meta } = await db
@@ -351,10 +354,9 @@ SELECT * FROM 3.14;
       const stmt = db
         .prepare(`SELECT name, age FROM ${tableName} WHERE name=?`)
         .bind("Bobby");
-      const controller = new AbortController();
-      const signal = controller.signal;
+      const controller = createPollingController();
       controller.abort();
-      await rejects(stmt.all(undefined, { signal }), (err: any) => {
+      await rejects(stmt.all(undefined, controller), (err: any) => {
         match(err.cause.message, /Th(e|is) operation was aborted/);
         return true;
       });

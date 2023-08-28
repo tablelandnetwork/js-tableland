@@ -4,7 +4,7 @@ import {
 } from "../validator/receipt.js";
 import { type Runnable } from "../registry/index.js";
 import { normalize } from "../helpers/index.js";
-import { type SignalAndInterval, type Wait } from "../helpers/await.js";
+import { type PollingController, type Wait } from "../helpers/await.js";
 import {
   type Config,
   type ReadConfig,
@@ -173,9 +173,9 @@ export async function wrapTransaction(
   const name = `${prefix}_${chainId}_${_params.tableIds[0]}`;
   const params = { ..._params, chainId, tableId: _params.tableIds[0] };
   const wait = async (
-    opts: SignalAndInterval = {}
+    controller?: PollingController
   ): Promise<TransactionReceipt & Named> => {
-    const receipt = await pollTransactionReceipt(conn, params, opts);
+    const receipt = await pollTransactionReceipt(conn, params, controller);
     if (receipt.error != null) {
       throw new Error(receipt.error);
     }
@@ -244,9 +244,9 @@ export async function wrapManyTransaction(
   };
 
   const wait = async (
-    opts: SignalAndInterval = {}
+    controller?: PollingController
   ): Promise<TransactionReceipt & Named> => {
-    const receipt = await pollTransactionReceipt(conn, params, opts);
+    const receipt = await pollTransactionReceipt(conn, params, controller);
     if (receipt.error != null) {
       throw new Error(receipt.error);
     }

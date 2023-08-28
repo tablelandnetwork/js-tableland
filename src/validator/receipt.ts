@@ -1,12 +1,12 @@
 import {
-  camelize,
   type Camelize,
   type PartialRequired,
+  camelize,
 } from "../helpers/utils.js";
 import {
   type AsyncFunction,
+  type PollingController,
   type Signal,
-  type SignalAndInterval,
   getAsyncPoller,
 } from "../helpers/await.js";
 import { hoistApiError } from "./errors.js";
@@ -46,13 +46,13 @@ function transformResponse(obj: Response): TransactionReceipt {
 export async function getTransactionReceipt(
   config: FetchConfig,
   params: Params,
-  opts: Signal = {}
+  signal?: Signal
 ): Promise<TransactionReceipt> {
   const receiptByTransactionHash = getFetcher(config)
     .path("/receipt/{chainId}/{transactionHash}")
     .method("get")
     .create();
-  const { data } = await receiptByTransactionHash(params, opts).catch(
+  const { data } = await receiptByTransactionHash(params, signal).catch(
     hoistApiError
   );
   const transformed = transformResponse(data);
@@ -62,7 +62,7 @@ export async function getTransactionReceipt(
 export async function pollTransactionReceipt(
   config: FetchConfig,
   params: Params,
-  { signal, interval }: SignalAndInterval = {}
+  controller?: PollingController
 ): Promise<TransactionReceipt> {
   const receiptByTransactionHash = getFetcher(config)
     .path("/receipt/{chainId}/{transactionHash}")
@@ -71,7 +71,7 @@ export async function pollTransactionReceipt(
   const fn: AsyncFunction<TransactionReceipt> = async () => {
     try {
       const { data: obj } = await receiptByTransactionHash(params, {
-        signal,
+        signal: controller?.signal,
       }).catch(hoistApiError);
       const data = transformResponse(obj);
       return { done: true, data };
@@ -83,6 +83,6 @@ export async function pollTransactionReceipt(
       throw err;
     }
   };
-  const receipt = await getAsyncPoller(fn, interval, signal);
+  const receipt = await getAsyncPoller(fn, controller);
   return receipt;
 }

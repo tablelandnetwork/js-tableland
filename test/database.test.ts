@@ -5,7 +5,7 @@ import { getAccounts } from "@tableland/local";
 import { getDefaultProvider } from "ethers";
 import { Database } from "../src/database.js";
 import { Statement } from "../src/statement.js";
-import { getAbortSignal } from "../src/helpers/await.js";
+import { createPollingController } from "../src/helpers/await.js";
 import { TEST_TIMEOUT_FACTOR } from "./setup";
 
 describe("database", function () {
@@ -53,15 +53,11 @@ describe("database", function () {
     this.beforeAll(async function () {
       // need to increase the default timeout for the receipt polling
       // abort signal because github action runners are timing out
-      const { signal } = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 60000);
       const { results, error, meta } = await db
         .prepare(
           "CREATE TABLE test_batch (id integer, name text, age integer, primary key (id));"
         )
-        .all(undefined, {
-          interval: TEST_TIMEOUT_FACTOR * 1500,
-          signal,
-        });
+        .all(undefined, createPollingController(TEST_TIMEOUT_FACTOR * 60000));
       tableName = meta.txn?.name ?? "";
       deepStrictEqual(results, []);
       strictEqual(error, undefined);
@@ -373,13 +369,10 @@ describe("database", function () {
       const stmt = db.prepare(
         `SELECT name, age FROM ${tableName} WHERE name=?`
       );
-      const controller = new AbortController();
-      const signal = controller.signal;
+      const controller = createPollingController();
       controller.abort();
       await rejects(
-        db.batch([stmt.bind("Bobby"), stmt.bind("Tables")], {
-          signal,
-        }),
+        db.batch([stmt.bind("Bobby"), stmt.bind("Tables")], controller),
         (err: any) => {
           match(err.cause.message, /Th(e|is) operation was aborted/);
           return true;
@@ -545,15 +538,12 @@ describe("database", function () {
   describe(".exec()", function () {
     let tableName: string;
     this.beforeAll(async function () {
-      const { signal } = getAbortSignal(undefined, TEST_TIMEOUT_FACTOR * 30000);
+      const controller = createPollingController(TEST_TIMEOUT_FACTOR * 30000);
       const { results, error, meta } = await db
         .prepare(
           "CREATE TABLE test_exec (id integer, name text, age integer, primary key (id));"
         )
-        .run({
-          signal,
-          interval: TEST_TIMEOUT_FACTOR * 1500,
-        });
+        .run(controller);
       tableName = meta.txn?.name ?? "";
       deepStrictEqual(results, []);
       strictEqual(error, undefined);
